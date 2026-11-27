@@ -1016,6 +1016,22 @@ const EduNavigation = {
       window.location.hash = targetSection;
     }
 
+    // Re-render data-driven views whenever they are opened so they reflect the
+    // latest learner evidence and report drafts saved during this session.
+    if (activeSection) {
+      switch (targetSection) {
+        case 'learners': this.renderLearnerDirectory(activeSection); break;
+        case 'assessments': this.renderPerformanceEntry(activeSection); break;
+        case 'classes': this.renderClasses(activeSection); break;
+        case 'analytics': this.renderAnalytics(activeSection); break;
+        case 'early-warnings': this.renderEarlyWarnings(activeSection); break;
+        case 'subjects': this.renderLearnerReports(activeSection); break;
+        case 'reports': this.renderReportsWorkspace(activeSection); break;
+        case 'settings': this.renderSettings(activeSection); break;
+        case 'import-marks': this.renderImportWorkspace(activeSection); break;
+      }
+    }
+
     if (window.lucide) {
       window.lucide.createIcons();
     }
