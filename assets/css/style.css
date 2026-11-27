@@ -1364,3 +1364,22 @@ button, select, input {
   font-size: 13px;
   line-height: 1.6;
 }
+
+
+/* Compact record-management actions */
+.record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  min-width: 170px;
+}
+.record-actions .btn {
+  min-height: 30px;
+  padding: 5px 9px;
+  font-size: 11px;
+}
+@media (max-width: 640px) {
+  .record-actions { min-width: 145px; }
+  .record-actions .btn { flex: 1 1 auto; }
+}
