@@ -24,9 +24,9 @@ const MODULE_BLUEPRINTS = {
     ]
   },
   'subjects': {
-    title: 'Subjects & Grading Scales',
-    badge: 'Module Ready for Phase 2',
-    description: 'Configure grade-specific CBC/CBE learning areas, curriculum options, strands, sub-strands, and learning outcomes.',
+    title: 'CBC Curriculum & Learning Areas',
+    badge: 'Kenya CBC/CBE · Grades 1–9',
+    description: 'Explore grade-band learning areas and the core competencies that guide learner development across Lower Primary, Upper Primary, and Junior School.',
     pillars: [
       { title: 'Learning Area Progress', detail: 'Track learning-outcome progress by grade and learning area to guide learner support.' },
       { title: 'Competency Assessment', detail: 'Configure school assessment rubrics and achievement descriptors without treating them as national grades.' },
@@ -114,6 +114,11 @@ const EduNavigation = {
       const section = document.getElementById(`view-${route}`);
       if (!section) return;
 
+      if (route === 'subjects') {
+        this.renderCurriculumDirectory(section);
+        return;
+      }
+
       section.innerHTML = `
         <div class="module-shell">
           <div class="module-header">
@@ -138,6 +143,83 @@ const EduNavigation = {
         </div>
       `;
     });
+  },
+
+  renderCurriculumDirectory(section) {
+    const curriculum = window.KENYA_CBC_CURRICULUM || KENYA_CBC_CURRICULUM;
+    const gradeOptions = curriculum.grades
+      .map((grade) => `<option value="${grade}">Grade ${grade}</option>`)
+      .join('');
+
+    section.innerHTML = `
+      <div class="module-shell">
+        <div class="module-header">
+          <div>
+            <span class="module-badge">Kenya CBC/CBE · Grades 1–9</span>
+            <h2>CBC Curriculum &amp; Learning Areas</h2>
+            <p>Explore learning areas by grade. The curriculum is grouped into three school stages, with learning areas changing as learners progress.</p>
+          </div>
+          <a href="#overview" class="btn btn-primary" data-route="overview">
+            <i data-lucide="arrow-left"></i>
+            <span>Back to Overview Dashboard</span>
+          </a>
+        </div>
+
+        <div class="panel-card" style="margin-bottom: 22px;">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">Select a Grade</h3>
+              <p class="panel-subtitle">Choose a grade to view its curriculum stage and learning areas.</p>
+            </div>
+            <select id="curriculumGradeSelect" class="compact-select" aria-label="Select curriculum grade">
+              ${gradeOptions}
+            </select>
+          </div>
+          <div id="curriculumStageSummary" class="module-badge">Lower Primary · Grades 1–3</div>
+          <div id="curriculumAreasGrid" class="roadmap-grid" style="margin-top: 18px;"></div>
+          <p class="panel-subtitle" style="margin-top: 16px;">Learning-area options, including languages and religious education, should be configured according to the school's approved programme and learner context. Refer to the relevant KICD curriculum design when setting up detailed strands and outcomes.</p>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h3 class="panel-title">CBC Core Competencies</h3>
+              <p class="panel-subtitle">Competencies developed across learning areas and learning experiences.</p>
+            </div>
+          </div>
+          <div class="roadmap-grid">
+            ${curriculum.coreCompetencies.map((competency) => `
+              <article class="roadmap-card">
+                <h4>${competency}</h4>
+                <p>Developed through classroom learning, practical experiences, collaboration, and application.</p>
+              </article>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    `;
+
+    const gradeSelect = section.querySelector('#curriculumGradeSelect');
+    const stageSummary = section.querySelector('#curriculumStageSummary');
+    const areasGrid = section.querySelector('#curriculumAreasGrid');
+
+    const renderGrade = (grade) => {
+      const stage = curriculum.stages.find((item) => item.grades.includes(Number(grade)));
+      if (!stage) return;
+      stageSummary.textContent = `${stage.name} · Grades ${stage.grades[0]}–${stage.grades[stage.grades.length - 1]}`;
+      areasGrid.innerHTML = curriculum.learningAreasByStage[stage.name]
+        .map((area) => `
+          <article class="roadmap-card">
+            <h4>${area}</h4>
+            <p>Grade ${grade} learning area</p>
+          </article>
+        `).join('');
+    };
+
+    gradeSelect.addEventListener('change', () => renderGrade(gradeSelect.value));
+    renderGrade(gradeSelect.value);
+
+    if (window.lucide) window.lucide.createIcons();
   },
 
   bindEvents() {
