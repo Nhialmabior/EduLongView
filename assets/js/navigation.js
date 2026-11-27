@@ -619,6 +619,8 @@ const EduNavigation = {
     // Route links across sidebar and body
     document.addEventListener('submit', (event) => this.handleWorkspaceSubmit(event));
     document.addEventListener('change', (event) => { if (event.target.id === 'performanceImportFile') this.readImportFile(event.target.files?.[0]); });
+    document.addEventListener('input', (event) => { if (event.target.id === 'learnerSearchInput') this.filterLearnerDirectory(); });
+    document.addEventListener('change', (event) => { if (event.target.id === 'learnerGradeFilter') this.filterLearnerDirectory(); });
     document.addEventListener('click', (e) => {
       if (e.target.closest('[data-download-import-template]')) { this.downloadImportTemplate(); return; }
       if (e.target.closest('[data-clear-import-preview]')) { this.pendingImportPreview=null; this.renderImportWorkspace(document.getElementById('view-import-marks')); return; }
