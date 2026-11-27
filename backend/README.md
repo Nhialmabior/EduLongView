@@ -9,6 +9,7 @@ The backend verifies Supabase Auth sessions, resolves each user's active school 
 - The backend resolves the authenticated user's active membership and verifies that the associated school is active.
 - `GET /api/v1/auth/me` returns the authenticated user's own school context.
 - `POST /api/v1/school/teachers/invite` is restricted to an active `school_admin`. The server creates a Supabase Auth invitation and an `invited` teacher membership in that administrator's school.
+- `POST /api/v1/auth/activate-invitation` activates only the signed-in user's own pending invitation, and only after Supabase confirms the invited email address.
 - Teacher invitations are never allowed to choose a school or role in the request body.
 - The Supabase service-role/secret key is used only by the backend. Never expose it to the browser.
 - Membership and school tables have RLS enabled. Browser clients have no write permissions on these identity tables.
@@ -49,6 +50,7 @@ Open `http://127.0.0.1:8000/docs` for API documentation and `http://127.0.0.1:80
 |---|---|---|
 | GET | `/health` | Public health check |
 | GET | `/api/v1/auth/me` | Signed-in active school member |
+| POST | `/api/v1/auth/activate-invitation` | Signed-in user with a confirmed invited email |
 | POST | `/api/v1/school/teachers/invite` | Active school administrator only |
 | POST | `/api/v1/reports/draft` | Signed-in active school member |
 
