@@ -144,19 +144,18 @@
             <div class="welcome-copy">
               <div class="tagline-pill">
                 <span class="gold-dot"></span>
-                <span>See the progress. Understand the patterns. Support every learner.</span>
+                <span>Illustrative demo data</span>
               </div>
-              <h2>School performance overview <span id="activePeriodHeading">2026 · Term 3</span></h2>
-              <p>A clear view of recorded learner performance, emerging patterns and reports awaiting teacher attention. This workspace currently uses illustrative demo data.</p>
+              <h2>School overview <span id="activePeriodHeading">2026 · Term 3</span></h2>
             </div>
             <div class="welcome-actions">
               <a href="#import-marks" class="btn btn-primary" data-route="import-marks">
                 <i data-lucide="file-up"></i>
-                <span>Import Performance Data</span>
+                <span>Upload Results</span>
               </a>
               <a href="#early-warnings" class="btn btn-outline" data-route="early-warnings">
                 <i data-lucide="shield-alert"></i>
-                <span>Review Flagged Learners</span>
+                <span>Review Learners</span>
               </a>
             </div>
           </div>
@@ -176,7 +175,7 @@
 
             <article class="kpi-card">
               <div class="kpi-top">
-                <span class="kpi-label">Average Recorded Performance</span>
+                <span class="kpi-label">Average Performance Index</span>
                 <span class="kpi-icon navy"><i data-lucide="bar-chart-3"></i></span>
               </div>
               <div class="kpi-value" id="kpiAvgPerformance">64.8 index points</div>
@@ -189,7 +188,7 @@
 
             <article class="kpi-card">
               <div class="kpi-top">
-                <span class="kpi-label">Total Assessments</span>
+                <span class="kpi-label">Assessment Records</span>
                 <span class="kpi-icon teal"><i data-lucide="clipboard-list"></i></span>
               </div>
               <div class="kpi-value" id="kpiTotalAssessments">36</div>
@@ -205,7 +204,7 @@
               </div>
               <div class="kpi-value" id="kpiFlaggedLearners">29</div>
               <div class="kpi-meta">
-                <span class="trend-badge warning" id="kpiFlaggedMeta">Below 50% mean or &gt;12% term drop</span>
+                <span class="trend-badge warning" id="kpiFlaggedMeta">Based on recorded evidence</span>
               </div>
             </article>
           </div>
@@ -217,7 +216,7 @@
               <div class="panel-header">
                 <div>
                   <h3 class="panel-title">Recorded Performance Trend</h3>
-                  <p class="panel-subtitle">School-level trend based on the selected reporting period</p>
+                  <p class="panel-subtitle">Performance over time</p>
                 </div>
                 <div class="panel-controls">
                   <label for="streamFilterSelect" class="sr-only">Filter by Class</label>
@@ -245,9 +244,9 @@
               <div class="panel-header">
                 <div>
                   <h3 class="panel-title">Performance by Learning Area</h3>
-                  <p class="panel-subtitle">Recorded performance summaries across learning areas</p>
+                  <p class="panel-subtitle">By learning area</p>
                 </div>
-                <span class="panel-tag">Sample Learning Areas</span>
+                <span class="panel-tag">Learning Areas</span>
               </div>
               <div class="chart-canvas-wrap">
                 <canvas id="subjectOverviewChart"></canvas>
@@ -261,11 +260,11 @@
             <article class="panel-card">
               <div class="panel-header">
                 <div>
-                  <h3 class="panel-title">Recently Recorded Evidence</h3>
-                  <p class="panel-subtitle">Latest performance records added to the workspace</p>
+                  <h3 class="panel-title">Recent Records</h3>
+                  <p class="panel-subtitle"></p>
                 </div>
                 <a href="#assessments" class="text-link" data-route="assessments">
-                  <span>All assessments</span>
+                  <span>View all</span>
                   <i data-lucide="arrow-right"></i>
                 </a>
               </div>
@@ -291,11 +290,11 @@
             <article class="panel-card">
               <div class="panel-header">
                 <div>
-                  <h3 class="panel-title">Learners Flagged for Review</h3>
-                  <p class="panel-subtitle">Evidence-based indicators that help teachers decide where follow-up may be useful</p>
+                  <h3 class="panel-title">Learners to Review</h3>
+                  <p class="panel-subtitle"></p>
                 </div>
                 <a href="#early-warnings" class="text-link" data-route="early-warnings">
-                  <span>Full triage</span>
+                  <span>View all</span>
                   <i data-lucide="arrow-right"></i>
                 </a>
               </div>
