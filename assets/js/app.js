@@ -123,10 +123,10 @@
           {
             label: selectedStream === 'all' ? 'School Progress Index' : `${selectedStream} Progress Index`,
             data: series,
-            borderColor: '#0F766E',
-            backgroundColor: 'rgba(15, 118, 110, 0.09)',
+            borderColor: '#555B61',
+            backgroundColor: 'rgba(85, 91, 97, 0.09)',
             borderWidth: 2.5,
-            pointBackgroundColor: '#0F213A',
+            pointBackgroundColor: '#555B61',
             pointBorderColor: '#FFFFFF',
             pointBorderWidth: 2,
             pointRadius: 4.5,
@@ -137,7 +137,7 @@
           {
             label: 'Illustrative reference (60 points)',
             data: benchmark,
-            borderColor: '#D97706',
+            borderColor: '#E5C84B',
             borderWidth: 1.75,
             borderDash: [5, 5],
             pointRadius: 0,
@@ -161,11 +161,11 @@
               usePointStyle: true,
               boxWidth: 8,
               font: { family: 'Inter', size: 12, weight: '500' },
-              color: '#475569'
+              color: '#555B61'
             }
           },
           tooltip: {
-            backgroundColor: '#0F213A',
+            backgroundColor: '#555B61',
             titleFont: { family: 'Manrope', size: 12.5 },
             bodyFont: { family: 'Inter', size: 12 },
             padding: 10,
@@ -179,17 +179,17 @@
           y: {
             min: 40,
             max: 80,
-            grid: { color: '#F1F5F9' },
+            grid: { color: '#ECEEF0' },
             ticks: {
               callback: (val) => `${val}`,
-              color: '#64748B',
+              color: '#737A81',
               font: { family: 'Inter', size: 11.5 }
             }
           },
           x: {
             grid: { display: false },
             ticks: {
-              color: '#64748B',
+              color: '#737A81',
               font: { family: 'Inter', size: 11.5 }
             }
           }
@@ -205,7 +205,7 @@
     const labels = periodData.subjects.map((s) => s.name);
     const scores = periodData.subjects.map((s) => s.mean);
     const barColors = scores.map((score) =>
-      score < 56 ? '#D97706' : score >= 65 ? '#0F766E' : '#1E406B'
+      score < 56 ? '#E5C84B' : score >= 65 ? '#555B61' : '#7B8289'
     );
 
     if (subjectChartInstance) {
@@ -233,7 +233,7 @@
         plugins: {
           legend: { display: false },
           tooltip: {
-            backgroundColor: '#0F213A',
+            backgroundColor: '#555B61',
             padding: 10,
             cornerRadius: 8,
             callbacks: {
@@ -245,17 +245,17 @@
           x: {
             min: 0,
             max: 100,
-            grid: { color: '#F1F5F9' },
+            grid: { color: '#ECEEF0' },
             ticks: {
               callback: (val) => `${val}`,
-              color: '#64748B',
+              color: '#737A81',
               font: { family: 'Inter', size: 11 }
             }
           },
           y: {
             grid: { display: false },
             ticks: {
-              color: '#0F172A',
+              color: '#3F444A',
               font: { family: 'Inter', size: 11.5, weight: '500' }
             }
           }
