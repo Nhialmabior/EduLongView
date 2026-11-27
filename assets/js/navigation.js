@@ -358,7 +358,9 @@ const EduNavigation = {
     const learner = this.workspaceState.learners.find((item) => item.id === report.learnerId);
     const popup = window.open('', '_blank', 'width=900,height=700');
     if (!popup) { this.showWorkspaceToast('Allow pop-ups to print a report.'); return; }
-    popup.document.write(`<!doctype html><html><head><title>EduLongView Report</title><style>body{font-family:Arial,sans-serif;color:#0f172a;max-width:800px;margin:40px auto;line-height:1.5}h1{font-size:24px}h2{font-size:16px;border-bottom:1px solid #ccc;padding-bottom:6px}.meta{color:#475569}.draft{color:#92400e}pre{white-space:pre-wrap;font-family:Arial,sans-serif}button{padding:8px 14px}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Print report</button><h1>EduLongView Learner Progress Report</h1><p class="draft"><strong>PRIVATE TEACHER DRAFT — NOT APPROVED OR RELEASED</strong></p><p class="meta"><strong>Learner:</strong> ${this.escapeHTML(learner?.fullName || 'Unknown')} · ${this.escapeHTML(learner?.admissionNo || '')} · Grade ${this.escapeHTML(learner?.grade || '—')}</p><h2>Performance summary</h2><pre>${this.escapeHTML(report.summary)}</pre><h2>Identified strengths</h2><pre>${this.escapeHTML(report.strengths)}</pre><h2>Areas needing attention</h2><pre>${this.escapeHTML(report.support)}</pre><h2>Recommended next steps</h2><pre>${this.escapeHTML(report.recommendations)}</pre><h2>Teacher comment</h2><pre>${this.escapeHTML(report.teacherComment || 'No comment recorded.')}</pre></body></html>`);
+    const isReleased = report.status === 'released';
+    const releaseLabel = isReleased ? 'RELEASE RECORDED — ' + this.escapeHTML(report.releasedBy || 'Authorised teacher') + ' · ' + this.escapeHTML(report.releasedAt ? new Date(report.releasedAt).toLocaleString() : 'Date not recorded') : 'PRIVATE TEACHER DRAFT — NOT RELEASED';
+    popup.document.write(`<!doctype html><html><head><title>EduLongView Report</title><style>body{font-family:Arial,sans-serif;color:#0f172a;max-width:800px;margin:40px auto;line-height:1.5}h1{font-size:24px}h2{font-size:16px;border-bottom:1px solid #ccc;padding-bottom:6px}.meta{color:#475569}.draft{color:#92400e}pre{white-space:pre-wrap;font-family:Arial,sans-serif}button{padding:8px 14px}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Print report</button><h1>EduLongView Learner Progress Report</h1><p class="draft"><strong>${releaseLabel}</strong></p><p class="meta"><strong>Learner:</strong> ${this.escapeHTML(learner?.fullName || 'Unknown')} · ${this.escapeHTML(learner?.admissionNo || '')} · Grade ${this.escapeHTML(learner?.grade || '—')}</p><h2>Performance summary</h2><pre>${this.escapeHTML(report.summary)}</pre><h2>Identified strengths</h2><pre>${this.escapeHTML(report.strengths)}</pre><h2>Areas needing attention</h2><pre>${this.escapeHTML(report.support)}</pre><h2>Recommended next steps</h2><pre>${this.escapeHTML(report.recommendations)}</pre><h2>Teacher comment</h2><pre>${this.escapeHTML(report.teacherComment || 'No comment recorded.')}</pre><p class="meta">A release label in this prototype records a local browser action only. It does not verify parent delivery.</p></body></html>`);
     popup.document.close();
   },
 
@@ -1113,11 +1115,20 @@ const EduNavigation = {
         const staffName = window.prompt('Enter the authorised teacher’s full name to record this release:');
         if (!staffName || !staffName.trim()) { this.showWorkspaceToast('Release cancelled. A staff name is required.'); return; }
         const learner = this.workspaceState.learners.find((item) => item.id === report.learnerId);
-        if (!window.confirm('Confirm that you have reviewed this report and are authorised to release ' + (learner?.fullName || 'this learner’s report') + ' to their parent or guardian?')) return;
+        if (!learner) { this.showWorkspaceToast('Cannot release: the linked learner profile could not be found.'); return; }
+        const requiredSections = [report.summary, report.strengths, report.support, report.recommendations];
+        if (!Number(report.evidenceCount) || !Array.isArray(report.evidenceSnapshot?.records) || !report.evidenceSnapshot.records.length || requiredSections.some((value) => !String(value || '').trim())) {
+          this.showWorkspaceToast('Cannot release an incomplete report. Check its evidence, summary, strengths, support areas and recommendations first.');
+          return;
+        }
+        if (!window.confirm('Confirm that you have reviewed this report and are authorised to release ' + learner.fullName + '’s report to their parent or guardian?')) return;
+        const releasedAt = new Date().toISOString();
+        if (!Array.isArray(report.releaseHistory)) report.releaseHistory = [];
+        report.releaseHistory.push({ action: 'released', staffName: staffName.trim(), at: releasedAt });
         report.status = 'released';
         report.releasedBy = staffName.trim();
-        report.releasedAt = new Date().toISOString();
-        report.updatedAt = new Date().toISOString();
+        report.releasedAt = releasedAt;
+        report.updatedAt = releasedAt;
         EduDataStore.save(this.workspaceState);
         this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
         this.showWorkspaceToast('Teacher release decision recorded in this browser.');
@@ -1128,11 +1139,16 @@ const EduNavigation = {
         const reportId = revokeTrigger.getAttribute('data-revoke-release');
         const report = this.workspaceState.learnerReports.find((item) => item.id === reportId);
         if (!report || report.status !== 'released') return;
-        if (!window.confirm('Revoke this local release record? The report will return to the awaiting-release queue.')) return;
+        if (!window.confirm('Revoke this local release record? The report will return to the awaiting-release queue. The action will be added to its local history.')) return;
+        const revokedAt = new Date().toISOString();
+        if (!Array.isArray(report.releaseHistory)) report.releaseHistory = [];
+        report.releaseHistory.push({ action: 'revoked', staffName: report.releasedBy || 'Recorded teacher', at: revokedAt });
         report.status = 'draft';
+        report.lastReleasedBy = report.releasedBy || '';
+        report.lastReleasedAt = report.releasedAt || '';
         report.releasedBy = '';
         report.releasedAt = '';
-        report.updatedAt = new Date().toISOString();
+        report.updatedAt = revokedAt;
         EduDataStore.save(this.workspaceState);
         this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
         this.showWorkspaceToast('Release record revoked. The report is no longer marked as released.');
