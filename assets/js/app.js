@@ -22,6 +22,14 @@
     }[char]));
   }
 
+  function hasRecordedScore(record) {
+    if (record?.percentage === null || record?.percentage === undefined || String(record.percentage).trim() === '') {
+      return false;
+    }
+    const score = Number(record.percentage);
+    return Number.isFinite(score);
+  }
+
   function showToast(message) {
     const toast = document.getElementById('appToast');
     if (!toast) return;
@@ -54,7 +62,7 @@
 
   function updateKPIs(data) {
     const allRecords = data.records;
-    const scored = allRecords.filter((record) => Number.isFinite(Number(record.percentage)));
+    const scored = allRecords.filter(hasRecordedScore);
     const mean = scored.length
       ? scored.reduce((sum, record) => sum + Number(record.percentage), 0) / scored.length
       : null;
@@ -92,7 +100,7 @@
     tbody.innerHTML = recent.map((record) => {
       const learner = data.learnerById.get(record.learnerId);
       const date = record.date || (record.createdAt ? new Date(record.createdAt).toLocaleDateString() : '—');
-      const score = Number.isFinite(Number(record.percentage)) ? Number(record.percentage).toFixed(1) + '%' : 'Observation';
+      const score = hasRecordedScore(record) ? Number(record.percentage).toFixed(1) + '%' : 'Observation';
       return `<tr>
         <td><span class="cell-primary">${escapeHTML(record.learningArea || 'Learning area not set')}</span><span class="cell-sub">${escapeHTML(record.assessmentTitle || record.assessmentType || 'Performance evidence')}</span></td>
         <td>${escapeHTML(learner ? 'Grade ' + learner.grade + (learner.stream ? ' · ' + learner.stream : '') : 'Learner unavailable')}</td>
@@ -150,17 +158,18 @@
       trendChartInstance = null;
     }
     const host = document.querySelector('[data-chart-host="performanceTrendChart"]');
-    if (!data.filteredRecords.length) {
-      if (host) host.innerHTML = '<div class="dashboard-chart-empty">Add learner evidence for this period to see the performance trend.</div>';
+    const scoredRecords = data.filteredRecords.filter(hasRecordedScore);
+    if (!scoredRecords.length) {
+      if (host) host.innerHTML = '<div class="dashboard-chart-empty">A performance trend will appear when numeric scores are saved. Observation-only records remain available in Recent Records.</div>';
       return;
     }
     const canvas = restoreChartCanvas('performanceTrendChart');
     if (!canvas || typeof Chart === 'undefined') return;
-    const ordered = data.filteredRecords.slice().sort((a, b) =>
+    const ordered = scoredRecords.slice().sort((a, b) =>
       String(a.date || a.createdAt || '').localeCompare(String(b.date || b.createdAt || ''))
     ).slice(-10);
     const labels = ordered.map((record) => record.assessmentTitle || record.date || 'Recorded entry');
-    const values = ordered.map((record) => Number.isFinite(Number(record.percentage)) ? Number(record.percentage) : null);
+    const values = ordered.map((record) => Number(record.percentage));
 
     trendChartInstance = new Chart(canvas, {
       type: 'line',
@@ -198,7 +207,7 @@
       subjectChartInstance = null;
     }
     const host = document.querySelector('[data-chart-host="subjectOverviewChart"]');
-    const scored = data.filteredRecords.filter((record) => Number.isFinite(Number(record.percentage)));
+    const scored = data.filteredRecords.filter(hasRecordedScore);
     const groups = {};
     scored.forEach((record) => {
       const area = record.learningArea || 'Unspecified';
