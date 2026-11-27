@@ -3,7 +3,7 @@
  * Aligned to the Kenya CBC/CBE structure for Grades 1–9; demo records are illustrative.
  */
 
-const EDULONGVIEW_STORAGE_KEY = 'edulongview_state_v1';
+const EDULONGVIEW_STORAGE_KEY = 'edulongview_state_v2';
 
 const DEFAULT_DEMO_DATA = {
   school: {
@@ -49,10 +49,10 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 63.9 }
         ],
         recentAssessments: [
-          { title: 'End-Term 1 Exam', subject: 'Mathematics', classStream: 'Grade 4 East', date: '10 Apr 2026', mean: '54.2%', status: 'Verified' },
-          { title: 'End-Term 1 Exam', subject: 'English', classStream: 'Grade 7 North', date: '09 Apr 2026', mean: '65.8%', status: 'Verified' },
-          { title: 'CAT 2 Practical', subject: 'Integrated Science', classStream: 'Grade 9 West', date: '04 Apr 2026', mean: '61.0%', status: 'Verified' },
-          { title: 'Mid-Term 1 Paper', subject: 'Agriculture', classStream: 'Grade 1 South', date: '21 Mar 2026', mean: '52.9%', status: 'Verified' }
+          { title: 'End-Term 1 Exam', subject: 'Mathematics', classStream: 'Grade 4 East', date: '10 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'End-Term 1 Exam', subject: 'English', classStream: 'Grade 7 North', date: '09 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'CAT 2 Practical', subject: 'Integrated Science', classStream: 'Grade 9 West', date: '04 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Mid-Term 1 Paper', subject: 'Agriculture', classStream: 'Grade 1 South', date: '21 Mar 2026', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -60,8 +60,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2418',
             stream: 'Grade 4 East',
             riskLevel: 'High',
-            reason: 'Mean dropped by 16.4% between CAT 1 and End-Term 1; weak scores in Mathematics (38%) and Agriculture (41%).',
-            currentMean: '44.2%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '81%'
           },
           {
@@ -69,8 +69,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2109',
             stream: 'Grade 7 North',
             riskLevel: 'High',
-            reason: 'Below 50% benchmark across 4 core subjects following 6 days of illness absence in March.',
-            currentMean: '46.5%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '84%'
           },
           {
@@ -78,8 +78,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2504',
             stream: 'Grade 1 South',
             riskLevel: 'Moderate',
-            reason: 'Steep downward trajectory in Pre-Technical Studies (-14.0%) and Mathematics (-11.5%) since entry baseline.',
-            currentMean: '49.8%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '92%'
           }
         ]
@@ -114,10 +114,10 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 66.0 }
         ],
         recentAssessments: [
-          { title: 'End-Term 2 Mock', subject: 'Agriculture', classStream: 'Grade 9 West', date: '07 Aug 2026', mean: '57.8%', status: 'Verified' },
-          { title: 'End-Term 2 Exam', subject: 'Mathematics', classStream: 'Grade 7 East', date: '06 Aug 2026', mean: '56.1%', status: 'Verified' },
-          { title: 'CAT 2 Assessment', subject: 'Creative Arts and Sports', classStream: 'Grade 4 North', date: '24 Jul 2026', mean: '66.4%', status: 'Verified' },
-          { title: 'Mid-Term 2 Exam', subject: 'Kiswahili', classStream: 'Grade 1 East', date: '19 Jun 2026', mean: '63.5%', status: 'Verified' }
+          { title: 'End-Term 2 Mock', subject: 'Agriculture', classStream: 'Grade 9 West', date: '07 Aug 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'End-Term 2 Exam', subject: 'Mathematics', classStream: 'Grade 7 East', date: '06 Aug 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'CAT 2 Assessment', subject: 'Creative Arts and Sports', classStream: 'Grade 4 North', date: '24 Jul 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Mid-Term 2 Exam', subject: 'Kiswahili', classStream: 'Grade 1 East', date: '19 Jun 2026', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -125,8 +125,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2287',
             stream: 'Grade 7 East',
             riskLevel: 'High',
-            reason: 'Consecutive declines across CAT 1 (55%) and End-Term 2 (42%) in Mathematics and Pre-Technical Studies.',
-            currentMean: '45.1%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '86%'
           },
           {
@@ -134,8 +134,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2341',
             stream: 'Grade 4 West',
             riskLevel: 'Moderate',
-            reason: 'Science cluster average fell 13.2% below Term 1 performance despite steady humanities marks.',
-            currentMean: '49.4%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '91%'
           },
           {
@@ -143,8 +143,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2095',
             stream: 'Grade 9 West',
             riskLevel: 'High',
-            reason: 'Candidate mock aggregate dropped 14.0% in Agriculture (36%) and Integrated Science (42%).',
-            currentMean: '46.8%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '88%'
           }
         ]
@@ -179,10 +179,10 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 69.5 }
         ],
         recentAssessments: [
-          { title: 'CAT 2 Continuous', subject: 'Mathematics', classStream: 'Grade 7 North', date: '24 Nov 2026', mean: '59.4%', status: 'Verified' },
-          { title: 'CAT 2 Continuous', subject: 'English Paper 2', classStream: 'Grade 9 East', date: '22 Nov 2026', mean: '69.1%', status: 'Verified' },
-          { title: 'CAT 2 Practical', subject: 'Agriculture', classStream: 'Grade 4 South', date: '19 Nov 2026', mean: '58.7%', status: 'Pending Review' },
-          { title: 'Mid-Term 3 Exam', subject: 'Social Studies', classStream: 'Grade 1 West', date: '06 Nov 2026', mean: '72.0%', status: 'Verified' }
+          { title: 'CAT 2 Continuous', subject: 'Mathematics', classStream: 'Grade 7 North', date: '24 Nov 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'CAT 2 Continuous', subject: 'English Paper 2', classStream: 'Grade 9 East', date: '22 Nov 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'CAT 2 Practical', subject: 'Agriculture', classStream: 'Grade 4 South', date: '19 Nov 2026', mean: 'Evidence recorded', status: 'Pending Review' },
+          { title: 'Mid-Term 3 Exam', subject: 'Social Studies', classStream: 'Grade 1 West', date: '06 Nov 2026', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -190,8 +190,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2314',
             stream: 'Grade 4 North',
             riskLevel: 'High',
-            reason: 'Overall mean declined 15.2% from Mid-Term 3 (58%) to CAT 2 (42.8%); flagged in Mathematics & Pre-Technical Studies.',
-            currentMean: '44.6%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '83%'
           },
           {
@@ -199,8 +199,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2452',
             stream: 'Grade 1 East',
             riskLevel: 'High',
-            reason: 'Scored below 45% in three consecutive STEM assessments (Mathematics 39%, Agriculture 41%, Integrated Science 44%).',
-            currentMean: '46.1%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '87%'
           },
           {
@@ -208,8 +208,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: 'KSS-2190',
             stream: 'Grade 7 South',
             riskLevel: 'Moderate',
-            reason: '12.6% drop in English and Kiswahili composition scores compared to Term 2 average.',
-            currentMean: '49.5%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '94%'
           }
         ]
@@ -246,8 +246,8 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 62.1 }
         ],
         recentAssessments: [
-          { title: 'End-Term 1 Archive', subject: 'Mathematics', classStream: 'All Streams', date: '11 Apr 2025', mean: '50.8%', status: 'Verified' },
-          { title: 'End-Term 1 Archive', subject: 'English', classStream: 'All Streams', date: '10 Apr 2025', mean: '61.5%', status: 'Verified' }
+          { title: 'End-Term 1 Archive', subject: 'Mathematics', classStream: 'All Streams', date: '11 Apr 2025', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'End-Term 1 Archive', subject: 'English', classStream: 'All Streams', date: '10 Apr 2025', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -255,8 +255,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: '2025-T1',
             stream: 'Grade 1 – Grade 9',
             riskLevel: 'Moderate',
-            reason: '44 learners received remedial peer-tutoring support in Mathematics and Agriculture during Term 2 2025.',
-            currentMean: '47.2%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '89%'
           }
         ]
@@ -291,8 +291,8 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 63.4 }
         ],
         recentAssessments: [
-          { title: 'End-Term 2 Archive', subject: 'Agriculture', classStream: 'All Streams', date: '08 Aug 2025', mean: '53.5%', status: 'Verified' },
-          { title: 'End-Term 2 Archive', subject: 'Integrated Science', classStream: 'All Streams', date: '07 Aug 2025', mean: '57.8%', status: 'Verified' }
+          { title: 'End-Term 2 Archive', subject: 'Agriculture', classStream: 'All Streams', date: '08 Aug 2025', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'End-Term 2 Archive', subject: 'Integrated Science', classStream: 'All Streams', date: '07 Aug 2025', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -300,8 +300,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: '2025-T2',
             stream: 'Grade 1 – Grade 9',
             riskLevel: 'Moderate',
-            reason: '40 learners flagged in 2025 Term 2 archive; 78% improved above 50% by End-Term 3.',
-            currentMean: '48.0%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '90%'
           }
         ]
@@ -336,7 +336,7 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 65.1 }
         ],
         recentAssessments: [
-          { title: 'End-Term 3 Annual Exam', subject: 'All Core Subjects', classStream: 'Grade 1 – Grade 7', date: '21 Nov 2025', mean: '61.2%', status: 'Verified' }
+          { title: 'End-Term 3 Annual Exam', subject: 'All Core Subjects', classStream: 'Grade 1 – Grade 7', date: '21 Nov 2025', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -344,8 +344,8 @@ const DEFAULT_DEMO_DATA = {
             admissionNo: '2025-T3',
             stream: 'Grade 1 – Grade 7',
             riskLevel: 'Moderate',
-            reason: '34 learners carried forward into 2026 Term 1 academic mentorship watchlist.',
-            currentMean: '48.4%',
+            reason: 'Teacher review is recommended based on the available demo learning evidence and learner-support context.',
+            currentMean: 'Needs teacher review',
             attendance: '91%'
           }
         ]
