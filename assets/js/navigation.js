@@ -201,6 +201,10 @@ const EduNavigation = {
         this.renderReportsWorkspace(section);
         return;
       }
+      if (route === 'parent-release') {
+        this.renderParentReleaseWorkspace(section);
+        return;
+      }
       if (route === 'settings') {
         this.renderSettings(section);
         return;
@@ -351,6 +355,34 @@ const EduNavigation = {
     if (!popup) { this.showWorkspaceToast('Allow pop-ups to print a report.'); return; }
     popup.document.write(`<!doctype html><html><head><title>EduLongView Report</title><style>body{font-family:Arial,sans-serif;color:#0f172a;max-width:800px;margin:40px auto;line-height:1.5}h1{font-size:24px}h2{font-size:16px;border-bottom:1px solid #ccc;padding-bottom:6px}.meta{color:#475569}.draft{color:#92400e}pre{white-space:pre-wrap;font-family:Arial,sans-serif}button{padding:8px 14px}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Print report</button><h1>EduLongView Learner Progress Report</h1><p class="draft"><strong>PRIVATE TEACHER DRAFT — NOT APPROVED OR RELEASED</strong></p><p class="meta"><strong>Learner:</strong> ${this.escapeHTML(learner?.fullName || 'Unknown')} · ${this.escapeHTML(learner?.admissionNo || '')} · Grade ${this.escapeHTML(learner?.grade || '—')}</p><h2>Performance summary</h2><pre>${this.escapeHTML(report.summary)}</pre><h2>Identified strengths</h2><pre>${this.escapeHTML(report.strengths)}</pre><h2>Areas needing attention</h2><pre>${this.escapeHTML(report.support)}</pre><h2>Recommended next steps</h2><pre>${this.escapeHTML(report.recommendations)}</pre><h2>Teacher comment</h2><pre>${this.escapeHTML(report.teacherComment || 'No comment recorded.')}</pre></body></html>`);
     popup.document.close();
+  },
+
+  renderParentReleaseWorkspace(section) {
+    const reports = this.workspaceState.learnerReports || [];
+    const learners = this.workspaceState.learners || [];
+    const releasedCount = reports.filter((report) => report.status === 'released').length;
+    const pendingCount = reports.filter((report) => report.status !== 'released').length;
+    section.innerHTML = `<div class="module-shell">
+      <div class="module-header"><div><span class="module-badge">Teacher-controlled release</span><h2>Parent Report Release</h2><p>Review saved learner reports and record an authorised teacher’s decision before a report is made available to a parent.</p></div><a href="#reports" class="btn btn-secondary" data-route="reports"><i data-lucide="files"></i><span>Report Management</span></a></div>
+      <div class="module-stat-grid">
+        <article class="panel-card module-stat-card"><span class="kpi-label">Awaiting release</span><h3>${pendingCount}</h3><p>Saved reports not yet released</p></article>
+        <article class="panel-card module-stat-card"><span class="kpi-label">Release recorded</span><h3>${releasedCount}</h3><p>Marked as released in this browser</p></article>
+      </div>
+      <div class="panel-card workspace-panel">
+        <div class="panel-header"><div><h3 class="panel-title">Review and release reports</h3><p class="panel-subtitle">Only saved teacher drafts appear here. Open a draft to check its contents before release.</p></div></div>
+        <div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Grade / Class</th><th>Evidence</th><th>Report status</th><th>Release record</th><th>Action</th></tr></thead><tbody>
+        ${reports.length ? reports.slice().sort((a,b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || ''))).map((report) => {
+          const learner = learners.find((item) => item.id === report.learnerId);
+          const isReleased = report.status === 'released';
+          const releasedAt = report.releasedAt ? new Date(report.releasedAt).toLocaleString() : '';
+          const releaseMeta = isReleased ? this.escapeHTML(report.releasedBy || 'Teacher') + '<span class="cell-sub">' + this.escapeHTML(releasedAt) + '</span>' : 'Not released';
+          return '<tr><td><strong>' + this.escapeHTML(learner?.fullName || 'Learner not found') + '</strong><span class="cell-sub">' + this.escapeHTML(learner?.admissionNo || '') + '</span></td><td>Grade ' + this.escapeHTML(learner?.grade || '—') + '<span class="cell-sub">' + this.escapeHTML(learner?.stream || '') + '</span></td><td>' + Number(report.evidenceCount || 0) + ' records</td><td><span class="status-pill ' + (isReleased ? 'verified' : 'pending') + '">' + (isReleased ? 'Released' : 'Awaiting release') + '</span></td><td>' + releaseMeta + '</td><td><button type="button" class="btn btn-secondary btn-sm" data-edit-report="' + this.escapeHTML(report.id) + '">Review</button> ' + (isReleased ? '<button type="button" class="btn btn-secondary btn-sm" data-revoke-release="' + this.escapeHTML(report.id) + '">Revoke</button>' : '<button type="button" class="btn btn-primary btn-sm" data-release-report="' + this.escapeHTML(report.id) + '">Release to Parents</button>') + '</td></tr>';
+        }).join('') : '<tr><td colspan="6" class="empty-state-cell">No saved reports are ready for review. Generate and save a learner report draft first.</td></tr>'}
+        </tbody></table></div>
+      </div>
+      <div class="panel-card workspace-panel"><h3 class="panel-title">Release safeguards</h3><p class="import-storage-note">Check the learner’s name, reporting period, evidence, summary and recommendations before recording release. The release record stores the staff name and date for this browser workspace.</p><p class="import-warning">Prototype limitation: this browser-only version does not authenticate staff roles, send notifications, or publish reports to a live parent portal. A secure school login and server-side permission checks must be connected before this can be used for real parent access.</p></div>
+    </div>`;
+    if (window.lucide) window.lucide.createIcons();
   },
 
   renderSettings(section) {
@@ -903,6 +935,40 @@ const EduNavigation = {
         });
         return;
       }
+      const releaseTrigger = e.target.closest('[data-release-report]');
+      if (releaseTrigger) {
+        const reportId = releaseTrigger.getAttribute('data-release-report');
+        const report = this.workspaceState.learnerReports.find((item) => item.id === reportId);
+        if (!report) return;
+        if (report.status === 'released') { this.showWorkspaceToast('This report is already marked as released.'); return; }
+        const staffName = window.prompt('Enter the authorised teacher’s full name to record this release:');
+        if (!staffName || !staffName.trim()) { this.showWorkspaceToast('Release cancelled. A staff name is required.'); return; }
+        const learner = this.workspaceState.learners.find((item) => item.id === report.learnerId);
+        if (!window.confirm('Confirm that you have reviewed this report and are authorised to release ' + (learner?.fullName || 'this learner’s report') + ' to their parent or guardian?')) return;
+        report.status = 'released';
+        report.releasedBy = staffName.trim();
+        report.releasedAt = new Date().toISOString();
+        report.updatedAt = new Date().toISOString();
+        EduDataStore.save(this.workspaceState);
+        this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
+        this.showWorkspaceToast('Teacher release decision recorded in this browser.');
+        return;
+      }
+      const revokeTrigger = e.target.closest('[data-revoke-release]');
+      if (revokeTrigger) {
+        const reportId = revokeTrigger.getAttribute('data-revoke-release');
+        const report = this.workspaceState.learnerReports.find((item) => item.id === reportId);
+        if (!report || report.status !== 'released') return;
+        if (!window.confirm('Revoke this local release record? The report will return to the awaiting-release queue.')) return;
+        report.status = 'draft';
+        report.releasedBy = '';
+        report.releasedAt = '';
+        report.updatedAt = new Date().toISOString();
+        EduDataStore.save(this.workspaceState);
+        this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
+        this.showWorkspaceToast('Release record revoked. The report is no longer marked as released.');
+        return;
+      }
       if (e.target.closest('[data-delete-report]')) {
         const reportId = e.target.closest('[data-delete-report]').getAttribute('data-delete-report');
         if (window.confirm('Delete this private report draft?')) {
@@ -1027,6 +1093,7 @@ const EduNavigation = {
         case 'early-warnings': this.renderEarlyWarnings(activeSection); break;
         case 'subjects': this.renderLearnerReports(activeSection); break;
         case 'reports': this.renderReportsWorkspace(activeSection); break;
+        case 'parent-release': this.renderParentReleaseWorkspace(activeSection); break;
         case 'settings': this.renderSettings(activeSection); break;
         case 'import-marks': this.renderImportWorkspace(activeSection); break;
       }
