@@ -13,7 +13,7 @@
   const resetDemoBtn = document.getElementById('resetDemoBtn');
 
   function getWorkspace() {
-    return (window.EduNavigation && EduNavigation.workspaceState) || EduDataStore.load();
+    return (typeof EduNavigation !== 'undefined' && EduNavigation.workspaceState) || EduDataStore.load();
   }
 
   function escapeHTML(value) {
@@ -59,7 +59,7 @@
       ? scored.reduce((sum, record) => sum + Number(record.percentage), 0) / scored.length
       : null;
     const learnersWithEvidence = new Set(allRecords.map((record) => record.learnerId)).size;
-    const flags = window.EduNavigation?.calculateEvidenceFlags
+    const flags = typeof EduNavigation !== 'undefined' && typeof EduNavigation.calculateEvidenceFlags === 'function'
       ? EduNavigation.calculateEvidenceFlags()
       : [];
 
@@ -261,8 +261,10 @@
     streamFilterSelect?.addEventListener('change', refreshDashboard);
 
     resetDemoBtn?.addEventListener('click', () => {
+      const confirmed = window.confirm('This will clear learner profiles, performance evidence and report drafts saved in this browser, then restore the demo defaults. Continue?');
+      if (!confirmed) return;
       const fresh = EduDataStore.reset();
-      if (window.EduNavigation) {
+      if (typeof EduNavigation !== 'undefined') {
         EduNavigation.workspaceState = fresh;
         EduNavigation.ensureWorkspaceCollections();
       }
