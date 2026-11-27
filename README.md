@@ -41,6 +41,17 @@ EduLongView is designed for teachers and school administrators in refugee and ho
 - CSV parsing uses PapaParse and Excel parsing uses SheetJS from CDN libraries; an internet connection is required to load those parsers.
 - Like manually entered records, imported records currently remain in this browser's LocalStorage and are not uploaded to a central school database.
 
+
+### Learner report analysis foundation
+
+- Generate an individual report draft only when the selected learner has saved performance records.
+- Calculate descriptive summaries by learning area, including record counts, mean recorded percentages and first-to-latest changes where repeated scored results exist.
+- Summarise attendance and participation entries and retain teacher observations alongside the source assessment records.
+- Show teachers an evidence snapshot and the source records used to prepare each report draft.
+- Identify positive or declining changes only when repeated records in the same learning area support the comparison; avoid treating a single result as a trend.
+- Keep each generated report as a private, editable teacher draft. Approval and parent release are not implemented.
+- **Important:** this is a transparent rule-based analysis foundation, not a connected generative AI model. A secure backend and AI service integration are still required before the platform can claim to generate AI-written insights.
+
 ## Project Structure
 
 ```text
