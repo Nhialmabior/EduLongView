@@ -52,7 +52,7 @@
     const filteredRecords = selectedGrade === 'all' ? records : records.filter((record) =>
       String(learnerById.get(record.learnerId)?.grade) === selectedGrade.replace('Grade ', '')
     );
-    return { state, year, term, learners, learnerById, records, filteredRecords };
+    return { state, year, term, learners, learnerById, records, filteredRecords, selectedGrade };
   }
 
   function setText(id, value) {
@@ -73,13 +73,13 @@
 
     setText('activePeriodHeading', data.year + ' · ' + data.term);
     setText('kpiTotalLearners', data.learners.length.toLocaleString());
-    setText('kpiLearnersMeta', learnersWithEvidence + ' with evidence in this period');
+    setText('kpiLearnersMeta', 'School-wide · ' + learnersWithEvidence + ' with evidence in this period');
     setText('kpiAvgPerformance', mean === null ? '—' : mean.toFixed(1) + '%');
-    setText('kpiAvgDelta', mean === null ? 'No scored evidence yet' : 'Mean of ' + scored.length + ' scored records');
+    setText('kpiAvgDelta', mean === null ? 'All grades · no scored evidence yet' : 'All grades · mean of ' + scored.length + ' scored records');
     setText('kpiTotalAssessments', allRecords.length.toLocaleString());
-    setText('kpiAssessmentsMeta', 'Saved records in selected period');
+    setText('kpiAssessmentsMeta', 'All grades · saved records in selected period');
     setText('kpiFlaggedLearners', flags.length.toLocaleString());
-    setText('kpiFlaggedMeta', 'Across all saved periods');
+    setText('kpiFlaggedMeta', 'Across all grades and saved periods');
 
     const sidebarBadge = document.getElementById('sidebarWarningBadge');
     if (sidebarBadge) sidebarBadge.textContent = flags.length;
@@ -88,6 +88,7 @@
   function renderRecentAssessments(data) {
     const tbody = document.getElementById('recentAssessmentsBody');
     if (!tbody) return;
+    setText('recentAssessmentsSubtitle', 'Latest saved records across all grades in ' + data.year + ' · ' + data.term);
     const recent = data.records.slice().sort((a, b) =>
       String(b.date || b.createdAt || '').localeCompare(String(a.date || a.createdAt || ''))
     ).slice(0, 5);
@@ -153,6 +154,8 @@
   }
 
   function renderTrendChart(data) {
+    const gradeLabel = data.selectedGrade === 'all' ? 'All grades' : data.selectedGrade;
+    setText('performanceTrendSubtitle', 'Numeric scores over time · ' + gradeLabel + ' · ' + data.year + ' ' + data.term);
     if (trendChartInstance) {
       trendChartInstance.destroy();
       trendChartInstance = null;
@@ -202,6 +205,8 @@
   }
 
   function renderSubjectChart(data) {
+    const gradeLabel = data.selectedGrade === 'all' ? 'All grades' : data.selectedGrade;
+    setText('subjectOverviewSubtitle', 'Mean score from saved records · ' + gradeLabel + ' · ' + data.year + ' ' + data.term);
     if (subjectChartInstance) {
       subjectChartInstance.destroy();
       subjectChartInstance = null;
