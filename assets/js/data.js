@@ -571,6 +571,142 @@ const KENYA_CBC_CURRICULUM = {
       verificationStatus: 'verified'
     },
     {
+      id: 'g1-eng-2-1-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Listening and Speaking',
+      subStrand: 'Pronunciation and Vocabulary',
+      topic: 'Theme 2.0: School',
+      specificLearningOutcomes: [
+        'Identify words featuring the sounds /iː/, /ɪ/, /aɪ/, /ʤ/, /k/, /l/, /m/, /n/, /ɒ/, /ɔː/ and /p/ in varied contexts.',
+        'Articulate the target sounds for speaking fluency.',
+        'Make sentences using words related to the theme.',
+        'Value the role of listening in communication.'
+      ],
+      suggestedLearningExperiences: [
+        'Identify the target sounds using examples modelled by the teacher.',
+        'Take pictures of items during a nature walk around the school and name them.',
+        'Use the Frayer Model to discuss the meaning of words related to the theme.',
+        'Make sentences using the learnt words.',
+        'Sing songs, recite poems and play language games featuring the learnt sounds and words.'
+      ],
+      keyInquiryQuestions: ['Which words do we use to talk about school?', 'How can we listen attentively to others?'],
+      coreCompetencies: ['Communication and Collaboration', 'Digital Literacy'],
+      values: ['Respect', 'Responsibility'],
+      pertinentAndContemporaryIssues: ['Life Skills (Self-awareness)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '8'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    },
+    {
+      id: 'g1-eng-2-2-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Reading',
+      subStrand: 'Pre-reading',
+      topic: 'Theme 2.0: School',
+      specificLearningOutcomes: [
+        'Identify small and capital letters from a text.',
+        'Position reading materials and sit appropriately while reading.',
+        'Read words featuring the letters I to P for fluency.',
+        'Value the need for the right posture while reading.'
+      ],
+      suggestedLearningExperiences: [
+        'Pick out small letters from flashcards or charts and match small and capital letters.',
+        'Focus eyes on a line or word while reading.',
+        'Track print through finger pointing as the teacher reads letters I to P.',
+        'Use flashcards to form words with the letters I to P.',
+        'Practise appropriate sitting posture and positioning of reading materials with peers.',
+        'Practise turning the pages of a book from right to left.'
+      ],
+      keyInquiryQuestions: ['Why should one sit appropriately when reading?'],
+      coreCompetencies: ['Communication and Collaboration'],
+      values: ['Responsibility'],
+      pertinentAndContemporaryIssues: ['Life Skills (Self-awareness)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '9'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    },
+    {
+      id: 'g1-eng-2-3-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Language Use',
+      subStrand: 'Verbs “to do” – Present form; Subjective Pronouns – Singular',
+      topic: 'Theme 2.0: School',
+      specificLearningOutcomes: [
+        'Pick out the words do and does and the subjective pronouns I, he, she and it from an oral text.',
+        'Use the subjective pronouns I, he, she and it and the verb forms do and does in sentences.',
+        'Acknowledge the need for well-formed sentences in communication.'
+      ],
+      suggestedLearningExperiences: [
+        'Ask one another questions using the target language pattern.',
+        'Listen to a story related to the theme and pick out do, does, I, he, she and it.',
+        'Form sentences with do and does from a substitution table.',
+        'Use I, he, she and it in sentences.',
+        'View pictures and form sentences, make charts and posters, and recite poems featuring the target patterns.'
+      ],
+      keyInquiryQuestions: ['How do you talk about a person, an object or a place?', 'How do we talk about many people?'],
+      coreCompetencies: ['Communication and Collaboration'],
+      values: ['Responsibility'],
+      pertinentAndContemporaryIssues: ['Life Skills (Self-awareness)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '10'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    },
+    {
+      id: 'g1-eng-2-4-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Writing',
+      subStrand: 'Pre-writing',
+      topic: 'Theme 2.0: School',
+      specificLearningOutcomes: [
+        'Describe the right sitting posture and position materials appropriately for writing readiness.',
+        'Coordinate the eye and hands in preparation for writing.',
+        'Value the need for the right posture and appropriate positioning of writing materials in learning.'
+      ],
+      suggestedLearningExperiences: [
+        'Observe pictures and identify the right sitting posture with peers.',
+        'Practise positioning writing materials and adopting the right sitting posture.',
+        'Select well-positioned writing materials from a chart.',
+        'Practise writing from left to right.',
+        'Draw and colour different shapes using appropriate posture and material positioning.',
+        'Role-play how to use exercise books appropriately.'
+      ],
+      keyInquiryQuestions: ['How do we sit when writing?', 'How do we write?'],
+      coreCompetencies: ['Communication and Collaboration'],
+      values: ['Love'],
+      pertinentAndContemporaryIssues: ['Life Skills (Self-awareness)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '11'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    },
+    {
       id: 'g1-eng-1-4-1',
       grade: 1,
       stage: 'Lower Primary',
