@@ -2,14 +2,18 @@
 
 **Tagline:** *See the progress. Understand the patterns. Support every learner.*
 
-EduLongView is an education monitoring and academic analytics platform designed for teachers and school administrators in refugee and host-community schools, particularly in Kakuma and Kalobeyei, Turkana County, Kenya.
+EduLongView is an education monitoring and CBC/CBE learner progress and academic monitoring platform designed for teachers and school administrators in refugee and host-community schools, particularly in Kakuma and Kalobeyei, Turkana County, Kenya.
 
-## Foundation Release Scope
+## CBC/CBE Foundation Release Scope
+
+- **Education Structure:** Kenya Grades 1–9, organised as Lower Primary (Grades 1–3), Upper Primary (Grades 4–6), and Junior School (Grades 7–9).
+- **Curriculum Foundation:** Grade-band learning areas and the seven CBC core competencies are represented in `KENYA_CBC_CURRICULUM` in `assets/js/data.js`.
+- **Assessment Approach:** The next implementation stage will connect evidence to learning outcomes, strands, sub-strands, and teacher-reviewed achievement descriptors. Dashboard index figures are illustrative demo indicators, not official CBC achievement levels.
 
 - **Brand & Visual System:** Clean light workspace paired with a deep navy sidebar, restrained teal accents, subtle gold highlights, and Inter/Manrope typography.
 - **Responsive Navigation Shell:** Collapsible desktop sidebar, mobile slide-out drawer, top breadcrumb header, and interactive Academic Year & Term selectors.
-- **Executive Teacher Dashboard:** KPI summary cards, interactive Chart.js performance trend line (with stream filtering), subject performance horizontal bar chart, recent assessment logs, and explainable early-warning alerts.
-- **Offline-Ready Persistence:** Uses browser `LocalStorage` (`edulongview_state_v1`) with one-click demo dataset reset.
+- **CBC/CBE Teacher Dashboard:** Learner and learning-progress indicators, interactive grade-filtered trend chart, learning-area overview, recent assessment evidence, and explainable learner-support alerts.
+- **Offline-Ready Persistence:** Uses browser `LocalStorage` (`edulongview_state_v2`) with one-click demo dataset reset.
 
 ## Project Structure
 
@@ -38,3 +42,11 @@ edulongview/
 1. Open the `edulongview/` folder in **VS Code**.
 2. Right-click `index.html` and select **Open with Live Server** (or serve via any static HTTP server).
 3. Deploy directly to **Netlify** or **GitHub Pages** with zero build steps required.
+
+
+## Official Curriculum References
+
+- Kenya Institute of Curriculum Development (KICD), [Lower Primary curriculum designs](https://kicd.ac.ke/cbc-materials/lower-primary/).
+- KICD, [Upper Primary curriculum designs](https://kicd.ac.ke/cbc-materials/curriculum-designs/upper-primary-designs/).
+- KICD, [Junior School curriculum designs](https://kicd.ac.ke/cbc-materials/curriculum-designs/junior-school-designs/).
+- KICD, [Basic Education Curriculum Framework](https://kicd.ac.ke/curriculum-reform/basic-education-curriculum%20-framework/).
