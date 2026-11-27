@@ -24,13 +24,13 @@ const MODULE_BLUEPRINTS = {
     ]
   },
   'subjects': {
-    title: 'CBC Curriculum & Learning Areas',
-    badge: 'Kenya CBC/CBE · Grades 1–9',
-    description: 'Explore grade-band learning areas and the core competencies that guide learner development across Lower Primary, Upper Primary, and Junior School.',
+    title: 'AI Learner Reports',
+    badge: 'Teacher-reviewed · Parent release controlled',
+    description: 'Turn each learner’s recorded performance into an understandable progress report with AI-generated insights and recommendations. Teachers review and approve every report before parents can see it.',
     pillars: [
-      { title: 'Learning Area Progress', detail: 'Track learning-outcome progress by grade and learning area to guide learner support.' },
-      { title: 'Competency Assessment', detail: 'Configure school assessment rubrics and achievement descriptors without treating them as national grades.' },
-      { title: 'Learning Evidence', detail: 'Record varied evidence of learning, practical tasks, observations, projects, and teacher feedback.' }
+      { title: 'Individual Performance Summary', detail: 'Bring together a learner’s recorded assessment results, attendance, progress over time, and teacher observations.' },
+      { title: 'AI Insights & Recommendations', detail: 'Highlight strengths, areas needing support, changes in performance, and practical next steps using only available learner evidence.' },
+      { title: 'Teacher Approval & Parent Release', detail: 'Keep AI reports as drafts until a teacher reviews and approves them. Parents see only reports explicitly released by the school.' }
     ]
   },
   'assessments': {
@@ -115,7 +115,7 @@ const EduNavigation = {
       if (!section) return;
 
       if (route === 'subjects') {
-        this.renderCurriculumDirectory(section);
+        this.renderLearnerReports(section);
         return;
       }
 
@@ -145,162 +145,46 @@ const EduNavigation = {
     });
   },
 
-  renderCurriculumDirectory(section) {
-    const curriculum = window.KENYA_CBC_CURRICULUM || KENYA_CBC_CURRICULUM;
-    const gradeOptions = curriculum.grades
-      .map((grade) => `<option value="${grade}">Grade ${grade}</option>`)
-      .join('');
+  renderLearnerReports(section) {
+    const steps = [
+      { number: '01', title: 'Record learner performance', detail: 'Teachers enter assessment results, attendance, participation, progress notes and relevant observations for each learner.' },
+      { number: '02', title: 'Analyse individual progress', detail: 'The system compares the learner’s recorded evidence over time and across learning areas, identifying strengths, changes and possible gaps.' },
+      { number: '03', title: 'Generate an AI report draft', detail: 'AI prepares a clear performance summary and practical recommendations. It must not invent evidence or make unsupported diagnoses.' },
+      { number: '04', title: 'Teacher reviews and approves', detail: 'The responsible teacher checks the evidence, edits the report where necessary and decides whether it is ready to share.' },
+      { number: '05', title: 'Release to the parent', detail: 'Only an approved and explicitly released report becomes visible to the authorised parent or guardian.' }
+    ];
 
     section.innerHTML = `
       <div class="module-shell">
         <div class="module-header">
           <div>
-            <span class="module-badge">Kenya CBC/CBE · Grades 1–9</span>
-            <h2>CBC Curriculum &amp; Learning Areas</h2>
-            <p>Browse the learning areas listed for each grade band and open the official KICD curriculum designs for detailed curriculum content.</p>
+            <span class="module-badge">AI-assisted · Human-approved</span>
+            <h2>Individual Learner Reports</h2>
+            <p>EduLongView helps teachers understand each learner’s performance and communicate meaningful progress to parents. It is not a curriculum delivery or teaching platform.</p>
           </div>
           <a href="#overview" class="btn btn-primary" data-route="overview">
-            <i data-lucide="arrow-left"></i>
-            <span>Back to Overview Dashboard</span>
+            <i data-lucide="arrow-left"></i><span>Back to Overview Dashboard</span>
           </a>
         </div>
-
-        <div class="panel-card" style="margin-bottom: 22px;">
-          <div class="panel-header">
-            <div>
-              <h3 class="panel-title">Grade Curriculum Explorer</h3>
-              <p class="panel-subtitle">Choose a grade to see its stage and learning-area catalogue.</p>
-            </div>
-            <select id="curriculumGradeSelect" class="compact-select" aria-label="Select curriculum grade">
-              ${gradeOptions}
-            </select>
-          </div>
-          <div class="curriculum-stage-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0;">
-            <span id="curriculumStageSummary" class="module-badge">Lower Primary · Grades 1–3</span>
-            <a id="curriculumSourceLink" class="btn btn-secondary" href="${curriculum.stages[0].sourceUrl}" target="_blank" rel="noopener noreferrer">
-              <i data-lucide="external-link"></i>
-              <span>Open official KICD designs</span>
-            </a>
-          </div>
-          <div id="curriculumAreasGrid" class="roadmap-grid"></div>
-          <div id="curriculumAreaDetail" class="panel-card" style="margin-top:18px;background:#F8FAFC;">
-            <h3 class="panel-title">Select a learning area</h3>
-            <p class="panel-subtitle">Select a card above to view its curriculum-record structure and source guidance.</p>
-          </div>
-          <p class="panel-subtitle" style="margin-top:16px;">The list reflects KICD's 2026 curriculum support-materials guidance. Religious education, indigenous languages and foreign languages are presented as programme options; the school should configure what it offers.</p>
+        <div class="roadmap-grid">
+          ${steps.map((step) => `
+            <article class="roadmap-card">
+              <span class="module-badge">Step ${step.number}</span>
+              <h4 style="margin-top:12px;">${step.title}</h4>
+              <p>${step.detail}</p>
+            </article>
+          `).join('')}
         </div>
-
-        <div class="panel-card" style="margin-bottom:22px;">
-          <div class="panel-header">
-            <div>
-              <h3 class="panel-title">CBC Core Competencies</h3>
-              <p class="panel-subtitle">Competencies developed across learning areas and learning experiences.</p>
-            </div>
-          </div>
+        <div class="panel-card" style="margin-top:22px;">
+          <div class="panel-header"><div><h3 class="panel-title">Report governance</h3><p class="panel-subtitle">The teacher remains accountable for every report shared with a parent.</p></div></div>
           <div class="roadmap-grid">
-            ${curriculum.coreCompetencies.map((competency) => `
-              <article class="roadmap-card">
-                <h4>${competency}</h4>
-                <p>Developed through classroom learning, practical experiences, collaboration, and application.</p>
-              </article>
-            `).join('')}
-          </div>
-        </div>
-
-        <div class="panel-card">
-          <h3 class="panel-title">Assessment language</h3>
-          <p class="panel-subtitle">The KICD rubric descriptors below are shown as reference labels. The exact rubric and evidence requirements should be taken from the relevant learning-area curriculum design and school assessment policy.</p>
-          <div class="roadmap-grid" style="margin-top:16px;">
-            ${curriculum.assessmentRubric.map((item) => `
-              <article class="roadmap-card">
-                <h4>${item.code} · ${item.label}</h4>
-                <p>Use with teacher-observed evidence and the applicable curriculum design.</p>
-              </article>
-            `).join('')}
+            <article class="roadmap-card"><h4>Evidence-based AI</h4><p>Recommendations must be traceable to recorded performance, attendance or teacher observations. Missing information must be identified, not guessed.</p></article>
+            <article class="roadmap-card"><h4>Teacher control</h4><p>AI output remains a private draft until a teacher reviews and approves it. AI cannot publish reports independently.</p></article>
+            <article class="roadmap-card"><h4>Parent privacy</h4><p>Parents can access only the reports for their linked learner that the school has approved and released.</p></article>
           </div>
         </div>
       </div>
     `;
-
-    const gradeSelect = section.querySelector('#curriculumGradeSelect');
-    const stageSummary = section.querySelector('#curriculumStageSummary');
-    const sourceLink = section.querySelector('#curriculumSourceLink');
-    const areasGrid = section.querySelector('#curriculumAreasGrid');
-    const areaDetail = section.querySelector('#curriculumAreaDetail');
-
-    const renderGrade = (grade) => {
-      const stage = curriculum.stages.find((item) => item.grades.includes(Number(grade)));
-      if (!stage) return;
-
-      stageSummary.textContent = `${stage.name} · Grades ${stage.grades[0]}–${stage.grades[stage.grades.length - 1]}`;
-      sourceLink.href = stage.sourceUrl;
-
-      const areas = curriculum.learningAreasByStage[stage.name] || [];
-      areasGrid.innerHTML = areas.map((area, index) => `
-        <button type="button" class="roadmap-card curriculum-area-card" data-area-index="${index}" aria-pressed="false" style="text-align:left;cursor:pointer;width:100%;">
-          <h4>${area.name}</h4>
-          <p>${area.type}</p>
-        </button>
-      `).join('');
-
-      areaDetail.innerHTML = `
-        <h3 class="panel-title">Curriculum detail status</h3>
-        <p class="panel-subtitle">Choose a learning area above. Detailed strands, sub-strands and specific learning outcomes have not yet been imported into EduLongView. They will be added from the official grade-specific KICD design, not generated or guessed.</p>
-      `;
-
-      areasGrid.querySelectorAll('[data-area-index]').forEach((card) => {
-        card.addEventListener('click', () => {
-          const selected = areas[Number(card.dataset.areaIndex)];
-          areasGrid.querySelectorAll('[data-area-index]').forEach((item) => item.setAttribute('aria-pressed', 'false'));
-          card.setAttribute('aria-pressed', 'true');
-
-          const records = (curriculum.curriculumRecords || []).filter((record) =>
-            record.grade === Number(grade) && record.learningArea === selected.name
-          );
-
-          const recordMarkup = records.length
-            ? records.map((record) => `
-                <article class="roadmap-card" style="margin-top:14px;">
-                  <div class="module-badge">${record.topic} · ${record.verificationStatus === 'verified' ? 'Source verified' : 'Draft'}</div>
-                  <h4 style="margin-top:10px;">${record.strand} — ${record.subStrand}</h4>
-                  <strong>Specific learning outcomes</strong>
-                  <ol style="margin:8px 0 12px 20px;color:#475569;line-height:1.7;">
-                    ${record.specificLearningOutcomes.map((outcome) => `<li>${outcome}</li>`).join('')}
-                  </ol>
-                  <strong>Suggested learning experiences</strong>
-                  <ul style="margin:8px 0 12px 20px;color:#475569;line-height:1.7;">
-                    ${record.suggestedLearningExperiences.map((experience) => `<li>${experience}</li>`).join('')}
-                  </ul>
-                  <p class="panel-subtitle"><strong>Core competencies:</strong> ${record.coreCompetencies.join(', ')}</p>
-                  <p class="panel-subtitle"><strong>Values:</strong> ${record.values.join(', ')}</p>
-                  <p class="panel-subtitle"><strong>PCIs:</strong> ${record.pertinentAndContemporaryIssues.join(', ')}</p>
-                  <p class="panel-subtitle"><strong>Key inquiry questions:</strong> ${record.keyInquiryQuestions.join(' · ')}</p>
-                  <p class="panel-subtitle">Source: ${record.source.organization}, ${record.source.documentTitle}, page ${record.source.page} · ${record.curriculumVersion}</p>
-                  <a class="text-link" href="${record.source.documentUrl}" target="_blank" rel="noopener noreferrer">Open official KICD source</a>
-                </article>
-              `).join('')
-            : `
-                <p class="panel-subtitle">Detailed strands, sub-strands and outcomes for this grade and learning area have not yet been imported. They will be added from the official grade-specific KICD design, not generated or guessed.</p>
-              `;
-
-          areaDetail.innerHTML = `
-            <span class="module-badge">${selected.type}</span>
-            <h3 class="panel-title" style="margin-top:12px;">Grade ${grade} · ${selected.name}</h3>
-            <p class="panel-subtitle">${records.length ? `${records.length} source-based curriculum record(s) available.` : 'Curriculum content is not yet available in the local catalogue for this selection.'}</p>
-            ${recordMarkup}
-            <a class="btn btn-secondary" style="margin-top:16px;" href="${stage.sourceUrl}" target="_blank" rel="noopener noreferrer">
-              <i data-lucide="book-open"></i>
-              <span>View KICD Grade ${grade} curriculum resources</span>
-            </a>
-          `;
-          if (window.lucide) window.lucide.createIcons();
-        });
-      });
-    };
-
-    gradeSelect.addEventListener('change', () => renderGrade(gradeSelect.value));
-    renderGrade(gradeSelect.value);
-
     if (window.lucide) window.lucide.createIcons();
   },
 
