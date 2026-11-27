@@ -386,7 +386,7 @@ const EduNavigation = {
   renderImportWorkspace(section) {
     const preview = this.pendingImportPreview;
     const learners = this.workspaceState.learners;
-    section.innerHTML = \`
+    section.innerHTML = `
       <div class="module-shell">
         <div class="module-header"><div><span class="module-badge">Bulk performance data upload</span><h2>Upload Learner Results</h2><p>Import assessment results for many learners in one file. Each row is matched to a registered learner using their admission number before it is added to that learner’s performance history.</p></div></div>
         <div class="panel-card workspace-panel">
@@ -400,31 +400,31 @@ const EduNavigation = {
         </div>
         <div class="panel-card workspace-panel">
           <div class="panel-header"><div><h3 class="panel-title">2. Upload results file</h3><p class="panel-subtitle">Supported formats: CSV and Excel workbook (.xlsx). Upload a whole class or multiple grades in one file.</p></div></div>
-          <div class="import-dropzone"><i data-lucide="file-up"></i><label for="performanceImportFile"><strong>Choose a results file</strong><span>CSV or Excel (.xlsx), maximum 10 MB</span></label><input id="performanceImportFile" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" /><small>\${learners.length} learner profile(s) are registered in this browser.</small></div>
-          \${!learners.length ? '<p class="import-warning">Register learners before importing results. Every row must match an existing admission number.</p>' : ''}
+          <div class="import-dropzone"><i data-lucide="file-up"></i><label for="performanceImportFile"><strong>Choose a results file</strong><span>CSV or Excel (.xlsx), maximum 10 MB</span></label><input id="performanceImportFile" type="file" accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" /><small>${learners.length} learner profile(s) are registered in this browser.</small></div>
+          ${!learners.length ? '<p class="import-warning">Register learners before importing results. Every row must match an existing admission number.</p>' : ''}
         </div>
-        <div id="importPreviewHost">\${preview ? this.renderImportPreviewMarkup(preview) : ''}</div>
+        <div id="importPreviewHost">${preview ? this.renderImportPreviewMarkup(preview) : ''}</div>
         <div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">How imported results are handled</h3><p class="panel-subtitle">Nothing is saved until you review the preview and confirm the import.</p></div></div>
           <div class="roadmap-grid"><div class="roadmap-card"><h4>Match</h4><p>Rows are matched using admission number, not learner name alone.</p></div><div class="roadmap-card"><h4>Validate</h4><p>Rows with unknown learners, missing values or invalid scores are rejected and explained.</p></div><div class="roadmap-card"><h4>Analyse</h4><p>Confirmed rows join the learner’s existing evidence and become available for individual report analysis.</p></div></div>
           <p class="import-storage-note">Current storage: this version saves imported records in this browser’s LocalStorage. Uploads are not sent to a school server or shared across devices.</p>
         </div>
-      </div>\`;
+      </div>`;
     if (window.lucide) window.lucide.createIcons();
   },
 
   renderImportPreviewMarkup(preview) {
     const validCount = preview.rows.filter(row => row.valid).length;
     const invalidCount = preview.rows.length - validCount;
-    return \`
-      <div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">3. Review import preview</h3><p class="panel-subtitle">\${this.escapeHTML(preview.fileName)} · \${preview.rows.length} data row(s) found</p></div></div>
-        <div class="import-summary"><span class="import-stat valid"><strong>\${validCount}</strong> valid rows</span><span class="import-stat invalid"><strong>\${invalidCount}</strong> rows needing correction</span></div>
+    return `
+      <div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">3. Review import preview</h3><p class="panel-subtitle">${this.escapeHTML(preview.fileName)} · ${preview.rows.length} data row(s) found</p></div></div>
+        <div class="import-summary"><span class="import-stat valid"><strong>${validCount}</strong> valid rows</span><span class="import-stat invalid"><strong>${invalidCount}</strong> rows needing correction</span></div>
         <div class="table-responsive"><table class="data-table import-preview-table"><thead><tr><th>Row</th><th>Admission No.</th><th>Learner</th><th>Learning area</th><th>Score</th><th>Validation</th></tr></thead><tbody>
-          \${preview.rows.slice(0,100).map(row => \`<tr><td>\${row.rowNumber}</td><td>\${this.escapeHTML(row.admissionNo || '—')}</td><td>\${this.escapeHTML(row.learnerName || '—')}</td><td>\${this.escapeHTML(row.learningArea || '—')}</td><td>\${row.scoreLabel}</td><td><span class="status-pill \${row.valid ? 'verified' : 'pending'}">\${row.valid ? 'Ready' : this.escapeHTML(row.error)}</span></td></tr>\`).join('')}
+          ${preview.rows.slice(0,100).map(row => `<tr><td>${row.rowNumber}</td><td>${this.escapeHTML(row.admissionNo || '—')}</td><td>${this.escapeHTML(row.learnerName || '—')}</td><td>${this.escapeHTML(row.learningArea || '—')}</td><td>${row.scoreLabel}</td><td><span class="status-pill ${row.valid ? 'verified' : 'pending'}">${row.valid ? 'Ready' : this.escapeHTML(row.error)}</span></td></tr>`).join('')}
         </tbody></table></div>
-        \${preview.rows.length > 100 ? '<p class="import-storage-note">Preview limited to the first 100 rows. All rows will be checked during import.</p>' : ''}
-        <div class="workspace-form-actions import-actions"><button type="button" class="btn btn-secondary" data-clear-import-preview>Clear preview</button><button type="button" class="btn btn-primary" data-confirm-import \${validCount ? '' : 'disabled'}><i data-lucide="database"></i><span>Import \${validCount} Valid Result(s)</span></button></div>
+        ${preview.rows.length > 100 ? '<p class="import-storage-note">Preview limited to the first 100 rows. All rows will be checked during import.</p>' : ''}
+        <div class="workspace-form-actions import-actions"><button type="button" class="btn btn-secondary" data-clear-import-preview>Clear preview</button><button type="button" class="btn btn-primary" data-confirm-import ${validCount ? '' : 'disabled'}><i data-lucide="database"></i><span>Import ${validCount} Valid Result(s)</span></button></div>
         <p class="import-storage-note">Invalid rows will not be imported. Existing duplicate results will be skipped.</p>
-      </div>\`;
+      </div>`;
   },
 
   async readImportFile(file) {
@@ -442,7 +442,7 @@ const EduNavigation = {
         rawRows = window.XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval:'', raw:false });
       } else throw new Error('Unsupported file type. Upload CSV or .xlsx.');
       if (!rawRows.length) throw new Error('No result rows found in this file.');
-      const normalise = value => String(value || '').trim().toLowerCase().replace(/[\\s_-]+/g, '');
+      const normalise = value => String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
       const rows = rawRows.map((raw,index) => {
         const fields = {};
         Object.keys(raw).forEach(key => fields[normalise(key)] = raw[key]);
@@ -465,7 +465,7 @@ const EduNavigation = {
         if (!assessmentTitle) errors.push('Missing assessment title');
         if (!Number.isInteger(year) || year<2020 || year>2100) errors.push('Invalid year');
         if (!['Term 1','Term 2','Term 3'].includes(term)) errors.push('Term must be Term 1, 2 or 3');
-        if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) errors.push('Date must be YYYY-MM-DD');
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) errors.push('Date must be YYYY-MM-DD');
         if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore<=0 || score<0 || score>maxScore) errors.push('Invalid score / maximum');
         return { rowNumber:index+2, admissionNo, learnerId:learner?.id || '', learnerName:learner?.fullName || '', learningArea, assessmentTitle, assessmentType, year, term, date, score, maxScore,
           percentage:Number.isFinite(score/maxScore)?Number(((score/maxScore)*100).toFixed(2)):0,
@@ -504,8 +504,8 @@ const EduNavigation = {
   downloadImportTemplate() {
     const headers=['admissionNo','learningArea','assessmentTitle','assessmentType','year','term','date','score','maxScore','attendance','participation','observation'];
     const example=['SCH-001','Mathematics','Term 1 Assessment','End-of-term assessment','2026','Term 1','2026-04-10','18','25','Present','Actively participated','Shows working clearly and explains the method used'];
-    const csv=[headers,example].map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(',')).join('\\r\\n');
-    const blob=new Blob(['\\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+    const csv=[headers,example].map(row=>row.map(value=>'"'+String(value).replace(/"/g,'""')+'"').join(',')).join('\r\n');
+    const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob),link=document.createElement('a');
     link.href=url;link.download='edulongview-performance-import-template.csv';document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
   },
