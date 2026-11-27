@@ -52,13 +52,17 @@ EduLongView is designed for teachers and school administrators in refugee and ho
 - Keep each generated report as a private, editable teacher draft. Approval and parent release are not implemented.
 - **Important:** this is a transparent rule-based analysis foundation, not a connected generative AI model. A secure backend and AI service integration are still required before the platform can claim to generate AI-written insights.
 
-### Secure AI backend preparation
+### FastAPI backend foundation
 
-- Added [the AI report API contract](api/AI_REPORT_API.md) to define the request/response schema, error handling, evidence references and required privacy safeguards.
-- The contract is a preparation document only. No backend has been deployed and no generative AI model is connected yet.
-- The intended flow is browser → authenticated school backend → configured AI provider → validated draft → teacher review.
-- The browser must never contain provider API keys or service-role credentials. Only the selected learner's pseudonymised evidence should be sent to the backend.
-- Production use with real learner data requires teacher authentication, a secure shared database, school-level access controls, and a safeguarding/data-protection review. Browser LocalStorage alone is not sufficient.
+- Added a Python FastAPI service under `backend/`, with a health endpoint and the protected `POST /api/v1/reports/draft` endpoint.
+- Validates request fields, grade range, score values, evidence record count and unique evidence IDs.
+- Supports an OpenAI-compatible provider through backend-only environment variables; provider credentials are never placed in frontend code.
+- Validates the model's structured response and rejects evidence references that were not included in the request.
+- Returns a clear `503` when no AI provider is configured. It does not fabricate AI output.
+- Includes a Render deployment blueprint (`render.yaml`) and local setup instructions in [backend/README.md](backend/README.md).
+- The API contract remains documented in [api/AI_REPORT_API.md](api/AI_REPORT_API.md).
+- **Important:** this is a backend scaffold, not a production-ready school system. The temporary shared bearer token is only for local/server-to-server testing; real teacher identity, school-level authorisation, a secure shared database, audit logging and a safeguarding/data-protection review are still required. Do not expose the shared token in the public website or send real learner data to an external model before those safeguards are implemented.
+- The static website's existing rule-based report workflow remains unchanged. No live AI provider is configured and no backend has been deployed yet.
 
 ## Project Structure
 
@@ -80,6 +84,15 @@ edulongview/
       logo-mark.svg
   pages/
     README.md
+  api/
+    AI_REPORT_API.md
+  backend/
+    app/
+      main.py
+    requirements.txt
+    .env.example
+    README.md
+  render.yaml
 ```
 
 ## Running Locally
@@ -89,3 +102,8 @@ edulongview/
 3. Deploy directly to **Netlify** or **GitHub Pages** with zero build steps required.
 
 
+
+
+## Running the backend locally
+
+See [backend/README.md](backend/README.md) for Windows PowerShell setup, environment variables and a sample request. The backend runs separately from the static website. Keep provider keys and the local bearer token in backend environment variables only; never add them to frontend JavaScript or commit a real `.env` file.
