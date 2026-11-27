@@ -14,6 +14,7 @@ EduLongView is designed for teachers and school administrators in refugee and ho
 - **Individual reports:** Generate understandable learner performance summaries and evidence-based recommendations.
 - **Teacher approval:** AI-generated reports remain drafts until reviewed and approved by an authorised teacher.
 - **Parent access:** Parents or guardians can see only reports explicitly approved and released for their linked learner.
+- **School accounts and roles:** Each school has an isolated account space. A school administrator manages teacher invitations and access; teachers are restricted to their own school. Role assignments are enforced by the backend and database, not editable browser metadata.
 - **Privacy and safeguarding:** Keep draft AI analysis and internal teacher notes unavailable to parents unless deliberately approved for release.
 - **Brand & Visual System:** Clean light workspace paired with a deep navy sidebar, restrained teal accents, subtle gold highlights, and Inter/Manrope typography.
 - **Responsive Navigation Shell:** Collapsible desktop sidebar, mobile slide-out drawer, top breadcrumb header, and interactive Academic Year & Term selectors.
@@ -107,3 +108,11 @@ edulongview/
 ## Running the backend locally
 
 See [backend/README.md](backend/README.md) for Windows PowerShell setup, environment variables and a sample request. The backend runs separately from the static website. Keep provider keys and the local bearer token in backend environment variables only; never add them to frontend JavaScript or commit a real `.env` file.
+
+
+### School identity and security foundation
+
+- Added the first SQL schema for schools, school memberships and administrative audit events under `backend/sql/001_school_identity.sql`.
+- Added row-level security policies and restricted browser permissions. School membership changes are reserved for a trusted, authenticated backend.
+- Added GitHub Actions to run backend tests automatically on pushes and pull requests.
+- **Not yet live:** the SQL schema has not been applied, school sign-in is not connected, and teacher invitations are not active. The connected Supabase workspace currently has no active EduLongView project; do not reuse another project's database. A dedicated project and secure backend configuration are required before real school accounts can be enabled.
