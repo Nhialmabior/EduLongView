@@ -494,6 +494,8 @@ const EduNavigation = {
       EduDataStore.save(this.workspaceState);
       this.syncWarningBadge();
       this.renderLearnerDirectory(document.getElementById('view-learners'));
+      // Refresh the assessment form so a newly registered learner is selectable immediately.
+      this.renderPerformanceEntry(document.getElementById('view-assessments'));
       this.showWorkspaceToast('Learner profile saved.');
       return;
     }
@@ -524,6 +526,8 @@ const EduNavigation = {
     EduDataStore.save(this.workspaceState);
     this.syncWarningBadge();
     this.renderPerformanceEntry(document.getElementById('view-assessments'));
+    // Keep the learner directory's record counts and status in sync with the saved evidence.
+    this.renderLearnerDirectory(document.getElementById('view-learners'));
     this.showWorkspaceToast('Performance record saved.');
   },
 
