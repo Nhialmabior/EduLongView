@@ -413,15 +413,19 @@ const EduNavigation = {
         </div>
         <div class="panel-card workspace-panel">
           <div class="panel-header"><div><h3 class="panel-title">Register a learner</h3><p class="panel-subtitle">Use the school's learner identifier to avoid duplicate profiles.</p></div></div>
-          <form id="learnerCreateForm" class="workspace-form">
-            <div class="workspace-form-grid">
-              <label>Full name<input name="fullName" required maxlength="120" placeholder="Learner's full name"></label>
-              <label>Admission / learner number<input name="admissionNo" required maxlength="40" placeholder="e.g. SCH-001"></label>
-              <label>Grade<select name="grade" required><option value="">Select grade</option>${Array.from({length:9},(_,i)=>`<option value="${i+1}">Grade ${i+1}</option>`).join('')}</select></label>
-              <label>Class / stream<input name="stream" maxlength="60" placeholder="e.g. Grade 4 East"></label>
-            </div>
-            <div class="workspace-form-actions"><button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i><span>Save Learner</span></button></div>
-          </form>
+          ${(() => {
+            const editing = this.workspaceState.learners.find((item) => item.id === this.editingLearnerId);
+            return `<form id="learnerCreateForm" class="workspace-form" data-edit-id="${this.escapeHTML(editing?.id || '')}">
+              <div class="workspace-form-grid">
+                <label>Full name<input name="fullName" required maxlength="120" placeholder="Learner's full name" value="${this.escapeHTML(editing?.fullName || '')}"></label>
+                <label>Admission / learner number<input name="admissionNo" required maxlength="40" placeholder="e.g. SCH-001" value="${this.escapeHTML(editing?.admissionNo || '')}"></label>
+                <label>Grade<select name="grade" required><option value="">Select grade</option>${Array.from({length:9},(_,i)=>`<option value="${i+1}" ${Number(editing?.grade) === i+1 ? 'selected' : ''}>Grade ${i+1}</option>`).join('')}</select></label>
+                <label>Class / stream<input name="stream" maxlength="60" placeholder="e.g. Grade 4 East" value="${this.escapeHTML(editing?.stream || '')}"></label>
+              </div>
+              <div class="workspace-form-actions"><button class="btn btn-primary" type="submit"><i data-lucide="save"></i><span>${editing ? 'Update Learner' : 'Save Learner'}</span></button>
+              ${editing ? '<button class="btn btn-secondary" type="button" data-cancel-learner-edit>Cancel</button>' : ''}</div>
+            </form>`;
+          })()}
         </div>
         <div class="panel-card workspace-panel">
           <div class="panel-header learner-directory-heading"><div><h3 class="panel-title">Registered learners</h3><p class="panel-subtitle"><span id="learnerVisibleCount">${learners.length}</span> of ${learners.length} learner profile(s) · browser storage</p></div></div>
@@ -433,7 +437,7 @@ const EduNavigation = {
           ${learners.length ? learners.map((learner) => {
             const count = records.filter((record) => record.learnerId === learner.id).length;
             const searchText = `${learner.fullName} ${learner.admissionNo} ${learner.stream || ''}`.toLowerCase();
-            return `<tr data-learner-row data-search="${this.escapeHTML(searchText)}" data-grade="${this.escapeHTML(learner.grade)}"><td><span class="cell-primary">${this.escapeHTML(learner.fullName)}</span></td><td>${this.escapeHTML(learner.admissionNo)}</td><td>Grade ${this.escapeHTML(learner.grade)}</td><td>${this.escapeHTML(learner.stream || '—')}</td><td><span class="learner-record-count">${count}</span></td><td><span class="status-pill ${count ? 'verified' : 'pending'}">${count ? 'Evidence added' : 'No records yet'}</span></td><td><button class="btn btn-secondary btn-sm" type="button" data-add-evidence="${this.escapeHTML(learner.id)}"><i data-lucide="plus-circle"></i><span>Add Evidence</span></button></td></tr>`;
+            return `<tr data-learner-row data-search="${this.escapeHTML(searchText)}" data-grade="${this.escapeHTML(learner.grade)}"><td><span class="cell-primary">${this.escapeHTML(learner.fullName)}</span></td><td>${this.escapeHTML(learner.admissionNo)}</td><td>Grade ${this.escapeHTML(learner.grade)}</td><td>${this.escapeHTML(learner.stream || '—')}</td><td><span class="learner-record-count">${count}</span></td><td><span class="status-pill ${count ? 'verified' : 'pending'}">${count ? 'Evidence added' : 'No records yet'}</span></td><td><div class="record-actions"><button class="btn btn-secondary btn-sm" type="button" data-add-evidence="${this.escapeHTML(learner.id)}">Add Evidence</button><button class="btn btn-secondary btn-sm" type="button" data-edit-learner="${this.escapeHTML(learner.id)}">Edit</button><button class="btn btn-secondary btn-sm" type="button" data-delete-learner="${this.escapeHTML(learner.id)}">Delete</button></div></td></tr>`;
           }).join('') : '<tr><td colspan="7" class="empty-state-cell">No learners registered yet. Add the first learner using the form above.</td></tr>'}
           </tbody></table></div>
           <p id="learnerNoMatches" class="learner-no-matches" hidden>No learners match these filters. Try another name, admission number or grade.</p>
@@ -511,24 +515,25 @@ const EduNavigation = {
 
     if (form.id === 'learnerCreateForm') {
       const admissionNo = values.admissionNo.trim();
-      if (this.workspaceState.learners.some((learner) => learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) {
+      const editingId = form.dataset.editId || '';
+      if (this.workspaceState.learners.some((learner) => learner.id !== editingId && learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) {
         window.alert('That admission / learner number is already registered.');
         return;
       }
-      this.workspaceState.learners.push({
-        id: `learner-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
-        fullName: values.fullName.trim(),
-        admissionNo,
-        grade: Number(values.grade),
-        stream: values.stream.trim(),
-        createdAt: new Date().toISOString()
-      });
+      const profile = { fullName: values.fullName.trim(), admissionNo, grade: Number(values.grade), stream: values.stream.trim() };
+      if (editingId) {
+        const learner = this.workspaceState.learners.find((item) => item.id === editingId);
+        if (!learner) { this.showWorkspaceToast('Learner profile could not be found.'); return; }
+        Object.assign(learner, profile, { updatedAt: new Date().toISOString() });
+        this.editingLearnerId = null;
+      } else {
+        this.workspaceState.learners.push(Object.assign({ id: 'learner-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), createdAt: new Date().toISOString() }, profile));
+      }
       EduDataStore.save(this.workspaceState);
       this.syncWarningBadge();
       this.renderLearnerDirectory(document.getElementById('view-learners'));
-      // Refresh the assessment form so a newly registered learner is selectable immediately.
       this.renderPerformanceEntry(document.getElementById('view-assessments'));
-      this.showWorkspaceToast('Learner profile saved.');
+      this.showWorkspaceToast(editingId ? 'Learner profile updated.' : 'Learner profile saved.');
       return;
     }
 
@@ -922,6 +927,40 @@ const EduNavigation = {
       }
     });
     document.addEventListener('click', (e) => {
+      const cancelLearnerEdit = e.target.closest('[data-cancel-learner-edit]');
+      if (cancelLearnerEdit) {
+        this.editingLearnerId = null;
+        this.renderLearnerDirectory(document.getElementById('view-learners'));
+        return;
+      }
+      const editLearnerTrigger = e.target.closest('[data-edit-learner]');
+      if (editLearnerTrigger) {
+        this.editingLearnerId = editLearnerTrigger.getAttribute('data-edit-learner');
+        this.renderLearnerDirectory(document.getElementById('view-learners'));
+        document.getElementById('learnerCreateForm')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      const deleteLearnerTrigger = e.target.closest('[data-delete-learner]');
+      if (deleteLearnerTrigger) {
+        const learnerId = deleteLearnerTrigger.getAttribute('data-delete-learner');
+        const learner = this.workspaceState.learners.find((item) => item.id === learnerId);
+        if (!learner) return;
+        const recordCount = this.workspaceState.performanceRecords.filter((item) => item.learnerId === learnerId).length;
+        const reportCount = this.workspaceState.learnerReports.filter((item) => item.learnerId === learnerId).length;
+        if (!window.confirm('Delete ' + learner.fullName + '? This will also permanently remove ' + recordCount + ' performance record(s) and ' + reportCount + ' report draft(s) from this browser workspace.')) return;
+        this.workspaceState.learners = this.workspaceState.learners.filter((item) => item.id !== learnerId);
+        this.workspaceState.performanceRecords = this.workspaceState.performanceRecords.filter((item) => item.learnerId !== learnerId);
+        this.workspaceState.learnerReports = this.workspaceState.learnerReports.filter((item) => item.learnerId !== learnerId);
+        this.editingLearnerId = null;
+        EduDataStore.save(this.workspaceState);
+        this.syncWarningBadge();
+        this.renderLearnerDirectory(document.getElementById('view-learners'));
+        this.renderPerformanceEntry(document.getElementById('view-assessments'));
+        this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
+        this.renderReportsWorkspace(document.getElementById('view-reports'));
+        this.showWorkspaceToast('Learner and linked browser records deleted.');
+        return;
+      }
       const addEvidenceTrigger = e.target.closest('[data-add-evidence]');
       if (addEvidenceTrigger) {
         const learnerId = addEvidenceTrigger.getAttribute('data-add-evidence');
