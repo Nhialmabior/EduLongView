@@ -336,7 +336,7 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 65.1 }
         ],
         recentAssessments: [
-          { title: 'End-Term Learning Review', subject: 'All Core Subjects', classStream: 'Grade 1 – Grade 7', date: '21 Nov 2025', mean: 'Evidence recorded', status: 'Verified' }
+          { title: 'End-Term Learning Review', subject: 'All Core Subjects', classStream: 'Grades 1–9', date: '21 Nov 2025', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -354,6 +354,18 @@ const DEFAULT_DEMO_DATA = {
   }
 };
 
+
+// The demo trend data samples one representative grade per band. Missing grades
+// share their band's illustrative series until real grade-specific evidence is entered.
+Object.values(DEFAULT_DEMO_DATA.periods).forEach((year) => {
+  Object.values(year).forEach((period) => {
+    period.trends['Grade 2'] = [...period.trends['Grade 1']];
+    period.trends['Grade 3'] = [...period.trends['Grade 1']];
+    period.trends['Grade 5'] = [...period.trends['Grade 4']];
+    period.trends['Grade 6'] = [...period.trends['Grade 4']];
+    period.trends['Grade 8'] = [...period.trends['Grade 7']];
+  });
+});
 
 // Kenya CBC/CBE curriculum reference structure. Learning areas are grouped by grade band;
 // schools can configure optional language and religious-education choices.
