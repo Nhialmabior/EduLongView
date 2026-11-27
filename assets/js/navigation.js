@@ -397,12 +397,12 @@ const EduNavigation = {
             <label class="learner-search-field"><i data-lucide="search"></i><input id="learnerSearchInput" type="search" placeholder="Search name or admission number" aria-label="Search learners"></label>
             <label class="learner-grade-filter"><span>Filter by grade</span><select id="learnerGradeFilter"><option value="">All grades</option>${grades.map(grade => `<option value="${grade}">Grade ${grade}</option>`).join('')}</select></label>
           </div>
-          <div class="table-responsive"><table class="data-table learner-directory-table"><thead><tr><th>Learner</th><th>Admission No.</th><th>Grade</th><th>Class / Stream</th><th>Records</th><th>Profile status</th></tr></thead><tbody id="learnerDirectoryRows">
+          <div class="table-responsive"><table class="data-table learner-directory-table"><thead><tr><th>Learner</th><th>Admission No.</th><th>Grade</th><th>Class / Stream</th><th>Records</th><th>Profile status</th><th>Action</th></tr></thead><tbody id="learnerDirectoryRows">
           ${learners.length ? learners.map((learner) => {
             const count = records.filter((record) => record.learnerId === learner.id).length;
             const searchText = `${learner.fullName} ${learner.admissionNo} ${learner.stream || ''}`.toLowerCase();
-            return `<tr data-learner-row data-search="${this.escapeHTML(searchText)}" data-grade="${this.escapeHTML(learner.grade)}"><td><span class="cell-primary">${this.escapeHTML(learner.fullName)}</span></td><td>${this.escapeHTML(learner.admissionNo)}</td><td>Grade ${this.escapeHTML(learner.grade)}</td><td>${this.escapeHTML(learner.stream || '—')}</td><td><span class="learner-record-count">${count}</span></td><td><span class="status-pill ${count ? 'verified' : 'pending'}">${count ? 'Evidence added' : 'No records yet'}</span></td></tr>`;
-          }).join('') : '<tr><td colspan="6" class="empty-state-cell">No learners registered yet. Add the first learner using the form above.</td></tr>'}
+            return `<tr data-learner-row data-search="${this.escapeHTML(searchText)}" data-grade="${this.escapeHTML(learner.grade)}"><td><span class="cell-primary">${this.escapeHTML(learner.fullName)}</span></td><td>${this.escapeHTML(learner.admissionNo)}</td><td>Grade ${this.escapeHTML(learner.grade)}</td><td>${this.escapeHTML(learner.stream || '—')}</td><td><span class="learner-record-count">${count}</span></td><td><span class="status-pill ${count ? 'verified' : 'pending'}">${count ? 'Evidence added' : 'No records yet'}</span></td><td><button class="btn btn-secondary btn-sm" type="button" data-add-evidence="${this.escapeHTML(learner.id)}"><i data-lucide="plus-circle"></i><span>Add Evidence</span></button></td></tr>`;
+          }).join('') : '<tr><td colspan="7" class="empty-state-cell">No learners registered yet. Add the first learner using the form above.</td></tr>'}
           </tbody></table></div>
           <p id="learnerNoMatches" class="learner-no-matches" hidden>No learners match these filters. Try another name, admission number or grade.</p>
         </div>
@@ -427,7 +427,7 @@ const EduNavigation = {
     if (noMatches) noMatches.hidden = visible > 0 || rows.length === 0;
   },
 
-  renderPerformanceEntry(section) {
+  renderPerformanceEntry(section, selectedLearnerId = '') {
     const learners = this.workspaceState.learners;
     const records = [...this.workspaceState.performanceRecords].sort((a,b) => b.createdAt.localeCompare(a.createdAt));
     const learnerOptions = learners.map((learner) => `<option value="${this.escapeHTML(learner.id)}">${this.escapeHTML(learner.fullName)} — ${this.escapeHTML(learner.admissionNo)} (Grade ${this.escapeHTML(learner.grade)})</option>`).join('');
@@ -441,7 +441,7 @@ const EduNavigation = {
           <div class="panel-header"><div><h3 class="panel-title">New performance record</h3><p class="panel-subtitle">Scores are stored with their maximum possible value. A percentage is calculated for comparison only.</p></div></div>
           <form id="performanceCreateForm" class="workspace-form">
             <div class="workspace-form-grid">
-              <label>Learner<select name="learnerId" required><option value="">Select learner</option>${learnerOptions}</select></label>
+              <label>Learner<select name="learnerId" required><option value="">Select learner</option>${learners.map((learner) => `<option value="${this.escapeHTML(learner.id)}" ${learner.id === selectedLearnerId ? 'selected' : '' }>${this.escapeHTML(learner.fullName)} — ${this.escapeHTML(learner.admissionNo)} (Grade ${this.escapeHTML(learner.grade)})</option>`).join('')}</select></label>
               <label>Learning area / subject<input name="learningArea" required maxlength="80" placeholder="e.g. Mathematics"></label>
               <label>Assessment / activity<input name="assessmentTitle" required maxlength="100" placeholder="e.g. Mid-term assessment"></label>
               <label>Assessment type<select name="assessmentType" required><option value="">Select type</option><option>Classwork</option><option>Homework</option><option>Quiz</option><option>Project</option><option>Practical</option><option>Continuous assessment</option><option>End-of-term assessment</option><option>Teacher observation</option></select></label>
@@ -890,6 +890,19 @@ const EduNavigation = {
       }
     });
     document.addEventListener('click', (e) => {
+      const addEvidenceTrigger = e.target.closest('[data-add-evidence]');
+      if (addEvidenceTrigger) {
+        const learnerId = addEvidenceTrigger.getAttribute('data-add-evidence');
+        const learner = this.workspaceState.learners.find((item) => item.id === learnerId);
+        if (!learner) return;
+        this.navigate('assessments', true);
+        this.renderPerformanceEntry(document.getElementById('view-assessments'), learnerId);
+        requestAnimationFrame(() => {
+          const form = document.getElementById('performanceCreateForm');
+          if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        return;
+      }
       if (e.target.closest('[data-delete-report]')) {
         const reportId = e.target.closest('[data-delete-report]').getAttribute('data-delete-report');
         if (window.confirm('Delete this private report draft?')) {
