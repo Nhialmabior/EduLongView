@@ -21,7 +21,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 load_dotenv()
 
 APP_ENV = os.getenv("APP_ENV", "development")
-API_TOKEN = os.getenv("EDULONGVIEW_API_TOKEN", "").strip()
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")\nSUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "").strip()\nSUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
 AI_BASE_URL = os.getenv("AI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
 AI_API_KEY = os.getenv("AI_API_KEY", "").strip()
 AI_MODEL = os.getenv("AI_MODEL", "").strip()
@@ -117,16 +117,151 @@ class DraftResponse(StrictModel):
     model: ModelInfo
 
 
-def require_teacher_token(
+async def require_teacher_token(
     credentials: HTTPAuthorizationCredentials | None = Depends(bearer),
-) -> None:
-    # This bootstrap token is suitable only for local/server-to-server testing.
-    # Do not place it in frontend JavaScript. Production requires per-user teacher
-    # authentication and school/learner authorisation (e.g. verified Supabase JWTs).
-    if not API_TOKEN or credentials is None or credentials.scheme.lower() != "bearer":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Valid teacher authentication is required.")
-    if not hmac.compare_digest(credentials.credentials, API_TOKEN):
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Valid teacher authentication is required.")
+) -> dict[str, Any]:
+    """Validate a Supabase access token and resolve its active school membership."""
+    if (
+        credentials is None
+        or credentials.scheme.lower() != "bearer"
+        or not SUPABASE_URL
+        or not SUPABASE_PUBLISHABLE_KEY
+        or not SUPABASE_SERVICE_ROLE_KEY
+    ):
+        raise HTTPException(status_code=401, detail="Valid school account authentication is required.")
+
+    token = credentials.credentials
+    headers = {
+        "apikey": SUPABASE_PUBLISHABLE_KEY,
+        "Authorization": f"Bearer {token}",
+    }
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            user_response = await client.get(f"{SUPABASE_URL}/auth/v1/user", headers=headers)
+            if user_response.status_code != 200:
+                raise HTTPException(status_code=401, detail="Your sign-in session is invalid or expired.")
+            user = user_response.json()
+            user_id = user.get("id")
+            if not user_id:
+                raise HTTPException(status_code=401, detail="Your sign-in session is invalid.")
+
+            admin_headers = {
+                "apikey": SUPABASE_SERVICE_ROLE_KEY,
+                "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+            }
+            membership_response = await client.get(
+                f"{SUPABASE_URL}/rest/v1/school_memberships",
+                headers=admin_headers,
+                params={
+                    "select": "id,school_id,user_id,role,status",
+                    "user_id": f"eq.{user_id}",
+                    "status": "eq.active",
+                    "limit": "1",
+                },
+            )
+            membership_response.raise_for_status()
+            memberships = membership_response.json()
+            if not memberships:
+                raise HTTPException(status_code=403, detail="Your account has no active school membership.")
+
+            membership = memberships[0]
+            school_response = await client.get(
+                f"{SUPABASE_URL}/rest/v1/schools",
+                headers=admin_headers,
+                params={"select": "id,name,status", "id": f"eq.{membership['school_id']}", "limit": "1"},
+            )
+            school_response.raise_for_status()
+            schools = school_response.json()
+            if not schools or schools[0].get("status") != "active":
+                raise HTTPException(status_code=403, detail="Your school account is not active.")
+
+            return {"user": user, "membership": membership, "school": schools[0]}
+    except HTTPException:
+        raise
+    except httpx.HTTPError:
+        raise HTTPException(status_code=503, detail="School authentication is temporarily unavailable.")
+
+
+class TeacherInviteRequest(StrictModel):
+    email: str = Field(min_length=5, max_length=254)
+
+
+class TeacherInviteResponse(StrictModel):
+    status: str
+    email: str
+    role: str
+    schoolId: str
+
+
+async def invite_teacher(
+    payload: TeacherInviteRequest,
+    context: dict[str, Any],
+) -> TeacherInviteResponse:
+    membership = context["membership"]
+    school = context["school"]
+    if membership.get("role") != "school_admin":
+        raise HTTPException(status_code=403, detail="Only a school administrator can invite teachers.")
+
+    email = payload.email.strip().lower()
+    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", email):
+        raise HTTPException(status_code=422, detail="Enter a valid teacher email address.")
+
+    headers = {
+        "apikey": SUPABASE_SERVICE_ROLE_KEY,
+        "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+        "Content-Type": "application/json",
+    }
+    try:
+        async with httpx.AsyncClient(timeout=15) as client:
+            invite_response = await client.post(
+                f"{SUPABASE_URL}/auth/v1/invite",
+                headers=headers,
+                json={"email": email},
+            )
+            if invite_response.status_code >= 400:
+                # Do not expose Auth internals or whether an unrelated account exists.
+                raise HTTPException(status_code=409, detail="The invitation could not be created. Check whether this email already has an account.")
+            invited_user = invite_response.json()
+            invited_user_id = invited_user.get("id") or (invited_user.get("user") or {}).get("id")
+            if not invited_user_id:
+                raise HTTPException(status_code=502, detail="The invitation service returned an invalid response.")
+
+            membership_response = await client.post(
+                f"{SUPABASE_URL}/rest/v1/school_memberships",
+                headers={**headers, "Prefer": "return=minimal"},
+                json={
+                    "school_id": membership["school_id"],
+                    "user_id": invited_user_id,
+                    "role": "teacher",
+                    "status": "invited",
+                    "invited_by": context["user"]["id"],
+                },
+            )
+            if membership_response.status_code >= 400:
+                raise HTTPException(status_code=409, detail="The invitation was sent but the school membership could not be saved. Contact the system administrator.")
+
+            await client.post(
+                f"{SUPABASE_URL}/rest/v1/school_audit_events",
+                headers={**headers, "Prefer": "return=minimal"},
+                json={
+                    "school_id": membership["school_id"],
+                    "actor_user_id": context["user"]["id"],
+                    "target_user_id": invited_user_id,
+                    "event_type": "teacher_invited",
+                    "details": {"email": email, "role": "teacher"},
+                },
+            )
+    except HTTPException:
+        raise
+    except httpx.HTTPError:
+        raise HTTPException(status_code=503, detail="The invitation service is temporarily unavailable.")
+
+    return TeacherInviteResponse(
+        status="invited",
+        email=email,
+        role="teacher",
+        schoolId=str(school["id"]),
+    )
 
 
 def _extract_json(content: Any) -> dict[str, Any]:
