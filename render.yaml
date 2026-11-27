@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: edulongview-report-api
+    runtime: python
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: EDULONGVIEW_API_TOKEN
+        sync: false
+      - key: AI_BASE_URL
+        value: https://api.openai.com/v1
+      - key: AI_API_KEY
+        sync: false
+      - key: AI_MODEL
+        sync: false
+      - key: AI_TIMEOUT_SECONDS
+        value: "45"
+      - key: CORS_ORIGINS
+        sync: false
+      - key: MAX_EVIDENCE_RECORDS
+        value: "200"
