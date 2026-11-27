@@ -90,7 +90,7 @@ const MODULE_BLUEPRINTS = {
     pillars: [
       { title: 'Early-Warning Thresholds', detail: 'Adjust pass marks and percentage-drop sensitivity to match school academic targets.' },
       { title: 'JSON Backup & Restore', detail: 'Export the entire LocalStorage database to a portable file for safe offline backup.' },
-      { title: 'Demo Dataset Controls', detail: 'Configure school grade coverage, curriculum options, and demo data or start with a clean slate.' }
+      { title: 'Demo Dataset Controls', detail: 'Configure school grade coverage, reporting preferences, and demo data or start with a clean slate.' }
     ]
   }
 };
