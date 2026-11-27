@@ -369,6 +369,30 @@ Object.values(DEFAULT_DEMO_DATA.periods).forEach((year) => {
 
 // Kenya CBC/CBE curriculum reference structure. Learning areas are grouped by grade band;
 // schools can configure optional language and religious-education choices.
+// Canonical shape for importing verified KICD curriculum content.
+// Outcome text must be transcribed from the relevant grade-specific source document.
+const CURRICULUM_RECORD_SCHEMA = {
+  grade: 'number (1–9)',
+  stage: 'Lower Primary | Upper Primary | Junior School',
+  learningArea: 'string',
+  strand: 'exact KICD strand title',
+  subStrand: 'exact KICD sub-strand title',
+  specificLearningOutcome: 'exact KICD specific learning outcome',
+  coreCompetencies: 'array of applicable CBC core competencies',
+  values: 'array of values identified in the source design',
+  pertinentAndContemporaryIssues: 'array of PCIs identified in the source design',
+  suggestedLearningExperiences: 'array of source-based learning experiences',
+  assessmentMethods: 'array of source-based assessment methods',
+  source: {
+    organization: 'Kenya Institute of Curriculum Development',
+    documentTitle: 'exact curriculum design title',
+    documentUrl: 'official KICD or KICD-hosted source URL',
+    page: 'page or section reference'
+  },
+  curriculumVersion: 'source edition / revision',
+  verificationStatus: 'draft | verified'
+};
+
 const KENYA_CBC_CURRICULUM = {
   country: 'Kenya',
   framework: 'CBC/CBE',
