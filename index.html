@@ -217,11 +217,11 @@
               <div class="panel-header">
                 <div>
                   <h3 class="panel-title">Recorded Performance Trend</h3>
-                  <p class="panel-subtitle">Saved assessment evidence over time</p>
+                  <p class="panel-subtitle" id="performanceTrendSubtitle">Numeric scores over time · All grades</p>
                 </div>
                 <div class="panel-controls">
-                  <label for="streamFilterSelect" class="sr-only">Filter by Class</label>
-                  <select id="streamFilterSelect" class="compact-select" aria-label="Filter trend chart by grade">
+                  <label for="streamFilterSelect" class="sr-only">Filter both charts by grade</label>
+                  <select id="streamFilterSelect" class="compact-select" aria-label="Filter both charts by grade">
                     <option value="all">All Grades (School Overview)</option>
                     <option value="Grade 1">Grade 1</option>
                     <option value="Grade 2">Grade 2</option>
@@ -245,7 +245,7 @@
               <div class="panel-header">
                 <div>
                   <h3 class="panel-title">Performance by Learning Area</h3>
-                  <p class="panel-subtitle">Mean score from saved records</p>
+                  <p class="panel-subtitle" id="subjectOverviewSubtitle">Mean score from saved records · All grades</p>
                 </div>
                 <span class="panel-tag">Learning Areas</span>
               </div>
@@ -262,7 +262,7 @@
               <div class="panel-header">
                 <div>
                   <h3 class="panel-title">Recent Records</h3>
-                  <p class="panel-subtitle"></p>
+                  <p class="panel-subtitle" id="recentAssessmentsSubtitle">Latest saved records across all grades in the selected period</p>
                 </div>
                 <a href="#assessments" class="text-link" data-route="assessments">
                   <span>View all</span>
