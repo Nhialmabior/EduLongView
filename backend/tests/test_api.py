@@ -165,3 +165,16 @@ def test_model_response_cannot_duplicate_evidence_references():
         assert "duplicate" in str(exc)
     else:
         raise AssertionError("Duplicate evidence references were not rejected")
+
+
+def test_ai_provider_not_configured_returns_503(monkeypatch):
+    setup_token(monkeypatch)
+    monkeypatch.setattr(main, "AI_API_KEY", "")
+    monkeypatch.setattr(main, "AI_MODEL", "")
+    response = client.post(
+        "/api/v1/reports/draft",
+        json=VALID_PAYLOAD,
+        headers={"Authorization": f"Bearer {TOKEN}"},
+    )
+    assert response.status_code == 503
+    assert "not configured" in response.json()["detail"]
