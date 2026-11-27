@@ -157,7 +157,7 @@ const EduNavigation = {
           <div>
             <span class="module-badge">Kenya CBC/CBE · Grades 1–9</span>
             <h2>CBC Curriculum &amp; Learning Areas</h2>
-            <p>Explore learning areas by grade. The curriculum is grouped into three school stages, with learning areas changing as learners progress.</p>
+            <p>Browse the learning areas listed for each grade band and open the official KICD curriculum designs for detailed curriculum content.</p>
           </div>
           <a href="#overview" class="btn btn-primary" data-route="overview">
             <i data-lucide="arrow-left"></i>
@@ -168,19 +168,29 @@ const EduNavigation = {
         <div class="panel-card" style="margin-bottom: 22px;">
           <div class="panel-header">
             <div>
-              <h3 class="panel-title">Select a Grade</h3>
-              <p class="panel-subtitle">Choose a grade to view its curriculum stage and learning areas.</p>
+              <h3 class="panel-title">Grade Curriculum Explorer</h3>
+              <p class="panel-subtitle">Choose a grade to see its stage and learning-area catalogue.</p>
             </div>
             <select id="curriculumGradeSelect" class="compact-select" aria-label="Select curriculum grade">
               ${gradeOptions}
             </select>
           </div>
-          <div id="curriculumStageSummary" class="module-badge">Lower Primary · Grades 1–3</div>
-          <div id="curriculumAreasGrid" class="roadmap-grid" style="margin-top: 18px;"></div>
-          <p class="panel-subtitle" style="margin-top: 16px;">Learning-area options, including languages and religious education, should be configured according to the school's approved programme and learner context. Refer to the relevant KICD curriculum design when setting up detailed strands and outcomes.</p>
+          <div class="curriculum-stage-row" style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:14px 0;">
+            <span id="curriculumStageSummary" class="module-badge">Lower Primary · Grades 1–3</span>
+            <a id="curriculumSourceLink" class="btn btn-secondary" href="${curriculum.stages[0].sourceUrl}" target="_blank" rel="noopener noreferrer">
+              <i data-lucide="external-link"></i>
+              <span>Open official KICD designs</span>
+            </a>
+          </div>
+          <div id="curriculumAreasGrid" class="roadmap-grid"></div>
+          <div id="curriculumAreaDetail" class="panel-card" style="margin-top:18px;background:#F8FAFC;">
+            <h3 class="panel-title">Select a learning area</h3>
+            <p class="panel-subtitle">Select a card above to view its curriculum-record structure and source guidance.</p>
+          </div>
+          <p class="panel-subtitle" style="margin-top:16px;">The list reflects KICD's 2026 curriculum support-materials guidance. Religious education, indigenous languages and foreign languages are presented as programme options; the school should configure what it offers.</p>
         </div>
 
-        <div class="panel-card">
+        <div class="panel-card" style="margin-bottom:22px;">
           <div class="panel-header">
             <div>
               <h3 class="panel-title">CBC Core Competencies</h3>
@@ -196,24 +206,70 @@ const EduNavigation = {
             `).join('')}
           </div>
         </div>
+
+        <div class="panel-card">
+          <h3 class="panel-title">Assessment language</h3>
+          <p class="panel-subtitle">The KICD rubric descriptors below are shown as reference labels. The exact rubric and evidence requirements should be taken from the relevant learning-area curriculum design and school assessment policy.</p>
+          <div class="roadmap-grid" style="margin-top:16px;">
+            ${curriculum.assessmentRubric.map((item) => `
+              <article class="roadmap-card">
+                <h4>${item.code} · ${item.label}</h4>
+                <p>Use with teacher-observed evidence and the applicable curriculum design.</p>
+              </article>
+            `).join('')}
+          </div>
+        </div>
       </div>
     `;
 
     const gradeSelect = section.querySelector('#curriculumGradeSelect');
     const stageSummary = section.querySelector('#curriculumStageSummary');
+    const sourceLink = section.querySelector('#curriculumSourceLink');
     const areasGrid = section.querySelector('#curriculumAreasGrid');
+    const areaDetail = section.querySelector('#curriculumAreaDetail');
 
     const renderGrade = (grade) => {
       const stage = curriculum.stages.find((item) => item.grades.includes(Number(grade)));
       if (!stage) return;
+
       stageSummary.textContent = `${stage.name} · Grades ${stage.grades[0]}–${stage.grades[stage.grades.length - 1]}`;
-      areasGrid.innerHTML = curriculum.learningAreasByStage[stage.name]
-        .map((area) => `
-          <article class="roadmap-card">
-            <h4>${area}</h4>
-            <p>Grade ${grade} learning area</p>
-          </article>
-        `).join('');
+      sourceLink.href = stage.sourceUrl;
+
+      const areas = curriculum.learningAreasByStage[stage.name] || [];
+      areasGrid.innerHTML = areas.map((area, index) => `
+        <button type="button" class="roadmap-card curriculum-area-card" data-area-index="${index}" aria-pressed="false" style="text-align:left;cursor:pointer;width:100%;">
+          <h4>${area.name}</h4>
+          <p>${area.type}</p>
+        </button>
+      `).join('');
+
+      areaDetail.innerHTML = `
+        <h3 class="panel-title">Curriculum detail status</h3>
+        <p class="panel-subtitle">Choose a learning area above. Detailed strands, sub-strands and specific learning outcomes have not yet been imported into EduLongView. They will be added from the official grade-specific KICD design, not generated or guessed.</p>
+      `;
+
+      areasGrid.querySelectorAll('[data-area-index]').forEach((card) => {
+        card.addEventListener('click', () => {
+          const selected = areas[Number(card.dataset.areaIndex)];
+          areasGrid.querySelectorAll('[data-area-index]').forEach((item) => item.setAttribute('aria-pressed', 'false'));
+          card.setAttribute('aria-pressed', 'true');
+
+          areaDetail.innerHTML = `
+            <span class="module-badge">${selected.type}</span>
+            <h3 class="panel-title" style="margin-top:12px;">Grade ${grade} · ${selected.name}</h3>
+            <p class="panel-subtitle">Curriculum record structure planned for this learning area:</p>
+            <ol style="margin:12px 0 16px 20px;color:#475569;line-height:1.9;">
+              ${curriculum.curriculumStructure.map((part) => `<li>${part}</li>`).join('')}
+            </ol>
+            <p class="panel-subtitle">The official strand names, sub-strands and specific learning outcomes must be imported from the Grade ${grade} KICD curriculum design before teachers can record achievement against them.</p>
+            <a class="btn btn-secondary" href="${stage.sourceUrl}" target="_blank" rel="noopener noreferrer">
+              <i data-lucide="book-open"></i>
+              <span>View KICD Grade ${grade} curriculum resources</span>
+            </a>
+          `;
+          if (window.lucide) window.lucide.createIcons();
+        });
+      });
     };
 
     gradeSelect.addEventListener('change', () => renderGrade(gradeSelect.value));
