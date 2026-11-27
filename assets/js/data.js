@@ -467,6 +467,143 @@ const KENYA_CBC_CURRICULUM = {
     { code: 'BE', label: 'Below expectation' }
   ],
   curriculumStructure: ['Learning Area', 'Strand', 'Sub-strand', 'Specific Learning Outcome'],
+  curriculumRecords: [
+    {
+      id: 'g1-eng-1-1-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Listening and Speaking',
+      subStrand: 'Pronunciation and vocabulary',
+      topic: 'Theme 1.0: Greetings',
+      specificLearningOutcomes: [
+        'Pick out the letters a–h and their corresponding sounds for effective communication.',
+        'Pronounce words with the sounds /a:/, /æ/, /ɜː/, /ɑː/, /ə/, /b:/, /b/, /k/, /s/, /d/, /e/, /iː/, /f/, /g/ and /h/ for oral fluency.',
+        'Use words related to greetings in everyday conversations.',
+        'Appreciate the role of greetings in diverse contexts.'
+      ],
+      suggestedLearningExperiences: [
+        'Listen to an oral text with words containing the sounds corresponding to letters a–h.',
+        'Take turns pronouncing the target sounds as modelled by peers, the teacher or an audio recording.',
+        'Match sounds with their corresponding letters.',
+        'Talk about pictures or photos of people greeting one another.',
+        'Practise verbal and non-verbal greetings in pairs.'
+      ],
+      keyInquiryQuestions: ['Why do we greet people?', 'How do we greet people at different times of the day?'],
+      coreCompetencies: ['Learning to Learn'],
+      values: ['Unity', 'Respect'],
+      pertinentAndContemporaryIssues: ['Life Skills (Self-esteem)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '4'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    },
+    {
+      id: 'g1-eng-1-2-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Reading',
+      subStrand: 'Pre-reading',
+      topic: 'Theme 1.0: Greetings',
+      specificLearningOutcomes: [
+        'Identify an appropriate reading posture for reading preparedness.',
+        'Read words containing the letters a–h for fluency.',
+        'Realise the importance of correct posture in preparation for reading.'
+      ],
+      suggestedLearningExperiences: [
+        'Select an appropriate sitting position from pictures, videos and teacher demonstrations.',
+        'Position self and reading materials appropriately.',
+        'Turn the pages of a book from right to left.',
+        'Track print through finger reading.',
+        'Pick out words containing letters a–h from flashcards or charts.',
+        'Match target letters with the sounds they represent.',
+        'Read two- to three-letter words containing the target sounds.'
+      ],
+      keyInquiryQuestions: ['How do we sit while reading?', 'How do we position our books while reading?'],
+      coreCompetencies: ['Learning to Learn'],
+      values: ['Responsibility'],
+      pertinentAndContemporaryIssues: ['Life Skills (Self-awareness)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '5'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    },
+    {
+      id: 'g1-eng-1-3-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Language Use',
+      subStrand: "Verb ‘to be’ – Present Tense",
+      topic: 'Theme 1.0: Greetings',
+      specificLearningOutcomes: [
+        'Identify the present tense forms of the verbs am, is and are in sentences.',
+        'Use the present tense forms am, is and are to greet and introduce oneself and others.',
+        'Acknowledge the importance of using correct tense in communication.'
+      ],
+      suggestedLearningExperiences: [
+        'Participate in language games and songs using am, is and are.',
+        'Watch videos of children greeting one another and introducing themselves.',
+        'Observe peers introducing themselves using am, is and are.',
+        'Introduce oneself politely and describe oneself and other people using am, is and are.',
+        'Role-play greetings and introductions.'
+      ],
+      keyInquiryQuestions: ['How do we greet people in the morning, afternoon and evening?'],
+      coreCompetencies: ['Communication and Collaboration', 'Learning to Learn'],
+      values: ['Respect'],
+      pertinentAndContemporaryIssues: ['Life Skills (Self-esteem)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '6'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    },
+    {
+      id: 'g1-eng-1-4-1',
+      grade: 1,
+      stage: 'Lower Primary',
+      learningArea: 'English',
+      strand: 'Writing',
+      subStrand: 'Pre-writing',
+      topic: 'Theme 1.0: Greetings',
+      specificLearningOutcomes: [
+        'Recognise the appropriate sitting posture in preparation for writing.',
+        'Exhibit appropriate eye-hand coordination for writing preparedness.',
+        'Realise the role of correct posture and eye-hand coordination in writing.'
+      ],
+      suggestedLearningExperiences: [
+        'Look at pictures and watch videos on appropriate sitting posture.',
+        'Practise sitting in the right posture and position an exercise book correctly.',
+        'Hold pencils and colouring materials correctly.',
+        'Work with peers to write target letters from left to right.',
+        'Join dotted lines, colour shapes and letters, draw patterns, and trace or mould letters and shapes.'
+      ],
+      keyInquiryQuestions: ['Why is it important to sit properly when writing?', 'How do we place our books when writing?'],
+      coreCompetencies: ['Learning to Learn'],
+      values: ['Responsibility'],
+      pertinentAndContemporaryIssues: ['Learner Support Programmes (Clubs and Societies)'],
+      source: {
+        organization: 'Kenya Institute of Curriculum Development',
+        documentTitle: 'Primary School Education Curriculum Design: English Language Activities, Grade 1, 2 & 3 (Revised 2024)',
+        documentUrl: 'https://kicd.ac.ke/wp-content/uploads/2024/10/Grade-1-3-English-Activities-Revised-Sept.pdf',
+        page: '7'
+      },
+      curriculumVersion: 'Revised 2024',
+      verificationStatus: 'verified'
+    }
+  ],
   implementationNote: 'The 2026 KICD guidance is a list of learning areas for curriculum support materials. School-level availability and learner programme selections must be configured. Import exact strands, sub-strands and specific learning outcomes from the relevant grade-specific curriculum design before using them for assessment.',
   sources: [
     { label: 'KICD 2026 Curriculum Support Materials Guidance', url: 'https://kicd.ac.ke/wp-content/uploads/2026/09/COMPLEMENTARY-MATERIALS-SUBMISSION-DOCUMENT-SEPTEMBER-2026.pdf' },
