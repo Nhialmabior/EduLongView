@@ -425,6 +425,13 @@ const EduNavigation = {
     // Route links across sidebar and body
     document.addEventListener('submit', (event) => this.handleWorkspaceSubmit(event));
     document.addEventListener('click', (e) => {
+      const editReportTrigger = e.target.closest('[data-edit-report]');
+      if (editReportTrigger) {
+        this.renderReportEditor(editReportTrigger.getAttribute('data-edit-report'));
+        const host = document.getElementById('reportEditorHost');
+        if (host) host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
+      }
       const routeTrigger = e.target.closest('[data-route]');
       if (routeTrigger) {
         e.preventDefault();
