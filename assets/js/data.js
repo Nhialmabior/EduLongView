@@ -372,11 +372,12 @@ Object.values(DEFAULT_DEMO_DATA.periods).forEach((year) => {
 const KENYA_CBC_CURRICULUM = {
   country: 'Kenya',
   framework: 'CBC/CBE',
-  grades: Array.from({ length: 9 }, (_, index) => index + 1),
+  referenceEdition: 'KICD 2026 complementary curriculum support-materials guidance',
+  grades: [1, 2, 3, 4, 5, 6, 7, 8, 9],
   stages: [
-    { name: 'Lower Primary', grades: [1, 2, 3] },
-    { name: 'Upper Primary', grades: [4, 5, 6] },
-    { name: 'Junior School', grades: [7, 8, 9] }
+    { name: 'Lower Primary', grades: [1, 2, 3], sourceUrl: 'https://kicd.ac.ke/cbc-materials/lower-primary/' },
+    { name: 'Upper Primary', grades: [4, 5, 6], sourceUrl: 'https://kicd.ac.ke/cbc-materials/curriculum-designs/upper-primary-designs/' },
+    { name: 'Junior School', grades: [7, 8, 9], sourceUrl: 'https://kicd.ac.ke/cbc-materials/curriculum-designs/junior-school-designs/' }
   ],
   coreCompetencies: [
     'Communication and Collaboration',
@@ -389,28 +390,67 @@ const KENYA_CBC_CURRICULUM = {
   ],
   learningAreasByStage: {
     'Lower Primary': [
-      'English', 'Kiswahili', 'Mathematics', 'Environmental Activities',
-      'Creative Activities', 'Religious Education', 'Indigenous Language'
+      { name: 'English', type: 'Learning area' },
+      { name: 'Kiswahili', type: 'Learning area' },
+      { name: 'Mathematics', type: 'Learning area' },
+      { name: 'Environmental Activities', type: 'Learning area' },
+      { name: 'Creative Activities', type: 'Learning area' },
+      { name: 'Christian Religious Education', type: 'Religious education option' },
+      { name: 'Hindu Religious Education', type: 'Religious education option' },
+      { name: 'Islamic Religious Education', type: 'Religious education option' },
+      { name: 'Indigenous Language', type: 'Language option' }
     ],
     'Upper Primary': [
-      'English', 'Kiswahili', 'Mathematics', 'Science and Technology',
-      'Agriculture', 'Social Studies', 'Creative Arts', 'Religious Education',
-      'Indigenous Language', 'Foreign Languages'
+      { name: 'English', type: 'Learning area' },
+      { name: 'Kiswahili', type: 'Learning area' },
+      { name: 'Mathematics', type: 'Learning area' },
+      { name: 'Agriculture & Nutrition', type: 'Learning area' },
+      { name: 'Social Studies', type: 'Learning area' },
+      { name: 'Creative Activities', type: 'Learning area' },
+      { name: 'Science & Technology', type: 'Learning area' },
+      { name: 'Christian Religious Education', type: 'Religious education option' },
+      { name: 'Hindu Religious Education', type: 'Religious education option' },
+      { name: 'Islamic Religious Education', type: 'Religious education option' },
+      { name: 'Indigenous Language', type: 'Language option' },
+      { name: 'Arabic', type: 'Foreign language option' },
+      { name: 'Mandarin', type: 'Foreign language option' },
+      { name: 'French', type: 'Foreign language option' },
+      { name: 'German', type: 'Foreign language option' }
     ],
     'Junior School': [
-      'English', 'Kiswahili', 'Mathematics', 'Integrated Science',
-      'Social Studies', 'Agriculture', 'Pre-Technical Studies',
-      'Creative Arts and Sports', 'Religious Education',
-      'Indigenous Language', 'Foreign Languages'
+      { name: 'Agriculture', type: 'Learning area' },
+      { name: 'Pre-Technical Studies', type: 'Learning area' },
+      { name: 'Creative Arts and Sports', type: 'Learning area' },
+      { name: 'Integrated Science', type: 'Learning area' },
+      { name: 'Social Studies', type: 'Learning area' },
+      { name: 'Mathematics', type: 'Learning area' },
+      { name: 'English', type: 'Learning area' },
+      { name: 'Kiswahili', type: 'Learning area' },
+      { name: 'Christian Religious Education', type: 'Religious education option' },
+      { name: 'Hindu Religious Education', type: 'Religious education option' },
+      { name: 'Islamic Religious Education', type: 'Religious education option' },
+      { name: 'Indigenous Language', type: 'Language option' },
+      { name: 'Arabic', type: 'Foreign language option' },
+      { name: 'Mandarin', type: 'Foreign language option' },
+      { name: 'French', type: 'Foreign language option' },
+      { name: 'German', type: 'Foreign language option' }
     ]
   },
-  assessmentDimensions: [
-    'Knowledge and Understanding',
-    'Skills and Competencies',
-    'Values and Attitudes',
-    'Application of Learning'
+  assessmentRubric: [
+    { code: 'EE', label: 'Exceeding Expectation' },
+    { code: 'ME', label: 'Meeting Expectation' },
+    { code: 'AE', label: 'Approaching Expectation' },
+    { code: 'BE', label: 'Below Expectation' }
   ],
-  demoNotice: 'Sample dashboard indicators are illustrative and are not official CBC achievement levels or national assessment grades.'
+  curriculumStructure: ['Learning Area', 'Strand', 'Sub-strand', 'Specific Learning Outcome'],
+  implementationNote: 'The 2026 KICD guidance is a list of learning areas for curriculum support materials. School-level availability and learner programme selections must be configured. Import exact strands, sub-strands and specific learning outcomes from the relevant grade-specific curriculum design before using them for assessment.',
+  sources: [
+    { label: 'KICD 2026 Curriculum Support Materials Guidance', url: 'https://kicd.ac.ke/wp-content/uploads/2026/09/COMPLEMENTARY-MATERIALS-SUBMISSION-DOCUMENT-SEPTEMBER-2026.pdf' },
+    { label: 'KICD Lower Primary Designs', url: 'https://kicd.ac.ke/cbc-materials/lower-primary/' },
+    { label: 'KICD Upper Primary Designs', url: 'https://kicd.ac.ke/cbc-materials/curriculum-designs/upper-primary-designs/' },
+    { label: 'KICD Junior School Designs', url: 'https://kicd.ac.ke/cbc-materials/curriculum-designs/junior-school-designs/' }
+  ],
+  demoNotice: 'Dashboard metrics are illustrative demo indicators, not official CBC achievement levels or national assessment grades.'
 };
 
 const EduDataStore = {
