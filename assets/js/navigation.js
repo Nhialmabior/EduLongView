@@ -172,10 +172,18 @@ const EduNavigation = {
 
   renderLearnerDirectory(section) {
     const learners = this.workspaceState.learners;
+    const records = this.workspaceState.performanceRecords;
+    const grades = [...new Set(learners.map((learner) => Number(learner.grade)).filter(Number.isInteger))].sort((a,b) => a-b);
+    const withRecords = learners.filter((learner) => records.some((record) => record.learnerId === learner.id)).length;
     section.innerHTML = `
       <div class="module-shell">
         <div class="module-header">
-          <div><span class="module-badge">Learner registry</span><h2>Learners Directory</h2><p>Create and maintain learner profiles. Each performance record will be linked to one learner so their progress can be followed over time.</p></div>
+          <div><span class="module-badge">Learner registry</span><h2>Learners Directory</h2><p>Create and maintain learner profiles. Each performance record is linked to one learner, building an individual evidence history over time.</p></div>
+        </div>
+        <div class="learner-overview-grid">
+          <div class="learner-overview-card"><span>Total learners</span><strong>${learners.length}</strong><small>Profiles in this browser</small></div>
+          <div class="learner-overview-card"><span>With performance data</span><strong>${withRecords}</strong><small>At least one recorded result</small></div>
+          <div class="learner-overview-card"><span>Grades represented</span><strong>${grades.length}</strong><small>Across Grades 1–9</small></div>
         </div>
         <div class="panel-card workspace-panel">
           <div class="panel-header"><div><h3 class="panel-title">Register a learner</h3><p class="panel-subtitle">Use the school's learner identifier to avoid duplicate profiles.</p></div></div>
@@ -190,16 +198,39 @@ const EduNavigation = {
           </form>
         </div>
         <div class="panel-card workspace-panel">
-          <div class="panel-header"><div><h3 class="panel-title">Registered learners</h3><p class="panel-subtitle">${learners.length} learner profile(s) stored in this browser.</p></div></div>
-          <div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Admission No.</th><th>Grade</th><th>Class / Stream</th><th>Records</th></tr></thead><tbody>
+          <div class="panel-header learner-directory-heading"><div><h3 class="panel-title">Registered learners</h3><p class="panel-subtitle"><span id="learnerVisibleCount">${learners.length}</span> of ${learners.length} learner profile(s) · browser storage</p></div></div>
+          <div class="learner-directory-tools">
+            <label class="learner-search-field"><i data-lucide="search"></i><input id="learnerSearchInput" type="search" placeholder="Search name or admission number" aria-label="Search learners"></label>
+            <label class="learner-grade-filter"><span>Filter by grade</span><select id="learnerGradeFilter"><option value="">All grades</option>${grades.map(grade => `<option value="${grade}">Grade ${grade}</option>`).join('')}</select></label>
+          </div>
+          <div class="table-responsive"><table class="data-table learner-directory-table"><thead><tr><th>Learner</th><th>Admission No.</th><th>Grade</th><th>Class / Stream</th><th>Records</th><th>Profile status</th></tr></thead><tbody id="learnerDirectoryRows">
           ${learners.length ? learners.map((learner) => {
-            const count = this.workspaceState.performanceRecords.filter((record) => record.learnerId === learner.id).length;
-            return `<tr><td><span class="cell-primary">${this.escapeHTML(learner.fullName)}</span></td><td>${this.escapeHTML(learner.admissionNo)}</td><td>Grade ${this.escapeHTML(learner.grade)}</td><td>${this.escapeHTML(learner.stream || '—')}</td><td>${count}</td></tr>`;
-          }).join('') : '<tr><td colspan="5" class="empty-state-cell">No learners registered yet. Add a learner using the form above.</td></tr>'}
+            const count = records.filter((record) => record.learnerId === learner.id).length;
+            const searchText = `${learner.fullName} ${learner.admissionNo} ${learner.stream || ''}`.toLowerCase();
+            return `<tr data-learner-row data-search="${this.escapeHTML(searchText)}" data-grade="${this.escapeHTML(learner.grade)}"><td><span class="cell-primary">${this.escapeHTML(learner.fullName)}</span></td><td>${this.escapeHTML(learner.admissionNo)}</td><td>Grade ${this.escapeHTML(learner.grade)}</td><td>${this.escapeHTML(learner.stream || '—')}</td><td><span class="learner-record-count">${count}</span></td><td><span class="status-pill ${count ? 'verified' : 'pending'}">${count ? 'Evidence added' : 'No records yet'}</span></td></tr>`;
+          }).join('') : '<tr><td colspan="6" class="empty-state-cell">No learners registered yet. Add the first learner using the form above.</td></tr>'}
           </tbody></table></div>
+          <p id="learnerNoMatches" class="learner-no-matches" hidden>No learners match these filters. Try another name, admission number or grade.</p>
         </div>
+        <p class="import-storage-note">Demo workspace notice: learner profiles and performance records currently remain in this browser only. They are not yet synchronised with the school database.</p>
       </div>`;
     if (window.lucide) window.lucide.createIcons();
+  },
+
+  filterLearnerDirectory() {
+    const search = (document.getElementById('learnerSearchInput')?.value || '').trim().toLowerCase();
+    const grade = document.getElementById('learnerGradeFilter')?.value || '';
+    const rows = [...document.querySelectorAll('#learnerDirectoryRows [data-learner-row]')];
+    let visible = 0;
+    rows.forEach((row) => {
+      const matches = row.dataset.search.includes(search) && (!grade || row.dataset.grade === grade);
+      row.hidden = !matches;
+      if (matches) visible++;
+    });
+    const count = document.getElementById('learnerVisibleCount');
+    if (count) count.textContent = visible;
+    const noMatches = document.getElementById('learnerNoMatches');
+    if (noMatches) noMatches.hidden = visible > 0 || rows.length === 0;
   },
 
   renderPerformanceEntry(section) {
