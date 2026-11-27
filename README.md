@@ -4,7 +4,7 @@
 
 EduLongView is an AI-assisted learner performance analysis and reporting platform. Teachers record learner performance; AI analyses the available evidence and drafts individual reports with recommendations; teachers review and approve those reports before explicitly releasing them to parents or guardians. EduLongView is not a curriculum repository, teaching platform, or automated assessment authority.
 
-EduLongView is an education monitoring and CBC/CBE learner progress and academic monitoring platform designed for teachers and school administrators in refugee and host-community schools, particularly in Kakuma and Kalobeyei, Turkana County, Kenya.
+EduLongView is designed for teachers and school administrators in refugee and host-community schools, particularly in Kakuma and Kalobeyei, Turkana County, Kenya. It focuses on individual learner performance, AI-assisted analysis, teacher-reviewed reports and controlled parent access.
 
 ## Product Scope
 
