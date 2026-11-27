@@ -474,33 +474,38 @@ const EduNavigation = {
         </div>
         ${learners.length ? `
         <div class="panel-card workspace-panel">
-          <div class="panel-header"><div><h3 class="panel-title">New performance record</h3><p class="panel-subtitle">Scores are stored with their maximum possible value. A percentage is calculated for comparison only.</p></div></div>
-          <form id="performanceCreateForm" class="workspace-form">
-            <div class="workspace-form-grid">
-              <label>Learner<select name="learnerId" required><option value="">Select learner</option>${learners.map((learner) => `<option value="${this.escapeHTML(learner.id)}" ${learner.id === selectedLearnerId ? 'selected' : '' }>${this.escapeHTML(learner.fullName)} — ${this.escapeHTML(learner.admissionNo)} (Grade ${this.escapeHTML(learner.grade)})</option>`).join('')}</select></label>
-              <label>Learning area / subject<input name="learningArea" required maxlength="80" placeholder="e.g. Mathematics"></label>
-              <label>Assessment / activity<input name="assessmentTitle" required maxlength="100" placeholder="e.g. Mid-term assessment"></label>
-              <label>Assessment type<select name="assessmentType" required><option value="">Select type</option><option>Classwork</option><option>Homework</option><option>Quiz</option><option>Project</option><option>Practical</option><option>Continuous assessment</option><option>End-of-term assessment</option><option>Teacher observation</option></select></label>
-              <label>Academic year<input name="year" type="number" min="2020" max="2100" value="${new Date().getFullYear()}" required></label>
-              <label>Term<select name="term" required><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></label>
-              <label>Date recorded<input name="date" type="date" value="${new Date().toISOString().slice(0,10)}" required></label>
-              <label>Score achieved<input name="score" type="number" min="0" step="0.01" placeholder="e.g. 18" required></label>
-              <label>Maximum score<input name="maxScore" type="number" min="0.01" step="0.01" placeholder="e.g. 25" required></label>
-              <label>Attendance for this activity<select name="attendance"><option value="Present">Present</option><option value="Late">Late</option><option value="Absent">Absent</option><option value="Not recorded" selected>Not recorded</option></select></label>
-              <label>Participation<select name="participation"><option value="">Not recorded</option><option>Actively participated</option><option>Participated with support</option><option>Limited participation</option><option>Not observed</option></select></label>
-              <label class="workspace-wide">Teacher observation<textarea name="observation" rows="3" maxlength="1200" placeholder="Record specific, factual observations. Avoid unsupported labels or diagnoses."></textarea></label>
-            </div>
-            <div class="workspace-form-actions"><button class="btn btn-primary" type="submit"><i data-lucide="save"></i><span>Save Performance Record</span></button></div>
-          </form>
+          ${(() => {
+            const editing = this.workspaceState.performanceRecords.find((item) => item.id === this.editingPerformanceId);
+            const selected = editing || {};
+            const select = (value, option) => value === option ? 'selected' : '';
+            return `<div class="panel-header"><div><h3 class="panel-title">${editing ? 'Edit performance record' : 'New performance record'}</h3><p class="panel-subtitle">Scores are stored with their maximum possible value. A percentage is calculated for comparison only.</p></div></div>
+            <form id="performanceCreateForm" class="workspace-form" data-edit-id="${this.escapeHTML(editing?.id || '')}">
+              <div class="workspace-form-grid">
+                <label>Learner<select name="learnerId" required><option value="">Select learner</option>${learners.map((learner) => `<option value="${this.escapeHTML(learner.id)}" ${(editing ? editing.learnerId : learner.id === selectedLearnerId ? learner.id : '') === learner.id ? 'selected' : ''}>${this.escapeHTML(learner.fullName)} — ${this.escapeHTML(learner.admissionNo)} (Grade ${this.escapeHTML(learner.grade)})</option>`).join('')}</select></label>
+                <label>Learning area / subject<input name="learningArea" required maxlength="80" placeholder="e.g. Mathematics" value="${this.escapeHTML(selected.learningArea || '')}"></label>
+                <label>Assessment / activity<input name="assessmentTitle" required maxlength="100" placeholder="e.g. Mid-term assessment" value="${this.escapeHTML(selected.assessmentTitle || '')}"></label>
+                <label>Assessment type<select name="assessmentType" required><option value="">Select type</option>${['Classwork','Homework','Quiz','Project','Practical','Continuous assessment','End-of-term assessment','Teacher observation'].map((v) => `<option ${select(selected.assessmentType,v)}>${v}</option>`).join('')}</select></label>
+                <label>Academic year<input name="year" type="number" min="2020" max="2100" value="${selected.year || new Date().getFullYear()}" required></label>
+                <label>Term<select name="term" required>${['Term 1','Term 2','Term 3'].map((v) => `<option ${select(selected.term || 'Term 1',v)}>${v}</option>`).join('')}</select></label>
+                <label>Date recorded<input name="date" type="date" value="${this.escapeHTML(selected.date || new Date().toISOString().slice(0,10))}" required></label>
+                <label>Score achieved<input name="score" type="number" min="0" step="0.01" placeholder="e.g. 18" value="${selected.score ?? ''}" required></label>
+                <label>Maximum score<input name="maxScore" type="number" min="0.01" step="0.01" placeholder="e.g. 25" value="${selected.maxScore ?? ''}" required></label>
+                <label>Attendance for this activity<select name="attendance">${['Present','Late','Absent','Not recorded'].map((v) => `<option ${select(selected.attendance || 'Not recorded',v)}>${v}</option>`).join('')}</select></label>
+                <label>Participation<select name="participation"><option value="">Not recorded</option>${['Actively participated','Participated with support','Limited participation','Not observed'].map((v) => `<option ${select(selected.participation,v)}>${v}</option>`).join('')}</select></label>
+                <label class="workspace-wide">Teacher observation<textarea name="observation" rows="3" maxlength="1200" placeholder="Record specific, factual observations. Avoid unsupported labels or diagnoses.">${this.escapeHTML(selected.observation || '')}</textarea></label>
+              </div>
+              <div class="workspace-form-actions"><button class="btn btn-primary" type="submit"><i data-lucide="save"></i><span>${editing ? 'Update Performance Record' : 'Save Performance Record'}</span></button>${editing ? '<button class="btn btn-secondary" type="button" data-cancel-performance-edit>Cancel</button>' : ''}</div>
+            </form>`;
+          })()}
         </div>` : `
         <div class="panel-card workspace-panel empty-guidance"><h3>Register learners first</h3><p>Performance records must belong to a specific learner. Create learner profiles before entering their assessment results and observations.</p><a class="btn btn-primary" href="#learners" data-route="learners"><i data-lucide="user-plus"></i><span>Open Learners Directory</span></a></div>`}
         <div class="panel-card workspace-panel">
           <div class="panel-header"><div><h3 class="panel-title">Recent learner performance records</h3><p class="panel-subtitle">Showing the latest ${records.length} saved record(s) on this device.</p></div></div>
-          <div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Learning area</th><th>Assessment</th><th>Period</th><th>Score</th><th>Attendance</th></tr></thead><tbody>
+          <div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Learning area</th><th>Assessment</th><th>Period</th><th>Score</th><th>Attendance</th><th>Actions</th></tr></thead><tbody>
           ${records.length ? records.map((record) => {
             const learner = learners.find((item) => item.id === record.learnerId);
-            return `<tr><td><span class="cell-primary">${this.escapeHTML(learner?.fullName || 'Learner not found')}</span><span class="cell-sub">${this.escapeHTML(learner?.admissionNo || '')}</span></td><td>${this.escapeHTML(record.learningArea)}</td><td><span class="cell-primary">${this.escapeHTML(record.assessmentTitle)}</span><span class="cell-sub">${this.escapeHTML(record.assessmentType)}</span></td><td>${this.escapeHTML(record.year)} · ${this.escapeHTML(record.term)}</td><td><strong>${record.score} / ${record.maxScore}</strong><span class="cell-sub">${record.percentage.toFixed(1)}%</span></td><td>${this.escapeHTML(record.attendance)}</td></tr>`;
-          }).join('') : '<tr><td colspan="6" class="empty-state-cell">No performance records yet. Saved entries will appear here.</td></tr>'}
+            return `<tr><td><span class="cell-primary">${this.escapeHTML(learner?.fullName || 'Learner not found')}</span><span class="cell-sub">${this.escapeHTML(learner?.admissionNo || '')}</span></td><td>${this.escapeHTML(record.learningArea)}</td><td><span class="cell-primary">${this.escapeHTML(record.assessmentTitle)}</span><span class="cell-sub">${this.escapeHTML(record.assessmentType)}</span></td><td>${this.escapeHTML(record.year)} · ${this.escapeHTML(record.term)}</td><td><strong>${record.score} / ${record.maxScore}</strong><span class="cell-sub">${record.percentage.toFixed(1)}%</span></td><td>${this.escapeHTML(record.attendance)}</td><td><div class="record-actions"><button class="btn btn-secondary btn-sm" type="button" data-edit-performance="${this.escapeHTML(record.id)}">Edit</button><button class="btn btn-secondary btn-sm" type="button" data-delete-performance="${this.escapeHTML(record.id)}">Delete</button></div></td></tr>`;
+          }).join('') : '<tr><td colspan="7" class="empty-state-cell">No performance records yet. Saved entries will appear here.</td></tr>'}
           </tbody></table></div>
         </div>
       </div>`;
@@ -901,8 +906,17 @@ const EduNavigation = {
     }
     const score = Number(values.score), maxScore = Number(values.maxScore);
     if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0 || score < 0 || score > maxScore) { window.alert('Enter a valid score. The score achieved cannot be greater than the maximum score.'); return; }
-    this.workspaceState.performanceRecords.push({ id:'performance-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), learnerId:values.learnerId, learningArea:values.learningArea.trim(), assessmentTitle:values.assessmentTitle.trim(), assessmentType:values.assessmentType, year:Number(values.year), term:values.term, date:values.date, score:score, maxScore:maxScore, percentage:Number(((score / maxScore) * 100).toFixed(2)), attendance:values.attendance, participation:values.participation, observation:values.observation.trim(), createdAt:new Date().toISOString() });
-    EduDataStore.save(this.workspaceState); this.syncWarningBadge(); this.renderPerformanceEntry(document.getElementById('view-assessments')); this.showWorkspaceToast('Performance record saved.');
+    const editId = form.dataset.editId || '';
+    const existing = editId ? this.workspaceState.performanceRecords.find((item) => item.id === editId) : null;
+    if (editId && !existing) { this.showWorkspaceToast('Performance record could not be found.'); return; }
+    const recordData = { learnerId:values.learnerId, learningArea:values.learningArea.trim(), assessmentTitle:values.assessmentTitle.trim(), assessmentType:values.assessmentType, year:Number(values.year), term:values.term, date:values.date, score, maxScore, percentage:Number(((score / maxScore) * 100).toFixed(2)), attendance:values.attendance, participation:values.participation, observation:values.observation.trim(), updatedAt:new Date().toISOString() };
+    if (existing) { Object.assign(existing, recordData); this.editingPerformanceId = null; }
+    else this.workspaceState.performanceRecords.push(Object.assign({ id:'performance-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), createdAt:new Date().toISOString() }, recordData));
+    EduDataStore.save(this.workspaceState); this.syncWarningBadge();
+    this.renderPerformanceEntry(document.getElementById('view-assessments'));
+    this.renderLearnerDirectory(document.getElementById('view-learners'));
+    this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
+    this.showWorkspaceToast(existing ? 'Performance record updated.' : 'Performance record saved.');
   },
 
   bindEvents() {
@@ -959,6 +973,34 @@ const EduNavigation = {
         this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
         this.renderReportsWorkspace(document.getElementById('view-reports'));
         this.showWorkspaceToast('Learner and linked browser records deleted.');
+        return;
+      }
+      const cancelPerformanceEdit = e.target.closest('[data-cancel-performance-edit]');
+      if (cancelPerformanceEdit) {
+        this.editingPerformanceId = null;
+        this.renderPerformanceEntry(document.getElementById('view-assessments'));
+        return;
+      }
+      const editPerformanceTrigger = e.target.closest('[data-edit-performance]');
+      if (editPerformanceTrigger) {
+        this.editingPerformanceId = editPerformanceTrigger.getAttribute('data-edit-performance');
+        this.renderPerformanceEntry(document.getElementById('view-assessments'));
+        document.getElementById('performanceCreateForm')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+      const deletePerformanceTrigger = e.target.closest('[data-delete-performance]');
+      if (deletePerformanceTrigger) {
+        const recordId = deletePerformanceTrigger.getAttribute('data-delete-performance');
+        const record = this.workspaceState.performanceRecords.find((item) => item.id === recordId);
+        if (!record) return;
+        if (!window.confirm('Delete this performance record? Any saved report drafts remain as historical snapshots and will not be rewritten.')) return;
+        this.workspaceState.performanceRecords = this.workspaceState.performanceRecords.filter((item) => item.id !== recordId);
+        this.editingPerformanceId = null;
+        EduDataStore.save(this.workspaceState);
+        this.syncWarningBadge();
+        this.renderPerformanceEntry(document.getElementById('view-assessments'));
+        this.renderLearnerDirectory(document.getElementById('view-learners'));
+        this.showWorkspaceToast('Performance record deleted.');
         return;
       }
       const addEvidenceTrigger = e.target.closest('[data-add-evidence]');
