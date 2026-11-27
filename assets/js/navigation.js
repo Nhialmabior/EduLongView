@@ -15,7 +15,7 @@ const MODULE_BLUEPRINTS = {
   },
   'classes': {
     title: 'Classes & Streams',
-    badge: 'Module Ready for Phase 2',
+    badge: 'Working · Browser records',
     description: 'Manage Grade 1 through Grade 9 streams, class teachers, enrollment capacity, and comparative stream benchmarks.',
     pillars: [
       { title: 'Stream Performance Comparison', detail: 'Compare East, West, North, and South streams across identical assessment papers.' },
@@ -116,6 +116,64 @@ const EduNavigation = {
     if (!Array.isArray(this.workspaceState.performanceRecords)) this.workspaceState.performanceRecords = [];
     if (!Array.isArray(this.workspaceState.learnerReports)) this.workspaceState.learnerReports = [];
     EduDataStore.save(this.workspaceState);
+    this.syncSchoolIdentity();
+    this.syncWarningBadge();
+  },
+
+  syncSchoolIdentity() {
+    const school = this.workspaceState.school || DEFAULT_DEMO_DATA.school;
+    const nameElement = document.querySelector('.school-name');
+    const locationElement = document.querySelector('.school-location');
+    if (nameElement) nameElement.textContent = school.name;
+    if (locationElement) locationElement.textContent = school.location;
+  },
+
+  calculateEvidenceFlags() {
+    const learners = this.workspaceState.learners || [];
+    const records = this.workspaceState.performanceRecords || [];
+    const school = this.workspaceState.school || DEFAULT_DEMO_DATA.school;
+    const attentionThreshold = Number(school.attentionIndexThreshold ?? 50);
+    const dropThreshold = Number(school.dropAlertThreshold ?? 12);
+    return learners.map((learner) => {
+      const learnerRecords = records.filter((record) => record.learnerId === learner.id);
+      const scored = learnerRecords.filter((record) => Number.isFinite(Number(record.percentage)));
+      const mean = scored.length ? scored.reduce((sum, record) => sum + Number(record.percentage), 0) / scored.length : null;
+      const absences = learnerRecords.filter((record) => String(record.attendance).toLowerCase() === 'absent').length;
+      const reasons = [];
+      if (mean !== null && mean < attentionThreshold) {
+        reasons.push(`Mean recorded score is ${mean.toFixed(1)}%, below the ${attentionThreshold}% attention threshold.`);
+      }
+
+      const areaGroups = {};
+      learnerRecords.forEach((record) => {
+        const area = String(record.learningArea || 'Unspecified');
+        (areaGroups[area] = areaGroups[area] || []).push(record);
+      });
+      let largestDrop = null;
+      Object.keys(areaGroups).forEach((area) => {
+        const ordered = areaGroups[area].slice()
+          .sort((a, b) => String(a.date || a.createdAt).localeCompare(String(b.date || b.createdAt)))
+          .filter((record) => Number.isFinite(Number(record.percentage)));
+        if (ordered.length < 2) return;
+        const first = Number(ordered[0].percentage);
+        const latest = Number(ordered[ordered.length - 1].percentage);
+        const drop = first - latest;
+        if (drop >= dropThreshold && (largestDrop === null || drop > largestDrop.drop)) {
+          largestDrop = { area, drop };
+        }
+      });
+      if (largestDrop) {
+        reasons.push(`${largestDrop.area}: the latest result is ${largestDrop.drop.toFixed(1)} percentage points below the first repeated result, exceeding the ${dropThreshold}-point alert threshold.`);
+      }
+      if (absences > 2) reasons.push(`${absences} absence entries were recorded.`);
+      if (!learnerRecords.length || !reasons.length) return null;
+      return { learner, mean, absences, reasons, level: mean !== null && mean < attentionThreshold ? 'High' : 'Moderate' };
+    }).filter(Boolean);
+  },
+
+  syncWarningBadge() {
+    const badge = document.getElementById('sidebarWarningBadge');
+    if (badge) badge.textContent = this.calculateEvidenceFlags().length;
   },
 
   escapeHTML(value) {
@@ -127,6 +185,26 @@ const EduNavigation = {
       const section = document.getElementById(`view-${route}`);
       if (!section) return;
 
+      if (route === 'classes') {
+        this.renderClasses(section);
+        return;
+      }
+      if (route === 'analytics') {
+        this.renderAnalytics(section);
+        return;
+      }
+      if (route === 'early-warnings') {
+        this.renderEarlyWarnings(section);
+        return;
+      }
+      if (route === 'reports') {
+        this.renderReportsWorkspace(section);
+        return;
+      }
+      if (route === 'settings') {
+        this.renderSettings(section);
+        return;
+      }
       if (route === 'subjects') {
         this.renderLearnerReports(section);
         return;
@@ -168,6 +246,122 @@ const EduNavigation = {
         </div>
       `;
     });
+  },
+
+  renderClasses(section) {
+    const learners = this.workspaceState.learners || [];
+    const bands = [
+      { name: 'Lower Primary', grades: [1, 2, 3] },
+      { name: 'Upper Primary', grades: [4, 5, 6] },
+      { name: 'Junior School', grades: [7, 8, 9] }
+    ];
+    const cards = bands.map((band) => {
+      const bandLearners = learners.filter((learner) => band.grades.includes(Number(learner.grade)));
+      const streams = Array.from(new Set(bandLearners.map((learner) => learner.stream || 'Unassigned')));
+      return `<article class="panel-card module-stat-card">
+        <span class="module-badge">${band.name}</span>
+        <h3>${bandLearners.length} registered learners</h3>
+        <p>${streams.length ? streams.join(', ') : 'No class streams registered yet'}</p>
+        <div class="module-stat-row"><span>Grades</span><strong>${band.grades.map((grade) => `G${grade}`).join(' · ')}</strong></div>
+      </article>`;
+    }).join('');
+    section.innerHTML = `<div class="module-shell">
+      <div class="module-header"><div><span class="module-badge">Grades 1–9</span><h2>Classes & Streams</h2><p>Review registered learners by grade band and class stream.</p></div><a href="#learners" class="btn btn-primary" data-route="learners"><i data-lucide="user-plus"></i><span>Manage Learners</span></a></div>
+      <div class="module-stat-grid">${cards}</div>
+      <div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">Registered class summary</h3><p class="panel-subtitle">${learners.length} learner profile(s) in this browser</p></div></div>
+      <div class="table-responsive"><table class="data-table"><thead><tr><th>Grade</th><th>Class / Stream</th><th>Learners</th></tr></thead><tbody>
+      ${Array.from({length: 9}, (_, index) => index + 1).map((grade) => {
+        const gradeLearners = learners.filter((learner) => Number(learner.grade) === grade);
+        const streams = Array.from(new Set(gradeLearners.map((learner) => learner.stream || 'Unassigned')));
+        return `<tr><td><strong>Grade ${grade}</strong></td><td>${streams.length ? streams.map((stream) => this.escapeHTML(stream)).join(', ') : '—'}</td><td>${gradeLearners.length}</td></tr>`;
+      }).join('')}
+      </tbody></table></div></div>
+    </div>`;
+    if (window.lucide) window.lucide.createIcons();
+  },
+
+  renderAnalytics(section) {
+    const records = this.workspaceState.performanceRecords || [];
+    const learnerCount = new Set(records.map((record) => record.learnerId)).size;
+    const mean = records.length ? records.reduce((sum, record) => sum + Number(record.percentage || 0), 0) / records.length : null;
+    section.innerHTML = `<div class="module-shell">
+      <div class="module-header"><div><span class="module-badge">Evidence-based analysis</span><h2>Learning Performance Analysis</h2><p>Explore the saved assessment evidence. All figures come from this browser’s learner records.</p></div><a href="#assessments" class="btn btn-secondary" data-route="assessments"><i data-lucide="clipboard-plus"></i><span>Add Evidence</span></a></div>
+      <div class="module-stat-grid">
+        <article class="panel-card module-stat-card"><span class="kpi-label">Saved records</span><h3>${records.length}</h3><p>Across ${learnerCount} learner(s)</p></article>
+        <article class="panel-card module-stat-card"><span class="kpi-label">Mean score</span><h3>${mean === null ? '—' : mean.toFixed(1) + '%'}</h3><p>Recorded percentage mean</p></article>
+        <article class="panel-card module-stat-card"><span class="kpi-label">Learning areas</span><h3>${new Set(records.map((record) => record.learningArea)).size}</h3><p>Areas represented</p></article>
+      </div>
+      <div class="charts-grid"><article class="panel-card"><div class="panel-header"><div><h3 class="panel-title">Performance by learning area</h3><p class="panel-subtitle">Mean saved percentage</p></div></div><div class="chart-canvas-wrap"><canvas id="analyticsSubjectChart"></canvas></div></article>
+      <article class="panel-card"><div class="panel-header"><div><h3 class="panel-title">Evidence distribution</h3><p class="panel-subtitle">Saved records by reporting term</p></div></div><div class="chart-canvas-wrap"><canvas id="analyticsTermChart"></canvas></div></article></div>
+    </div>`;
+    requestAnimationFrame(() => this.renderAnalyticsCharts());
+    if (window.lucide) window.lucide.createIcons();
+  },
+
+  renderAnalyticsCharts() {
+    if (typeof Chart === 'undefined') return;
+    const records = this.workspaceState.performanceRecords || [];
+    const groups = {};
+    records.forEach((record) => {
+      const key = record.learningArea || 'Unspecified';
+      (groups[key] = groups[key] || []).push(Number(record.percentage || 0));
+    });
+    const areaLabels = Object.keys(groups);
+    const areaMeans = areaLabels.map((key) => groups[key].reduce((sum, value) => sum + value, 0) / groups[key].length);
+    const termLabels = ['Term 1', 'Term 2', 'Term 3'];
+    const termCounts = termLabels.map((term) => records.filter((record) => record.term === term).length);
+    const subjectCanvas = document.getElementById('analyticsSubjectChart');
+    const termCanvas = document.getElementById('analyticsTermChart');
+    if (subjectCanvas) {
+      new Chart(subjectCanvas, { type: 'bar', data: { labels: areaLabels, datasets: [{ label: 'Mean %', data: areaMeans, backgroundColor: '#0F766E', borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 }, x: { ticks: { font: { size: 11 } } } }, plugins: { legend: { display: false } } } });
+    }
+    if (termCanvas) {
+      new Chart(termCanvas, { type: 'doughnut', data: { labels: termLabels, datasets: [{ data: termCounts, backgroundColor: ['#0F213A', '#0F766E', '#D97706'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+    }
+  },
+
+  renderEarlyWarnings(section) {
+    const flags = this.calculateEvidenceFlags();
+    section.innerHTML = `<div class="module-shell">
+      <div class="module-header"><div><span class="module-badge">Explainable intervention</span><h2>Early-Warning Triage</h2><p>Flags are calculated only from saved evidence and do not represent diagnoses.</p></div><a href="#assessments" class="btn btn-primary" data-route="assessments"><i data-lucide="clipboard-plus"></i><span>Add Learner Evidence</span></a></div>
+      ${flags.length ? `<div class="warning-list">${flags.map((flag) => `<div class="warning-item ${flag.level === 'High' ? 'critical' : ''}"><div class="warning-item-top"><div><span class="learner-ident">${this.escapeHTML(flag.learner.fullName)}</span><span class="learner-stream">${this.escapeHTML(flag.learner.stream || `Grade ${flag.learner.grade}`)} · ${this.escapeHTML(flag.learner.admissionNo)}</span></div><span class="risk-tag ${flag.level.toLowerCase() === 'high' ? 'high' : 'moderate'}">${flag.level} Priority</span></div><p class="warning-reason">${flag.reasons.map((reason) => this.escapeHTML(reason)).join(' ')}</p><div class="warning-metrics"><span>Recorded mean: <strong>${flag.mean === null ? '—' : flag.mean.toFixed(1) + '%'}</strong></span><span>Absence entries: <strong>${flag.absences}</strong></span></div></div>`).join('')}</div>` : `<div class="panel-card workspace-panel empty-guidance"><h3>No evidence-based flags</h3><p>No saved learner currently meets the configured low-score, term-drop or repeated-absence rules. Continue reviewing the underlying records.</p></div>`}
+    </div>`;
+    if (window.lucide) window.lucide.createIcons();
+  },
+
+  renderReportsWorkspace(section) {
+    const reports = this.workspaceState.learnerReports || [];
+    const learners = this.workspaceState.learners || [];
+    section.innerHTML = `<div class="module-shell">
+      <div class="module-header"><div><span class="module-badge">Private teacher drafts</span><h2>Reports & Print</h2><p>Review and print individual report drafts. Parent release is not enabled in this browser-only workspace.</p></div><a href="#subjects" class="btn btn-primary" data-route="subjects"><i data-lucide="file-plus-2"></i><span>Prepare New Draft</span></a></div>
+      <div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">Individual report drafts</h3><p class="panel-subtitle">${reports.length} private draft(s)</p></div></div>
+      <div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Evidence</th><th>Updated</th><th>Status</th><th>Action</th></tr></thead><tbody>${reports.length ? reports.map((report) => {
+        const learner = learners.find((item) => item.id === report.learnerId);
+        return `<tr><td><strong>${this.escapeHTML(learner?.fullName || 'Learner not found')}</strong></td><td>${report.evidenceCount || 0} records</td><td>${this.escapeHTML(new Date(report.updatedAt).toLocaleString())}</td><td><span class="status-pill pending">Private draft</span></td><td><button type="button" class="btn btn-secondary btn-sm" data-edit-report="${this.escapeHTML(report.id)}">Open draft</button><button type="button" class="btn btn-secondary btn-sm" data-print-report="${this.escapeHTML(report.id)}">Print</button><button type="button" class="btn btn-secondary btn-sm" data-delete-report="${this.escapeHTML(report.id)}">Delete</button></td></tr>`;
+      }).join('') : '<tr><td colspan="5" class="empty-state-cell">No report drafts have been generated yet.</td></tr>'}</tbody></table></div></div>
+    </div>`;
+    if (window.lucide) window.lucide.createIcons();
+  },
+
+  printReport(reportId) {
+    const report = this.workspaceState.learnerReports.find((item) => item.id === reportId);
+    if (!report) return;
+    const learner = this.workspaceState.learners.find((item) => item.id === report.learnerId);
+    const popup = window.open('', '_blank', 'width=900,height=700');
+    if (!popup) { this.showWorkspaceToast('Allow pop-ups to print a report.'); return; }
+    popup.document.write(`<!doctype html><html><head><title>EduLongView Report</title><style>body{font-family:Arial,sans-serif;color:#0f172a;max-width:800px;margin:40px auto;line-height:1.5}h1{font-size:24px}h2{font-size:16px;border-bottom:1px solid #ccc;padding-bottom:6px}.meta{color:#475569}.draft{color:#92400e}pre{white-space:pre-wrap;font-family:Arial,sans-serif}button{padding:8px 14px}@media print{button{display:none}}</style></head><body><button onclick="window.print()">Print report</button><h1>EduLongView Learner Progress Report</h1><p class="draft"><strong>PRIVATE TEACHER DRAFT — NOT APPROVED OR RELEASED</strong></p><p class="meta"><strong>Learner:</strong> ${this.escapeHTML(learner?.fullName || 'Unknown')} · ${this.escapeHTML(learner?.admissionNo || '')} · Grade ${this.escapeHTML(learner?.grade || '—')}</p><h2>Performance summary</h2><pre>${this.escapeHTML(report.summary)}</pre><h2>Identified strengths</h2><pre>${this.escapeHTML(report.strengths)}</pre><h2>Areas needing attention</h2><pre>${this.escapeHTML(report.support)}</pre><h2>Recommended next steps</h2><pre>${this.escapeHTML(report.recommendations)}</pre><h2>Teacher comment</h2><pre>${this.escapeHTML(report.teacherComment || 'No comment recorded.')}</pre></body></html>`);
+    popup.document.close();
+  },
+
+  renderSettings(section) {
+    const school = this.workspaceState.school || DEFAULT_DEMO_DATA.school;
+    section.innerHTML = `<div class="module-shell">
+      <div class="module-header"><div><span class="module-badge">Browser workspace settings</span><h2>School & Data Settings</h2><p>Configure local demo preferences and protect your browser records with backup tools.</p></div></div>
+      <div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">School context</h3><p class="panel-subtitle">School identity displayed in the current browser workspace.</p></div></div>
+      <form id="settingsForm" class="workspace-form"><div class="workspace-form-grid"><label>School name<input name="schoolName" maxlength="120" value="${this.escapeHTML(school.name)}" required></label><label>Location<input name="schoolLocation" maxlength="160" value="${this.escapeHTML(school.location)}" required></label><label>Attention threshold (%)<input name="attentionThreshold" type="number" min="0" max="100" value="${Number(school.attentionIndexThreshold)}" required></label><label>Term-drop alert (percentage points)<input name="dropThreshold" type="number" min="0" max="100" value="${Number(school.dropAlertThreshold)}" required></label></div><div class="workspace-form-actions"><button type="submit" class="btn btn-primary"><i data-lucide="save"></i><span>Save Settings</span></button></div></form></div>
+      <div class="roadmap-grid"><div class="roadmap-card"><h4>Export backup</h4><p>Download all learner profiles, performance records and report drafts as JSON.</p><button type="button" class="btn btn-secondary btn-sm" data-export-state><i data-lucide="download"></i><span>Export JSON</span></button></div><div class="roadmap-card"><h4>Import backup</h4><p>Restore a previously exported EduLongView backup file.</p><input id="stateRestoreFile" type="file" accept=".json,application/json"></div><div class="roadmap-card"><h4>Reset demo</h4><p>Replace this browser workspace with the original illustrative dataset.</p><button type="button" class="btn btn-secondary btn-sm" data-reset-workspace><i data-lucide="rotate-ccw"></i><span>Reset Workspace</span></button></div></div>
+    </div>`;
+    if (window.lucide) window.lucide.createIcons();
   },
 
   renderLearnerDirectory(section) {
@@ -298,6 +492,7 @@ const EduNavigation = {
         createdAt: new Date().toISOString()
       });
       EduDataStore.save(this.workspaceState);
+      this.syncWarningBadge();
       this.renderLearnerDirectory(document.getElementById('view-learners'));
       this.showWorkspaceToast('Learner profile saved.');
       return;
@@ -327,6 +522,7 @@ const EduNavigation = {
       createdAt: new Date().toISOString()
     });
     EduDataStore.save(this.workspaceState);
+    this.syncWarningBadge();
     this.renderPerformanceEntry(document.getElementById('view-assessments'));
     this.showWorkspaceToast('Performance record saved.');
   },
@@ -555,6 +751,7 @@ const EduNavigation = {
       imported++;
     });
     EduDataStore.save(this.workspaceState);
+    this.syncWarningBadge();
     this.pendingImportPreview=null;
     this.renderImportWorkspace(document.getElementById('view-import-marks'));
     this.showWorkspaceToast(imported+' result(s) imported; '+duplicates+' duplicate(s) skipped.');
@@ -569,11 +766,63 @@ const EduNavigation = {
     link.href=url;link.download='edulongview-performance-import-template.csv';document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
   },
 
+  exportWorkspaceBackup() {
+    const blob = new Blob([JSON.stringify(this.workspaceState, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `edulongview-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    this.showWorkspaceToast('Workspace backup exported.');
+  },
+
+  async restoreWorkspaceBackup(file) {
+    if (!file) return;
+    try {
+      const restored = JSON.parse(await file.text());
+      if (!restored || typeof restored !== 'object' || !restored.periods) throw new Error('This is not a valid EduLongView backup.');
+      restored.learners = Array.isArray(restored.learners) ? restored.learners : [];
+      restored.performanceRecords = Array.isArray(restored.performanceRecords) ? restored.performanceRecords : [];
+      restored.learnerReports = Array.isArray(restored.learnerReports) ? restored.learnerReports : [];
+      EduDataStore.save(restored);
+      this.workspaceState = restored;
+      this.ensureWorkspaceCollections();
+      this.renderFoundationViews();
+      this.navigate('settings', false);
+      this.showWorkspaceToast('Workspace backup restored.');
+    } catch (error) {
+      this.showWorkspaceToast(error.message || 'Could not restore this backup.');
+    }
+  },
+
   handleWorkspaceSubmit(event) {
     const form = event.target;
-    if (form.id !== 'learnerCreateForm' && form.id !== 'performanceCreateForm' && form.id !== 'reportGenerateForm' && form.id !== 'reportSaveForm') return;
+    if (form.id !== 'learnerCreateForm' && form.id !== 'performanceCreateForm' && form.id !== 'reportGenerateForm' && form.id !== 'reportSaveForm' && form.id !== 'settingsForm') return;
     event.preventDefault();
     const values = Object.fromEntries(new FormData(form).entries());
+    if (form.id === 'settingsForm') {
+      const attentionThreshold = Number(values.attentionThreshold);
+      const dropThreshold = Number(values.dropThreshold);
+      if (!Number.isFinite(attentionThreshold) || attentionThreshold < 0 || attentionThreshold > 100 || !Number.isFinite(dropThreshold) || dropThreshold < 0 || dropThreshold > 100) {
+        window.alert('Enter threshold values from 0 to 100.');
+        return;
+      }
+      this.workspaceState.school = Object.assign({}, this.workspaceState.school || DEFAULT_DEMO_DATA.school, {
+        name: values.schoolName.trim(),
+        location: values.schoolLocation.trim(),
+        attentionIndexThreshold: attentionThreshold,
+        dropAlertThreshold: dropThreshold
+      });
+      EduDataStore.save(this.workspaceState);
+      this.syncSchoolIdentity();
+      this.syncWarningBadge();
+      this.renderSettings(document.getElementById('view-settings'));
+      this.showWorkspaceToast('Workspace settings saved.');
+      return;
+    }
     if (form.id === 'reportGenerateForm') {
       const analysis = this.analyseLearner(values.learnerId);
       if (!analysis) return;
@@ -607,29 +856,81 @@ const EduNavigation = {
       const admissionNo = values.admissionNo.trim();
       if (this.workspaceState.learners.some((learner) => learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) { window.alert('That admission / learner number is already registered.'); return; }
       this.workspaceState.learners.push({ id:'learner-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), fullName:values.fullName.trim(), admissionNo:admissionNo, grade:Number(values.grade), stream:values.stream.trim(), createdAt:new Date().toISOString() });
-      EduDataStore.save(this.workspaceState); this.renderLearnerDirectory(document.getElementById('view-learners')); this.showWorkspaceToast('Learner profile saved.'); return;
+      EduDataStore.save(this.workspaceState); this.syncWarningBadge(); this.renderLearnerDirectory(document.getElementById('view-learners')); this.showWorkspaceToast('Learner profile saved.'); return;
     }
     const score = Number(values.score), maxScore = Number(values.maxScore);
     if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0 || score < 0 || score > maxScore) { window.alert('Enter a valid score. The score achieved cannot be greater than the maximum score.'); return; }
     this.workspaceState.performanceRecords.push({ id:'performance-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), learnerId:values.learnerId, learningArea:values.learningArea.trim(), assessmentTitle:values.assessmentTitle.trim(), assessmentType:values.assessmentType, year:Number(values.year), term:values.term, date:values.date, score:score, maxScore:maxScore, percentage:Number(((score / maxScore) * 100).toFixed(2)), attendance:values.attendance, participation:values.participation, observation:values.observation.trim(), createdAt:new Date().toISOString() });
-    EduDataStore.save(this.workspaceState); this.renderPerformanceEntry(document.getElementById('view-assessments')); this.showWorkspaceToast('Performance record saved.');
+    EduDataStore.save(this.workspaceState); this.syncWarningBadge(); this.renderPerformanceEntry(document.getElementById('view-assessments')); this.showWorkspaceToast('Performance record saved.');
   },
 
   bindEvents() {
     // Route links across sidebar and body
     document.addEventListener('submit', (event) => this.handleWorkspaceSubmit(event));
-    document.addEventListener('change', (event) => { if (event.target.id === 'performanceImportFile') this.readImportFile(event.target.files?.[0]); });
-    document.addEventListener('input', (event) => { if (event.target.id === 'learnerSearchInput') this.filterLearnerDirectory(); });
-    document.addEventListener('change', (event) => { if (event.target.id === 'learnerGradeFilter') this.filterLearnerDirectory(); });
+    // File uploads, workspace restoration and learner directory filters
+    document.addEventListener('change', (event) => {
+      if (event.target.id === 'performanceImportFile') {
+        this.readImportFile(event.target.files?.[0]);
+      }
+      if (event.target.id === 'stateRestoreFile') {
+        this.restoreWorkspaceBackup(event.target.files?.[0]);
+      }
+      if (event.target.id === 'learnerGradeFilter') {
+        this.filterLearnerDirectory();
+      }
+    });
+
+    document.addEventListener('input', (event) => {
+      if (event.target.id === 'learnerSearchInput') {
+        this.filterLearnerDirectory();
+      }
+    });
     document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-delete-report]')) {
+        const reportId = e.target.closest('[data-delete-report]').getAttribute('data-delete-report');
+        if (window.confirm('Delete this private report draft?')) {
+          this.workspaceState.learnerReports = this.workspaceState.learnerReports.filter((report) => report.id !== reportId);
+          EduDataStore.save(this.workspaceState);
+          this.renderReportsWorkspace(document.getElementById('view-reports'));
+          this.showWorkspaceToast('Private report draft deleted.');
+        }
+        return;
+      }
+      if (e.target.closest('[data-print-report]')) {
+        this.printReport(e.target.closest('[data-print-report]').getAttribute('data-print-report'));
+        return;
+      }
+      if (e.target.closest('[data-export-state]')) {
+        this.exportWorkspaceBackup();
+        return;
+      }
+      if (e.target.closest('[data-reset-workspace]')) {
+        if (window.confirm('Reset all browser learners, evidence and reports to the demo dataset?')) {
+          this.workspaceState = EduDataStore.reset();
+          this.ensureWorkspaceCollections();
+          this.renderFoundationViews();
+          this.navigate('overview', true);
+          this.showWorkspaceToast('Browser workspace reset to demo data.');
+        }
+        return;
+      }
       if (e.target.closest('[data-download-import-template]')) { this.downloadImportTemplate(); return; }
       if (e.target.closest('[data-clear-import-preview]')) { this.pendingImportPreview=null; this.renderImportWorkspace(document.getElementById('view-import-marks')); return; }
       if (e.target.closest('[data-confirm-import]')) { this.confirmImport(); return; }
       const editReportTrigger = e.target.closest('[data-edit-report]');
       if (editReportTrigger) {
-        this.renderReportEditor(editReportTrigger.getAttribute('data-edit-report'));
-        const host = document.getElementById('reportEditorHost');
-        if (host) host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        const reportId = editReportTrigger.getAttribute('data-edit-report');
+        const report = this.workspaceState.learnerReports.find((item) => item.id === reportId);
+        if (!report) return;
+        if (window.location.hash !== '#subjects') {
+          this.navigate('subjects', true);
+          this.renderLearnerReports(document.getElementById('view-subjects'), report.learnerId);
+        }
+        requestAnimationFrame(() => {
+          this.renderReportEditor(reportId);
+          const host = document.getElementById('reportEditorHost');
+          if (host) host.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
         return;
       }
       const routeTrigger = e.target.closest('[data-route]');
@@ -679,6 +980,7 @@ const EduNavigation = {
 
   navigate(route, pushHash = true) {
     const targetSection = document.getElementById(`view-${route}`) ? route : 'overview';
+    this.syncWarningBadge();
 
     document.querySelectorAll('.view-section').forEach((sec) => {
       sec.classList.toggle('active', sec.id === `view-${targetSection}`);
@@ -704,5 +1006,3 @@ const EduNavigation = {
     if (typeof this.onRouteChange === 'function') {
       this.onRouteChange(targetSection);
     }
-  }
-};
