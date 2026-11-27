@@ -104,3 +104,19 @@ python -m pytest -q
 ```
 
 The tests cover the health route, missing/incorrect authentication, a successful mocked draft, invalid scores, duplicate evidence IDs and rejection of unexpected personal fields. The successful draft test mocks the provider adapter; it does not call a paid AI service.
+
+
+## School identity and access-control foundation
+
+The first school-identity SQL schema is in `sql/001_school_identity.sql`.
+
+It creates:
+- `schools`: one isolated organisation per school.
+- `school_memberships`: one user-to-school membership with the roles `school_admin` or `teacher`.
+- `school_audit_events`: metadata-only audit trail for administrative actions.
+- Row Level Security policies so signed-in users can read only their own membership and school; school administrators can read memberships and audit events for their own school.
+- No browser-authenticated INSERT, UPDATE or DELETE permissions on these identity tables. Membership changes must go through the trusted backend after role checks.
+
+**Important setup status:** this repository contains the SQL foundation, but it has not been applied to a Supabase project. The connected Supabase workspace currently has no active EduLongView project. Do not apply this migration to another project's database. A dedicated active EduLongView Supabase project must be selected before enabling sign-in or teacher invitations.
+
+The first school and its first school administrator must be provisioned through a controlled setup process. Public self-assignment of the `school_admin` role is intentionally not permitted.
