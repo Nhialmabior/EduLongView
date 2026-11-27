@@ -45,6 +45,18 @@ create table if not exists public.school_audit_events (
 create index if not exists school_audit_events_school_created_idx
   on public.school_audit_events(school_id, created_at desc);
 
+create index if not exists school_memberships_invited_by_idx
+  on public.school_memberships(invited_by)
+  where invited_by is not null;
+
+create index if not exists school_audit_events_actor_user_idx
+  on public.school_audit_events(actor_user_id)
+  where actor_user_id is not null;
+
+create index if not exists school_audit_events_target_user_idx
+  on public.school_audit_events(target_user_id)
+  where target_user_id is not null;
+
 -- This narrowly scoped SECURITY DEFINER helper is required to avoid recursive
 -- membership-table RLS checks. It lives in a non-exposed schema, fixes search_path,
 -- and derives identity only from the verified Supabase auth.uid().
