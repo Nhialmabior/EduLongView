@@ -8,7 +8,7 @@ const MODULE_BLUEPRINTS = {
     badge: 'Module Ready for Phase 2',
     description: 'Centralized learner registry with admission numbers, class stream assignments, attendance context, and longitudinal academic profiles.',
     pillars: [
-      { title: 'Learner Profiles', detail: 'Longitudinal learning-outcome progress, competency strengths, learner support needs, and teacher intervention notes.' },
+      { title: 'Learner Profiles', detail: 'Current and historical performance records, attendance context, teacher observations, support needs and individual progress history.' },
       { title: 'Stream & Cohort Filters', detail: 'Filter across Grades 1–9 streams, gender balance, and support categories without losing context.' },
       { title: 'LocalStorage Persistence', detail: 'Add, edit, or search learner records directly in browser storage with instant CSV export.' }
     ]
@@ -34,33 +34,33 @@ const MODULE_BLUEPRINTS = {
     ]
   },
   'assessments': {
-    title: 'Assessments & Markbooks',
+    title: 'Learner Performance Records',
     badge: 'Module Ready for Phase 2',
-    description: 'Create and review formative and summative assessments linked to grade-level learning areas, strands, sub-strands, and outcomes.',
+    description: 'Record and review learner assessment results and other performance evidence by grade, class, learning area and reporting period.',
     pillars: [
-      { title: 'Structured Mark Entry', detail: 'Teacher-friendly evidence entry with rubric/descriptor selection and validation.' },
-      { title: 'Completion Tracking', detail: 'See which subject teachers have submitted marks and which streams are still pending.' },
-      { title: 'Automatic Calculations', detail: 'Summaries of achievement evidence and learner progress; avoid ranking learners as the default measure.' }
+      { title: 'Structured Mark Entry', detail: 'Simple entry of scores, achievement descriptors where the school uses them, attendance, participation and teacher observations.' },
+      { title: 'Completion Tracking', detail: 'Track which learner performance records have been entered, checked or are still missing.' },
+      { title: 'Automatic Calculations', detail: 'Calculate learner-level summaries and changes over time without making class ranking the default measure.' }
     ]
   },
   'import-marks': {
-    title: 'Import Marks (CSV)',
+    title: 'Import Performance Data',
     badge: 'Powered by PapaParse',
-    description: 'Import learner records and assessment evidence using grade-aware CSV templates with validation before saving.',
+    description: 'Import learner performance records in bulk using grade-aware CSV templates, with validation before saving.',
     pillars: [
-      { title: 'Downloadable CSV Templates', detail: 'Pre-formatted templates per stream so teachers can enter marks offline and upload in seconds.' },
-      { title: 'Validation & Preview', detail: 'Detect missing admission numbers, out-of-range marks, or duplicate rows before saving.' },
+      { title: 'Downloadable CSV Templates', detail: 'Templates for learner identifiers, assessment results, attendance and performance observations.' },
+      { title: 'Validation & Preview', detail: 'Detect missing learner identifiers, invalid scores, unsupported values and duplicate records before saving.' },
       { title: 'Instant Dashboard Sync', detail: 'Uploaded assessments immediately update Overview charts and Early-Warning indicators.' }
     ]
   },
   'analytics': {
-    title: 'Deep Academic Analytics',
+    title: 'Learner Performance Analysis',
     badge: 'Powered by Chart.js',
-    description: 'Longitudinal learning progress, competency development, grade-level patterns, and cohort progression insights.',
+    description: 'Analyse individual learner progress and class patterns across reporting periods using the evidence entered by teachers.',
     pillars: [
-      { title: 'Longitudinal Cohort Curves', detail: 'Follow learner development from Grade 1 through Grade 9 while preserving historical records.' },
-      { title: 'Subject Gap Analysis', detail: 'Identify topics and subjects pulling down overall learner mean grades.' },
-      { title: 'Distribution Histograms', detail: 'Visualize score spreads to distinguish whole-class gaps from individual learner struggles.' }
+      { title: 'Longitudinal Cohort Curves', detail: 'Compare each learner’s performance across terms and years while preserving their history.' },
+      { title: 'Subject Gap Analysis', detail: 'Identify learning areas with improving performance or persistent difficulty and show the evidence behind each insight.' },
+      { title: 'Distribution Histograms', detail: 'Distinguish individual support needs from patterns shared across a class or grade.' }
     ]
   },
   'early-warnings': {
@@ -68,19 +68,19 @@ const MODULE_BLUEPRINTS = {
     badge: 'Rule-Based Intervention Engine',
     description: 'Transparent academic risk flags showing exactly why a learner needs support—never an opaque black-box score.',
     pillars: [
-      { title: 'Clear Trigger Rules', detail: 'Use transparent indicators such as missing learning evidence, attendance concerns, or sustained difficulty with selected outcomes; teachers review every flag.' },
+      { title: 'Clear Trigger Rules', detail: 'Use explainable indicators such as repeated low results, falling performance, missing records or attendance concerns. A flag prompts teacher review; it is not a diagnosis.' },
       { title: 'Teacher Action Log', detail: 'Record remedial classes, guardian meetings, and follow-up check-ins per flagged learner.' },
-      { title: 'Recovery Monitoring', detail: 'Track whether interventions lift learner performance in subsequent assessments.' }
+      { title: 'Recovery Monitoring', detail: 'Track whether agreed support actions are followed by measurable improvement in later learner records.' }
     ]
   },
   'reports': {
-    title: 'Academic Reports & PDFs',
+    title: 'AI Reports & Parent Release',
     badge: 'Powered by jsPDF',
-    description: 'Generate clean, printable learner report cards, stream broadsheets, and board summary briefs offline.',
+    description: 'Prepare individual learner performance reports from recorded evidence, including AI-generated summaries and recommendations for teacher review.',
     pillars: [
-      { title: 'Individual Learner Report Cards', detail: 'Learner progress summaries with learning areas, competency evidence, teacher feedback, and support actions.' },
-      { title: 'Administration Term Briefs', detail: 'One-click executive summaries for school principals and education partners.' },
-      { title: 'Offline-First Generation', detail: 'Generates crisp vector PDFs directly in the browser without requiring internet access.' }
+      { title: 'Individual Learner Report Cards', detail: 'Individual reports summarising performance, strengths, areas needing support, teacher comments and recommended next steps.' },
+      { title: 'Administration Term Briefs', detail: 'School-level summaries that help authorised staff review trends without exposing private learner reports unnecessarily.' },
+      { title: 'Offline-First Generation', detail: 'Provide printable reports after teacher approval; parent release must be a separate, explicit action.' }
     ]
   },
   'settings': {
@@ -88,9 +88,9 @@ const MODULE_BLUEPRINTS = {
     badge: 'System Configuration',
     description: 'Customize school identity, early-warning sensitivity thresholds, and local browser data backups.',
     pillars: [
-      { title: 'Early-Warning Thresholds', detail: 'Adjust pass marks and percentage-drop sensitivity to match school academic targets.' },
+      { title: 'Early-Warning Thresholds', detail: 'Configure school-approved performance thresholds, reporting periods and support-alert sensitivity.' },
       { title: 'JSON Backup & Restore', detail: 'Export the entire LocalStorage database to a portable file for safe offline backup.' },
-      { title: 'Demo Dataset Controls', detail: 'Configure school grade coverage, reporting preferences, and demo data or start with a clean slate.' }
+      { title: 'Demo Dataset Controls', detail: 'Configure grade coverage, school reporting preferences and demo data or start with a clean slate.' }
     ]
   }
 };
