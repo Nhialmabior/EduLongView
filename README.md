@@ -52,6 +52,14 @@ EduLongView is designed for teachers and school administrators in refugee and ho
 - Keep each generated report as a private, editable teacher draft. Approval and parent release are not implemented.
 - **Important:** this is a transparent rule-based analysis foundation, not a connected generative AI model. A secure backend and AI service integration are still required before the platform can claim to generate AI-written insights.
 
+### Secure AI backend preparation
+
+- Added [the AI report API contract](api/AI_REPORT_API.md) to define the request/response schema, error handling, evidence references and required privacy safeguards.
+- The contract is a preparation document only. No backend has been deployed and no generative AI model is connected yet.
+- The intended flow is browser → authenticated school backend → configured AI provider → validated draft → teacher review.
+- The browser must never contain provider API keys or service-role credentials. Only the selected learner's pseudonymised evidence should be sent to the backend.
+- Production use with real learner data requires teacher authentication, a secure shared database, school-level access controls, and a safeguarding/data-protection review. Browser LocalStorage alone is not sufficient.
+
 ## Project Structure
 
 ```text
