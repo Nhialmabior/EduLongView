@@ -768,35 +768,46 @@ const EduNavigation = {
         rawRows = window.XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval:'', raw:true });
       } else throw new Error('Unsupported file type. Upload CSV or .xlsx.');
       if (!rawRows.length) throw new Error('No result rows found in this file.');
-      const normalise = value => String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
+      if (rawRows.length > 5000) throw new Error('This file contains more than 5,000 rows. Split it into smaller uploads.');
+      const normalise = value => String(value ?? '').trim().toLowerCase().replace(/[\\s_-]+/g, '');
+      const makeKey = (learnerId, area, title, year, term, date) => [learnerId, area, title, year, term, date].map(value => String(value ?? '').trim().toLowerCase()).join('|');
+      const existingKeys = new Set(this.workspaceState.performanceRecords.map(record => makeKey(record.learnerId, record.learningArea, record.assessmentTitle, record.year, record.term, record.date)));
+      const fileKeys = new Set();
       const rows = rawRows.map((raw,index) => {
         const fields = {};
         Object.keys(raw).forEach(key => fields[normalise(key)] = raw[key]);
-        const get = (...keys) => { for (const key of keys) { const value=fields[normalise(key)]; if (value !== undefined && value !== '') return value; } return ''; };
+        const get = (...keys) => { for (const key of keys) { const value=fields[normalise(key)]; if (value !== undefined && String(value).trim() !== '') return value; } return ''; };
         const admissionNo=String(get('admissionNo','admission number','learner number','learner id')).trim();
-        const learner=this.workspaceState.learners.find(item => String(item.admissionNo).toLowerCase() === admissionNo.toLowerCase());
+        const learner=this.workspaceState.learners.find(item => String(item.admissionNo || '').trim().toLowerCase() === admissionNo.toLowerCase());
         const learningArea=String(get('learningArea','subject','learning area')).trim();
         const assessmentTitle=String(get('assessmentTitle','assessment','activity title')).trim();
-        const assessmentType=String(get('assessmentType','assessment type') || 'Imported assessment').trim();
+        const assessmentType=String(get('assessmentType','assessment type')).trim();
         const year=Number(get('year','academic year'));
         const term=String(get('term','reporting term')).trim();
         let dateValue=get('date','date recorded','assessment date');
         if (dateValue instanceof Date) dateValue=dateValue.toISOString().slice(0,10);
         const date=String(dateValue).trim().slice(0,10);
-        const scoreRaw=get('score','score achieved','marks');
-        const maxScoreRaw=get('maxScore','maximum score','total marks');
+        const scoreRaw=String(get('score','score achieved','marks')).trim();
+        const maxScoreRaw=String(get('maxScore','maximum score','total marks')).trim();
         const score=Number(scoreRaw);
         const maxScore=Number(maxScoreRaw);
         const errors=[];
         if (!admissionNo) errors.push('Missing admission number'); else if (!learner) errors.push('Learner not registered');
         if (!learningArea) errors.push('Missing learning area');
         if (!assessmentTitle) errors.push('Missing assessment title');
+        if (!assessmentType) errors.push('Missing assessment type');
         if (!Number.isInteger(year) || year<2020 || year>2100) errors.push('Invalid year');
         if (!['Term 1','Term 2','Term 3'].includes(term)) errors.push('Term must be Term 1, 2 or 3');
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) errors.push('Date must be YYYY-MM-DD');
+        const dateParts=/^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(date);
+        const validDate=!!dateParts && (() => { const parsed=new Date(Date.UTC(Number(dateParts[1]),Number(dateParts[2])-1,Number(dateParts[3]))); return parsed.getUTCFullYear()===Number(dateParts[1]) && parsed.getUTCMonth()===Number(dateParts[2])-1 && parsed.getUTCDate()===Number(dateParts[3]); })();
+        if (!validDate) errors.push('Date must be a real calendar date in YYYY-MM-DD format');
         if (scoreRaw === '' || maxScoreRaw === '' || !Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore<=0 || score<0 || score>maxScore) errors.push('Invalid or missing score / maximum');
+        const key=learner ? makeKey(learner.id,learningArea,assessmentTitle,year,term,date) : '';
+        if (key && existingKeys.has(key)) errors.push('Duplicate: matching result already exists');
+        if (key && fileKeys.has(key)) errors.push('Duplicate: this result appears more than once in the file');
+        if (key) fileKeys.add(key);
         return { rowNumber:index+2, admissionNo, learnerId:learner?.id || '', learnerName:learner?.fullName || '', learningArea, assessmentTitle, assessmentType, year, term, date, score, maxScore,
-          percentage:Number.isFinite(score/maxScore)?Number(((score/maxScore)*100).toFixed(2)):0,
+          percentage:Number.isFinite(score/maxScore) && maxScore>0?Number(((score/maxScore)*100).toFixed(2)):0,
           attendance:String(get('attendance') || 'Not recorded').trim(), participation:String(get('participation') || '').trim(),
           observation:String(get('observation','teacher observation') || '').trim(), scoreLabel:Number.isFinite(score)&&Number.isFinite(maxScore)?score+' / '+maxScore:'—',
           valid:errors.length===0, error:errors.join('; ') };
