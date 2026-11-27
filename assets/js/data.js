@@ -437,10 +437,10 @@ const KENYA_CBC_CURRICULUM = {
     ]
   },
   assessmentRubric: [
-    { code: 'EE', label: 'Exceeding Expectation' },
-    { code: 'ME', label: 'Meeting Expectation' },
-    { code: 'AE', label: 'Approaching Expectation' },
-    { code: 'BE', label: 'Below Expectation' }
+    { code: 'EE', label: 'Exceeds expectation' },
+    { code: 'ME', label: 'Meets expectation' },
+    { code: 'AE', label: 'Approaching expectation' },
+    { code: 'BE', label: 'Below expectation' }
   ],
   curriculumStructure: ['Learning Area', 'Strand', 'Sub-strand', 'Specific Learning Outcome'],
   implementationNote: 'The 2026 KICD guidance is a list of learning areas for curriculum support materials. School-level availability and learner programme selections must be configured. Import exact strands, sub-strands and specific learning outcomes from the relevant grade-specific curriculum design before using them for assessment.',
