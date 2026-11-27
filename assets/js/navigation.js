@@ -167,7 +167,7 @@ const EduNavigation = {
 
   renderLearnerDirectory(section) {
     const learners = this.workspaceState.learners;
-    section.innerHTML = \`
+    section.innerHTML = `
       <div class="module-shell">
         <div class="module-header">
           <div><span class="module-badge">Learner registry</span><h2>Learners Directory</h2><p>Create and maintain learner profiles. Each performance record will be linked to one learner so their progress can be followed over time.</p></div>
@@ -178,46 +178,46 @@ const EduNavigation = {
             <div class="workspace-form-grid">
               <label>Full name<input name="fullName" required maxlength="120" placeholder="Learner's full name"></label>
               <label>Admission / learner number<input name="admissionNo" required maxlength="40" placeholder="e.g. SCH-001"></label>
-              <label>Grade<select name="grade" required><option value="">Select grade</option>\${Array.from({length:9},(_,i)=>\`<option value="\${i+1}">Grade \${i+1}</option>\`).join('')}</select></label>
+              <label>Grade<select name="grade" required><option value="">Select grade</option>${Array.from({length:9},(_,i)=>`<option value="${i+1}">Grade ${i+1}</option>`).join('')}</select></label>
               <label>Class / stream<input name="stream" maxlength="60" placeholder="e.g. Grade 4 East"></label>
             </div>
             <div class="workspace-form-actions"><button class="btn btn-primary" type="submit"><i data-lucide="user-plus"></i><span>Save Learner</span></button></div>
           </form>
         </div>
         <div class="panel-card workspace-panel">
-          <div class="panel-header"><div><h3 class="panel-title">Registered learners</h3><p class="panel-subtitle">\${learners.length} learner profile(s) stored in this browser.</p></div></div>
+          <div class="panel-header"><div><h3 class="panel-title">Registered learners</h3><p class="panel-subtitle">${learners.length} learner profile(s) stored in this browser.</p></div></div>
           <div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Admission No.</th><th>Grade</th><th>Class / Stream</th><th>Records</th></tr></thead><tbody>
-          \${learners.length ? learners.map((learner) => {
+          ${learners.length ? learners.map((learner) => {
             const count = this.workspaceState.performanceRecords.filter((record) => record.learnerId === learner.id).length;
-            return \`<tr><td><span class="cell-primary">\${this.escapeHTML(learner.fullName)}</span></td><td>\${this.escapeHTML(learner.admissionNo)}</td><td>Grade \${this.escapeHTML(learner.grade)}</td><td>\${this.escapeHTML(learner.stream || '—')}</td><td>\${count}</td></tr>\`;
+            return `<tr><td><span class="cell-primary">${this.escapeHTML(learner.fullName)}</span></td><td>${this.escapeHTML(learner.admissionNo)}</td><td>Grade ${this.escapeHTML(learner.grade)}</td><td>${this.escapeHTML(learner.stream || '—')}</td><td>${count}</td></tr>`;
           }).join('') : '<tr><td colspan="5" class="empty-state-cell">No learners registered yet. Add a learner using the form above.</td></tr>'}
           </tbody></table></div>
         </div>
-      </div>\`;
+      </div>`;
     if (window.lucide) window.lucide.createIcons();
   },
 
   renderPerformanceEntry(section) {
     const learners = this.workspaceState.learners;
     const records = [...this.workspaceState.performanceRecords].sort((a,b) => b.createdAt.localeCompare(a.createdAt));
-    const learnerOptions = learners.map((learner) => \`<option value="\${this.escapeHTML(learner.id)}">\${this.escapeHTML(learner.fullName)} — \${this.escapeHTML(learner.admissionNo)} (Grade \${this.escapeHTML(learner.grade)})</option>\`).join('');
-    section.innerHTML = \`
+    const learnerOptions = learners.map((learner) => `<option value="${this.escapeHTML(learner.id)}">${this.escapeHTML(learner.fullName)} — ${this.escapeHTML(learner.admissionNo)} (Grade ${this.escapeHTML(learner.grade)})</option>`).join('');
+    section.innerHTML = `
       <div class="module-shell">
         <div class="module-header">
           <div><span class="module-badge">Individual performance evidence</span><h2>Record Learner Performance</h2><p>Enter the evidence a teacher has observed or assessed. EduLongView stores each entry against the learner and reporting period; AI analysis will use these records later.</p></div>
         </div>
-        \${learners.length ? \`
+        ${learners.length ? `
         <div class="panel-card workspace-panel">
           <div class="panel-header"><div><h3 class="panel-title">New performance record</h3><p class="panel-subtitle">Scores are stored with their maximum possible value. A percentage is calculated for comparison only.</p></div></div>
           <form id="performanceCreateForm" class="workspace-form">
             <div class="workspace-form-grid">
-              <label>Learner<select name="learnerId" required><option value="">Select learner</option>\${learnerOptions}</select></label>
+              <label>Learner<select name="learnerId" required><option value="">Select learner</option>${learnerOptions}</select></label>
               <label>Learning area / subject<input name="learningArea" required maxlength="80" placeholder="e.g. Mathematics"></label>
               <label>Assessment / activity<input name="assessmentTitle" required maxlength="100" placeholder="e.g. Mid-term assessment"></label>
               <label>Assessment type<select name="assessmentType" required><option value="">Select type</option><option>Classwork</option><option>Homework</option><option>Quiz</option><option>Project</option><option>Practical</option><option>Continuous assessment</option><option>End-of-term assessment</option><option>Teacher observation</option></select></label>
-              <label>Academic year<input name="year" type="number" min="2020" max="2100" value="\${new Date().getFullYear()}" required></label>
+              <label>Academic year<input name="year" type="number" min="2020" max="2100" value="${new Date().getFullYear()}" required></label>
               <label>Term<select name="term" required><option>Term 1</option><option>Term 2</option><option>Term 3</option></select></label>
-              <label>Date recorded<input name="date" type="date" value="\${new Date().toISOString().slice(0,10)}" required></label>
+              <label>Date recorded<input name="date" type="date" value="${new Date().toISOString().slice(0,10)}" required></label>
               <label>Score achieved<input name="score" type="number" min="0" step="0.01" placeholder="e.g. 18" required></label>
               <label>Maximum score<input name="maxScore" type="number" min="0.01" step="0.01" placeholder="e.g. 25" required></label>
               <label>Attendance for this activity<select name="attendance"><option value="Present">Present</option><option value="Late">Late</option><option value="Absent">Absent</option><option value="Not recorded" selected>Not recorded</option></select></label>
@@ -226,18 +226,18 @@ const EduNavigation = {
             </div>
             <div class="workspace-form-actions"><button class="btn btn-primary" type="submit"><i data-lucide="save"></i><span>Save Performance Record</span></button></div>
           </form>
-        </div>\` : \`
-        <div class="panel-card workspace-panel empty-guidance"><h3>Register learners first</h3><p>Performance records must belong to a specific learner. Create learner profiles before entering their assessment results and observations.</p><a class="btn btn-primary" href="#learners" data-route="learners"><i data-lucide="user-plus"></i><span>Open Learners Directory</span></a></div>\`}
+        </div>` : `
+        <div class="panel-card workspace-panel empty-guidance"><h3>Register learners first</h3><p>Performance records must belong to a specific learner. Create learner profiles before entering their assessment results and observations.</p><a class="btn btn-primary" href="#learners" data-route="learners"><i data-lucide="user-plus"></i><span>Open Learners Directory</span></a></div>`}
         <div class="panel-card workspace-panel">
-          <div class="panel-header"><div><h3 class="panel-title">Recent learner performance records</h3><p class="panel-subtitle">Showing the latest \${records.length} saved record(s) on this device.</p></div></div>
+          <div class="panel-header"><div><h3 class="panel-title">Recent learner performance records</h3><p class="panel-subtitle">Showing the latest ${records.length} saved record(s) on this device.</p></div></div>
           <div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Learning area</th><th>Assessment</th><th>Period</th><th>Score</th><th>Attendance</th></tr></thead><tbody>
-          \${records.length ? records.map((record) => {
+          ${records.length ? records.map((record) => {
             const learner = learners.find((item) => item.id === record.learnerId);
-            return \`<tr><td><span class="cell-primary">\${this.escapeHTML(learner?.fullName || 'Learner not found')}</span><span class="cell-sub">\${this.escapeHTML(learner?.admissionNo || '')}</span></td><td>\${this.escapeHTML(record.learningArea)}</td><td><span class="cell-primary">\${this.escapeHTML(record.assessmentTitle)}</span><span class="cell-sub">\${this.escapeHTML(record.assessmentType)}</span></td><td>\${this.escapeHTML(record.year)} · \${this.escapeHTML(record.term)}</td><td><strong>\${record.score} / \${record.maxScore}</strong><span class="cell-sub">\${record.percentage.toFixed(1)}%</span></td><td>\${this.escapeHTML(record.attendance)}</td></tr>\`;
+            return `<tr><td><span class="cell-primary">${this.escapeHTML(learner?.fullName || 'Learner not found')}</span><span class="cell-sub">${this.escapeHTML(learner?.admissionNo || '')}</span></td><td>${this.escapeHTML(record.learningArea)}</td><td><span class="cell-primary">${this.escapeHTML(record.assessmentTitle)}</span><span class="cell-sub">${this.escapeHTML(record.assessmentType)}</span></td><td>${this.escapeHTML(record.year)} · ${this.escapeHTML(record.term)}</td><td><strong>${record.score} / ${record.maxScore}</strong><span class="cell-sub">${record.percentage.toFixed(1)}%</span></td><td>${this.escapeHTML(record.attendance)}</td></tr>`;
           }).join('') : '<tr><td colspan="6" class="empty-state-cell">No performance records yet. Saved entries will appear here.</td></tr>'}
           </tbody></table></div>
         </div>
-      </div>\`;
+      </div>`;
     if (window.lucide) window.lucide.createIcons();
   },
 
@@ -254,7 +254,7 @@ const EduNavigation = {
         return;
       }
       this.workspaceState.learners.push({
-        id: \`learner-\${Date.now()}-\${Math.random().toString(36).slice(2,8)}\`,
+        id: `learner-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
         fullName: values.fullName.trim(),
         admissionNo,
         grade: Number(values.grade),
@@ -274,7 +274,7 @@ const EduNavigation = {
       return;
     }
     this.workspaceState.performanceRecords.push({
-      id: \`performance-\${Date.now()}-\${Math.random().toString(36).slice(2,8)}\`,
+      id: `performance-${Date.now()}-${Math.random().toString(36).slice(2,8)}`,
       learnerId: values.learnerId,
       learningArea: values.learningArea.trim(),
       assessmentTitle: values.assessmentTitle.trim(),
