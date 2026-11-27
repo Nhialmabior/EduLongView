@@ -93,3 +93,14 @@ Without `AI_API_KEY` and `AI_MODEL`, the protected draft endpoint intentionally 
 5. Then connect the frontend using a short-lived authenticated teacher session, never the shared bootstrap token.
 
 The rule-based report generator in the static website remains the active workflow until those steps are complete.
+
+
+## Automated tests
+
+From the `backend/` directory, after installing requirements:
+
+```powershell
+python -m pytest -q
+```
+
+The tests cover the health route, missing/incorrect authentication, a successful mocked draft, invalid scores, duplicate evidence IDs and rejection of unexpected personal fields. The successful draft test mocks the provider adapter; it does not call a paid AI service.
