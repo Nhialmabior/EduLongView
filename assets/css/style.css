@@ -1226,3 +1226,21 @@ button, select, input {
   .workspace-wide { grid-column: auto; }
   .workspace-form-actions .btn { width: 100%; justify-content: center; }
 }
+
+
+/* Bulk learner performance import */
+.import-instructions p { color: var(--text-secondary); margin: 8px 0; font-size: 13px; }
+.import-actions { justify-content: flex-start; gap: 10px; flex-wrap: wrap; }
+.import-dropzone { border: 1.5px dashed var(--border-medium); border-radius: var(--radius-md); background: var(--bg-subtle); padding: 28px 18px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+.import-dropzone > i { width: 30px; height: 30px; color: var(--teal-700); }
+.import-dropzone label { display: flex; flex-direction: column; gap: 4px; cursor: pointer; color: var(--text-primary); }
+.import-dropzone label span, .import-dropzone small { color: var(--text-muted); font-size: 12px; }
+.import-dropzone input { max-width: 100%; margin-top: 6px; }
+.import-warning { color: var(--warning-text); background: var(--warning-bg); padding: 10px 12px; border-radius: var(--radius-sm); margin-top: 12px; }
+.import-summary { display: flex; gap: 12px; flex-wrap: wrap; margin: 12px 0 16px; }
+.import-stat { padding: 8px 12px; border-radius: var(--radius-sm); background: var(--bg-subtle); color: var(--text-secondary); font-size: 12px; }
+.import-stat strong { font-size: 16px; margin-right: 4px; }
+.import-stat.valid strong { color: var(--success-text); }
+.import-stat.invalid strong { color: var(--warning-text); }
+.import-preview-table td { vertical-align: top; }
+.import-storage-note { color: var(--text-muted); font-size: 12px; margin-top: 12px; }
