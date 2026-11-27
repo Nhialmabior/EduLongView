@@ -900,9 +900,27 @@ const EduNavigation = {
     }
     if (form.id === 'learnerCreateForm') {
       const admissionNo = values.admissionNo.trim();
-      if (this.workspaceState.learners.some((learner) => learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) { window.alert('That admission / learner number is already registered.'); return; }
-      this.workspaceState.learners.push({ id:'learner-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), fullName:values.fullName.trim(), admissionNo:admissionNo, grade:Number(values.grade), stream:values.stream.trim(), createdAt:new Date().toISOString() });
-      EduDataStore.save(this.workspaceState); this.syncWarningBadge(); this.renderLearnerDirectory(document.getElementById('view-learners')); this.showWorkspaceToast('Learner profile saved.'); return;
+      const editingId = form.dataset.editId || '';
+      if (this.workspaceState.learners.some((learner) => learner.id !== editingId && learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) {
+        window.alert('That admission / learner number is already registered.');
+        return;
+      }
+      const profile = { fullName: values.fullName.trim(), admissionNo, grade: Number(values.grade), stream: values.stream.trim() };
+      if (editingId) {
+        const learner = this.workspaceState.learners.find((item) => item.id === editingId);
+        if (!learner) { this.showWorkspaceToast('Learner profile could not be found.'); return; }
+        Object.assign(learner, profile, { updatedAt: new Date().toISOString() });
+        this.editingLearnerId = null;
+      } else {
+        this.workspaceState.learners.push(Object.assign({ id: 'learner-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), createdAt: new Date().toISOString() }, profile));
+      }
+      EduDataStore.save(this.workspaceState);
+      this.syncWarningBadge();
+      this.renderLearnerDirectory(document.getElementById('view-learners'));
+      this.renderPerformanceEntry(document.getElementById('view-assessments'));
+      this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
+      this.showWorkspaceToast(editingId ? 'Learner profile updated.' : 'Learner profile saved.');
+      return;
     }
     const score = Number(values.score), maxScore = Number(values.maxScore);
     if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0 || score < 0 || score > maxScore) { window.alert('Enter a valid score. The score achieved cannot be greater than the maximum score.'); return; }
