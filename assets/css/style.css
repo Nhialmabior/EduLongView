@@ -1177,3 +1177,28 @@ button, select, input {
     display: none;
   }
 }
+
+
+/* CBC/CBE curriculum explorer */
+.curriculum-area-card {
+  appearance: none;
+  color: inherit;
+  font: inherit;
+  display: block;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+
+.curriculum-area-card:hover,
+.curriculum-area-card[aria-pressed="true"] {
+  border-color: var(--teal-600);
+  box-shadow: 0 4px 14px rgba(15, 118, 110, 0.10);
+  transform: translateY(-1px);
+}
+
+.curriculum-area-card:focus-visible {
+  outline: 3px solid rgba(15, 118, 110, 0.25);
+  outline-offset: 2px;
+}
