@@ -319,7 +319,7 @@ const EduNavigation = {
           <div>
             <span class="module-badge">AI-assisted · Human-approved</span>
             <h2>Individual Learner Reports</h2>
-            <p>EduLongView helps teachers understand each learner’s performance and communicate meaningful progress to parents. It is not a curriculum delivery or teaching platform.</p>
+            <p>EduLongView helps teachers understand each learner’s performance and communicate meaningful progress to parents.</p>
           </div>
           <a href="#overview" class="btn btn-primary" data-route="overview">
             <i data-lucide="arrow-left"></i><span>Back to Overview Dashboard</span>
