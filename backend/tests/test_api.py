@@ -68,6 +68,12 @@ def test_auth_me_returns_only_current_school_context(monkeypatch):
     assert response.json()["membership"]["role"] == "teacher"
 
 
+def test_invitation_activation_requires_authenticated_session():
+    main.app.dependency_overrides.pop(main.require_authenticated_user, None)
+    response = client.post("/api/v1/auth/activate-invitation")
+    assert response.status_code == 401
+
+
 def test_teacher_cannot_invite_another_teacher(monkeypatch):
     setup_school_user(monkeypatch, role="teacher")
     response = client.post(
