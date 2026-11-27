@@ -36,7 +36,7 @@
     document.getElementById('activePeriodHeading').textContent = `${year} · ${term}`;
     document.getElementById('kpiTotalLearners').textContent = kpis.totalLearners.toLocaleString();
     document.getElementById('kpiLearnersMeta').textContent = kpis.learnersMeta;
-    document.getElementById('kpiAvgPerformance').textContent = `${kpis.avgPerformance.toFixed(1)} index points`;
+    document.getElementById('kpiAvgPerformance').textContent = kpis.avgPerformance.toFixed(1);
 
     const deltaEl = document.getElementById('kpiAvgDelta');
     deltaEl.innerHTML = `<i data-lucide="arrow-up-right"></i> ${kpis.avgDelta}`;
