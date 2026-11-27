@@ -1,17 +1,26 @@
 /**
- * EduLongView — Main Dashboard Controller & Chart Visualization Engine
+ * EduLongView — Live learner evidence dashboard.
+ * Dashboard figures are derived from the same browser workspace used by
+ * Learners, Performance Records, Analytics and Reports.
  */
-
 (function () {
-  let appState = EduDataStore.load();
   let trendChartInstance = null;
   let subjectChartInstance = null;
 
-  // DOM References
   const yearSelect = document.getElementById('yearSelect');
   const termSelect = document.getElementById('termSelect');
   const streamFilterSelect = document.getElementById('streamFilterSelect');
   const resetDemoBtn = document.getElementById('resetDemoBtn');
+
+  function getWorkspace() {
+    return (window.EduNavigation && EduNavigation.workspaceState) || EduDataStore.load();
+  }
+
+  function escapeHTML(value) {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[char]));
+  }
 
   function showToast(message) {
     const toast = document.getElementById('appToast');
@@ -19,307 +28,255 @@
     toast.textContent = message;
     toast.classList.add('show');
     clearTimeout(toast._timer);
-    toast._timer = setTimeout(() => {
-      toast.classList.remove('show');
-    }, 2800);
+    toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
   }
 
-  function getActivePeriodData() {
-    const { year, term } = appState.activePeriod;
-    return appState.periods[year]?.[term] || appState.periods['2026']['Term 3'];
+  function getActiveRecords() {
+    const state = getWorkspace();
+    const year = String(state.activePeriod?.year || yearSelect?.value || new Date().getFullYear());
+    const term = String(state.activePeriod?.term || termSelect?.value || 'Term 1');
+    const learners = state.learners || [];
+    const learnerById = new Map(learners.map((learner) => [learner.id, learner]));
+    const records = (state.performanceRecords || []).filter((record) =>
+      String(record.year) === year && String(record.term) === term
+    );
+    const selectedGrade = streamFilterSelect?.value || 'all';
+    const filteredRecords = selectedGrade === 'all' ? records : records.filter((record) =>
+      String(learnerById.get(record.learnerId)?.grade) === selectedGrade.replace('Grade ', '')
+    );
+    return { state, year, term, learners, learnerById, records, filteredRecords };
   }
 
-  function updateKPIs(periodData) {
-    const { year, term } = appState.activePeriod;
-    const { kpis } = periodData;
+  function setText(id, value) {
+    const element = document.getElementById(id);
+    if (element) element.textContent = value;
+  }
 
-    document.getElementById('activePeriodHeading').textContent = `${year} · ${term}`;
-    document.getElementById('kpiTotalLearners').textContent = kpis.totalLearners.toLocaleString();
-    document.getElementById('kpiLearnersMeta').textContent = kpis.learnersMeta;
-    document.getElementById('kpiAvgPerformance').textContent = kpis.avgPerformance.toFixed(1);
+  function updateKPIs(data) {
+    const allRecords = data.records;
+    const scored = allRecords.filter((record) => Number.isFinite(Number(record.percentage)));
+    const mean = scored.length
+      ? scored.reduce((sum, record) => sum + Number(record.percentage), 0) / scored.length
+      : null;
+    const learnersWithEvidence = new Set(allRecords.map((record) => record.learnerId)).size;
+    const flags = window.EduNavigation?.calculateEvidenceFlags
+      ? EduNavigation.calculateEvidenceFlags()
+      : [];
 
-    const deltaEl = document.getElementById('kpiAvgDelta');
-    deltaEl.innerHTML = `<i data-lucide="arrow-up-right"></i> ${kpis.avgDelta}`;
-
-    document.getElementById('kpiTotalAssessments').textContent = kpis.totalAssessments;
-    document.getElementById('kpiAssessmentsMeta').textContent = kpis.assessmentsMeta;
-    document.getElementById('kpiFlaggedLearners').textContent = kpis.flaggedLearners;
-    document.getElementById('kpiFlaggedMeta').textContent = kpis.flaggedMeta;
+    setText('activePeriodHeading', data.year + ' · ' + data.term);
+    setText('kpiTotalLearners', data.learners.length.toLocaleString());
+    setText('kpiLearnersMeta', learnersWithEvidence + ' with evidence in this period');
+    setText('kpiAvgPerformance', mean === null ? '—' : mean.toFixed(1) + '%');
+    setText('kpiAvgDelta', mean === null ? 'No scored evidence yet' : 'Mean of ' + scored.length + ' scored records');
+    setText('kpiTotalAssessments', allRecords.length.toLocaleString());
+    setText('kpiAssessmentsMeta', 'Saved records in selected period');
+    setText('kpiFlaggedLearners', flags.length.toLocaleString());
+    setText('kpiFlaggedMeta', 'Across all saved periods');
 
     const sidebarBadge = document.getElementById('sidebarWarningBadge');
-    if (sidebarBadge) {
-      sidebarBadge.textContent = kpis.flaggedLearners;
-    }
+    if (sidebarBadge) sidebarBadge.textContent = flags.length;
   }
 
-  function renderRecentAssessments(periodData) {
+  function renderRecentAssessments(data) {
     const tbody = document.getElementById('recentAssessmentsBody');
     if (!tbody) return;
+    const recent = data.records.slice().sort((a, b) =>
+      String(b.date || b.createdAt || '').localeCompare(String(a.date || a.createdAt || ''))
+    ).slice(0, 5);
 
-    tbody.innerHTML = periodData.recentAssessments
-      .map((item) => {
-        const isVerified = item.status === 'Verified';
-        const pillClass = isVerified ? 'verified' : 'pending';
-        return `
-          <tr>
-            <td>
-              <span class="cell-primary">${item.subject}</span>
-              <span class="cell-sub">${item.title}</span>
-            </td>
-            <td>${item.classStream}</td>
-            <td class="cell-sub">${item.date}</td>
-            <td><strong>${item.mean}</strong></td>
-            <td><span class="status-pill ${pillClass}">${item.status}</span></td>
-          </tr>
-        `;
-      })
-      .join('');
+    if (!recent.length) {
+      tbody.innerHTML = '<tr><td colspan="5" class="empty-state-cell">No performance records have been saved for this period yet.</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = recent.map((record) => {
+      const learner = data.learnerById.get(record.learnerId);
+      const date = record.date || (record.createdAt ? new Date(record.createdAt).toLocaleDateString() : '—');
+      const score = Number.isFinite(Number(record.percentage)) ? Number(record.percentage).toFixed(1) + '%' : 'Observation';
+      return `<tr>
+        <td><span class="cell-primary">${escapeHTML(record.learningArea || 'Learning area not set')}</span><span class="cell-sub">${escapeHTML(record.assessmentTitle || record.assessmentType || 'Performance evidence')}</span></td>
+        <td>${escapeHTML(learner ? 'Grade ' + learner.grade + (learner.stream ? ' · ' + learner.stream : '') : 'Learner unavailable')}</td>
+        <td class="cell-sub">${escapeHTML(date)}</td>
+        <td><strong>${escapeHTML(score)}</strong></td>
+        <td><span class="status-pill verified">Saved</span></td>
+      </tr>`;
+    }).join('');
   }
 
-  function renderEarlyWarnings(periodData) {
+  function renderEarlyWarnings() {
     const container = document.getElementById('earlyWarningSummaryList');
     if (!container) return;
+    const flags = window.EduNavigation?.calculateEvidenceFlags
+      ? EduNavigation.calculateEvidenceFlags()
+      : [];
 
-    container.innerHTML = periodData.earlyWarnings
-      .map((w) => {
-        const isHigh = w.riskLevel === 'High';
-        return `
-          <div class="warning-item ${isHigh ? 'critical' : ''}">
-            <div class="warning-item-top">
-              <div>
-                <span class="learner-ident">${w.learnerName}</span>
-                <span class="learner-stream">${w.stream} · ${w.admissionNo}</span>
-              </div>
-              <span class="risk-tag ${isHigh ? 'high' : 'moderate'}">${w.riskLevel} Priority</span>
-            </div>
-            <p class="warning-reason">${w.reason}</p>
-            <div class="warning-metrics">
-              <span>Progress status: <strong>${w.currentMean}</strong></span>
-              <span>Attendance: <strong>${w.attendance}</strong></span>
-            </div>
-          </div>
-        `;
-      })
-      .join('');
+    if (!flags.length) {
+      container.innerHTML = '<div class="empty-state-cell">No learners currently meet the configured evidence-review rules.</div>';
+      return;
+    }
+
+    container.innerHTML = flags.slice(0, 4).map((flag) => `
+      <div class="warning-item ${flag.level === 'High' ? 'critical' : ''}">
+        <div class="warning-item-top">
+          <div><span class="learner-ident">${escapeHTML(flag.learner.fullName)}</span>
+          <span class="learner-stream">Grade ${escapeHTML(flag.learner.grade)} · ${escapeHTML(flag.learner.admissionNo)}</span></div>
+          <span class="risk-tag ${flag.level.toLowerCase() === 'high' ? 'high' : 'moderate'}">${flag.level} Priority</span>
+        </div>
+        <p class="warning-reason">${flag.reasons.map(escapeHTML).join(' ')}</p>
+        <div class="warning-metrics"><span>Recorded mean: <strong>${flag.mean === null ? '—' : flag.mean.toFixed(1) + '%'}</strong></span><span>Absence entries: <strong>${flag.absences}</strong></span></div>
+      </div>`
+    ).join('');
   }
 
-  function renderTrendChart(periodData) {
-    const canvas = document.getElementById('performanceTrendChart');
-    if (!canvas || typeof Chart === 'undefined') return;
+  function showChartEmpty(canvasId, message) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const wrapper = canvas.parentElement;
+    if (wrapper) wrapper.innerHTML = '<div class="dashboard-chart-empty">' + escapeHTML(message) + '</div>';
+  }
 
-    const selectedStream = streamFilterSelect ? streamFilterSelect.value : 'all';
-    const series = periodData.trends[selectedStream] || periodData.trends['all'];
-    const benchmark = periodData.trendLabels.map(() => appState.school.targetBenchmark);
+  function restoreChartCanvas(canvasId) {
+    let canvas = document.getElementById(canvasId);
+    if (canvas) return canvas;
+    const wrapper = document.querySelector('[data-chart-host="' + canvasId + '"]');
+    if (!wrapper) return null;
+    wrapper.innerHTML = '<canvas id="' + canvasId + '"></canvas>';
+    return document.getElementById(canvasId);
+  }
 
+  function renderTrendChart(data) {
     if (trendChartInstance) {
       trendChartInstance.destroy();
+      trendChartInstance = null;
     }
+    const host = document.querySelector('[data-chart-host="performanceTrendChart"]');
+    if (!data.filteredRecords.length) {
+      if (host) host.innerHTML = '<div class="dashboard-chart-empty">Add learner evidence for this period to see the performance trend.</div>';
+      return;
+    }
+    const canvas = restoreChartCanvas('performanceTrendChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const ordered = data.filteredRecords.slice().sort((a, b) =>
+      String(a.date || a.createdAt || '').localeCompare(String(b.date || b.createdAt || ''))
+    ).slice(-10);
+    const labels = ordered.map((record) => record.assessmentTitle || record.date || 'Recorded entry');
+    const values = ordered.map((record) => Number.isFinite(Number(record.percentage)) ? Number(record.percentage) : null);
 
     trendChartInstance = new Chart(canvas, {
       type: 'line',
-      data: {
-        labels: periodData.trendLabels,
-        datasets: [
-          {
-            label: selectedStream === 'all' ? 'School Progress Index' : `${selectedStream} Progress Index`,
-            data: series,
-            borderColor: '#555B61',
-            backgroundColor: 'rgba(85, 91, 97, 0.09)',
-            borderWidth: 2.5,
-            pointBackgroundColor: '#555B61',
-            pointBorderColor: '#FFFFFF',
-            pointBorderWidth: 2,
-            pointRadius: 4.5,
-            pointHoverRadius: 6,
-            tension: 0.28,
-            fill: true
-          },
-          {
-            label: 'Illustrative reference (60 points)',
-            data: benchmark,
-            borderColor: '#E5C84B',
-            borderWidth: 1.75,
-            borderDash: [5, 5],
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            fill: false
-          }
-        ]
-      },
+      data: { labels, datasets: [{
+        label: 'Recorded score',
+        data: values,
+        spanGaps: true,
+        borderColor: '#555B61',
+        backgroundColor: 'rgba(85, 91, 97, 0.10)',
+        borderWidth: 2.5,
+        pointBackgroundColor: '#E5C84B',
+        pointBorderColor: '#555B61',
+        pointBorderWidth: 1.5,
+        pointRadius: 4,
+        tension: 0.25,
+        fill: true
+      }] },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: {
-          mode: 'index',
-          intersect: false
-        },
+        responsive: true, maintainAspectRatio: false,
         plugins: {
-          legend: {
-            position: 'top',
-            align: 'end',
-            labels: {
-              usePointStyle: true,
-              boxWidth: 8,
-              font: { family: 'Inter', size: 12, weight: '500' },
-              color: '#555B61'
-            }
-          },
-          tooltip: {
-            backgroundColor: '#555B61',
-            titleFont: { family: 'Manrope', size: 12.5 },
-            bodyFont: { family: 'Inter', size: 12 },
-            padding: 10,
-            cornerRadius: 8,
-            callbacks: {
-              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} points`
-            }
-          }
+          legend: { display: false },
+          tooltip: { callbacks: { label: (ctx) => ctx.parsed.y === null ? 'Observation only' : 'Score: ' + ctx.parsed.y.toFixed(1) + '%' } }
         },
         scales: {
-          y: {
-            min: 40,
-            max: 80,
-            grid: { color: '#ECEEF0' },
-            ticks: {
-              callback: (val) => `${val}`,
-              color: '#737A81',
-              font: { family: 'Inter', size: 11.5 }
-            }
-          },
-          x: {
-            grid: { display: false },
-            ticks: {
-              color: '#737A81',
-              font: { family: 'Inter', size: 11.5 }
-            }
-          }
+          y: { beginAtZero: true, max: 100, grid: { color: '#ECEEF0' }, ticks: { color: '#737A81', callback: (value) => value + '%' } },
+          x: { grid: { display: false }, ticks: { color: '#737A81', maxRotation: 35, minRotation: 0 } }
         }
       }
     });
   }
 
-  function renderSubjectChart(periodData) {
-    const canvas = document.getElementById('subjectOverviewChart');
-    if (!canvas || typeof Chart === 'undefined') return;
-
-    const labels = periodData.subjects.map((s) => s.name);
-    const scores = periodData.subjects.map((s) => s.mean);
-    const barColors = scores.map((score) =>
-      score < 56 ? '#E5C84B' : score >= 65 ? '#555B61' : '#7B8289'
-    );
-
+  function renderSubjectChart(data) {
     if (subjectChartInstance) {
       subjectChartInstance.destroy();
+      subjectChartInstance = null;
     }
-
+    const host = document.querySelector('[data-chart-host="subjectOverviewChart"]');
+    const scored = data.filteredRecords.filter((record) => Number.isFinite(Number(record.percentage)));
+    const groups = {};
+    scored.forEach((record) => {
+      const area = record.learningArea || 'Unspecified';
+      (groups[area] = groups[area] || []).push(Number(record.percentage));
+    });
+    const labels = Object.keys(groups);
+    if (!labels.length) {
+      if (host) host.innerHTML = '<div class="dashboard-chart-empty">Learning-area averages will appear when scored evidence is saved.</div>';
+      return;
+    }
+    const canvas = restoreChartCanvas('subjectOverviewChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+    const means = labels.map((area) => groups[area].reduce((sum, value) => sum + value, 0) / groups[area].length);
     subjectChartInstance = new Chart(canvas, {
       type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Illustrative Progress Index',
-            data: scores,
-            backgroundColor: barColors,
-            borderRadius: 5,
-            barThickness: 16
-          }
-        ]
-      },
+      data: { labels, datasets: [{
+        label: 'Mean score',
+        data: means,
+        backgroundColor: means.map((value) => value < 50 ? '#E5C84B' : value >= 70 ? '#555B61' : '#AEB4BA'),
+        borderRadius: 5,
+        barThickness: 16
+      }] },
       options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: '#555B61',
-            padding: 10,
-            cornerRadius: 8,
-            callbacks: {
-              label: (ctx) => `Index points: ${ctx.parsed.x}`
-            }
-          }
-        },
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => 'Mean score: ' + ctx.parsed.x.toFixed(1) + '%' } } },
         scales: {
-          x: {
-            min: 0,
-            max: 100,
-            grid: { color: '#ECEEF0' },
-            ticks: {
-              callback: (val) => `${val}`,
-              color: '#737A81',
-              font: { family: 'Inter', size: 11 }
-            }
-          },
-          y: {
-            grid: { display: false },
-            ticks: {
-              color: '#3F444A',
-              font: { family: 'Inter', size: 11.5, weight: '500' }
-            }
-          }
+          x: { beginAtZero: true, max: 100, grid: { color: '#ECEEF0' }, ticks: { color: '#737A81', callback: (value) => value + '%' } },
+          y: { grid: { display: false }, ticks: { color: '#555B61' } }
         }
       }
     });
   }
 
   function refreshDashboard() {
-    const periodData = getActivePeriodData();
-    updateKPIs(periodData);
-    renderRecentAssessments(periodData);
-    renderEarlyWarnings(periodData);
-    renderTrendChart(periodData);
-    renderSubjectChart(periodData);
-
-    if (window.lucide) {
-      window.lucide.createIcons();
-    }
+    const data = getActiveRecords();
+    updateKPIs(data);
+    renderRecentAssessments(data);
+    renderEarlyWarnings();
+    renderTrendChart(data);
+    renderSubjectChart(data);
+    if (window.lucide) window.lucide.createIcons();
   }
 
   function bindDashboardControls() {
-    // Sync selectors with saved state
-    yearSelect.value = appState.activePeriod.year;
-    termSelect.value = appState.activePeriod.term;
+    const state = getWorkspace();
+    if (yearSelect) yearSelect.value = String(state.activePeriod?.year || '2026');
+    if (termSelect) termSelect.value = String(state.activePeriod?.term || 'Term 3');
 
-    yearSelect.addEventListener('change', () => {
-      appState.activePeriod.year = yearSelect.value;
-      EduDataStore.save(appState);
+    function savePeriod() {
+      const workspace = getWorkspace();
+      workspace.activePeriod = workspace.activePeriod || {};
+      workspace.activePeriod.year = yearSelect?.value || workspace.activePeriod.year || '2026';
+      workspace.activePeriod.term = termSelect?.value || workspace.activePeriod.term || 'Term 3';
+      EduDataStore.save(workspace);
       refreshDashboard();
-      showToast(`Loaded ${appState.activePeriod.year} · ${appState.activePeriod.term}`);
-    });
+      showToast('Showing ' + workspace.activePeriod.year + ' · ' + workspace.activePeriod.term);
+    }
+    yearSelect?.addEventListener('change', savePeriod);
+    termSelect?.addEventListener('change', savePeriod);
+    streamFilterSelect?.addEventListener('change', refreshDashboard);
 
-    termSelect.addEventListener('change', () => {
-      appState.activePeriod.term = termSelect.value;
-      EduDataStore.save(appState);
+    resetDemoBtn?.addEventListener('click', () => {
+      const fresh = EduDataStore.reset();
+      if (window.EduNavigation) {
+        EduNavigation.workspaceState = fresh;
+        EduNavigation.ensureWorkspaceCollections();
+      }
+      if (yearSelect) yearSelect.value = fresh.activePeriod.year;
+      if (termSelect) termSelect.value = fresh.activePeriod.term;
+      if (streamFilterSelect) streamFilterSelect.value = 'all';
       refreshDashboard();
-      showToast(`Switched to ${appState.activePeriod.year} · ${appState.activePeriod.term}`);
+      showToast('Demo workspace reset');
     });
-
-    if (streamFilterSelect) {
-      streamFilterSelect.addEventListener('change', () => {
-        renderTrendChart(getActivePeriodData());
-      });
-    }
-
-    if (resetDemoBtn) {
-      resetDemoBtn.addEventListener('click', () => {
-        appState = EduDataStore.reset();
-        yearSelect.value = appState.activePeriod.year;
-        termSelect.value = appState.activePeriod.term;
-        if (streamFilterSelect) streamFilterSelect.value = 'all';
-        refreshDashboard();
-        showToast('Demo dataset restored');
-      });
-    }
   }
 
-  // Initialize Application
   document.addEventListener('DOMContentLoaded', () => {
     EduNavigation.init((activeRoute) => {
-      if (activeRoute === 'overview') {
-        refreshDashboard();
-      }
+      if (activeRoute === 'overview') refreshDashboard();
     });
     bindDashboardControls();
     refreshDashboard();
