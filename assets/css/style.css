@@ -1244,3 +1244,37 @@ button, select, input {
 .import-stat.invalid strong { color: var(--warning-text); }
 .import-preview-table td { vertical-align: top; }
 .import-storage-note { color: var(--text-muted); font-size: 12px; margin-top: 12px; }
+
+
+/* Batch 1 — dashboard and navigation polish */
+:focus-visible {
+  outline: 3px solid rgba(13, 148, 136, 0.38);
+  outline-offset: 2px;
+}
+.sidebar-nav { scrollbar-width: thin; scrollbar-color: rgba(148, 163, 184, 0.28) transparent; }
+.nav-group + .nav-group { padding-top: 4px; }
+.nav-item { min-height: 40px; }
+.nav-item.active { background: linear-gradient(90deg, rgba(30, 64, 107, 0.98), rgba(22, 48, 82, 0.88)); }
+.welcome-banner { border-color: #DCE5ED; background: linear-gradient(115deg, #FFFFFF 0%, #F8FCFB 100%); }
+.welcome-copy h2 { line-height: 1.35; }
+.welcome-copy h2 span { color: var(--teal-700); white-space: nowrap; }
+.kpi-card, .panel-card { transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition); }
+.kpi-card:hover, .panel-card:hover { border-color: #CBDDD9; box-shadow: var(--shadow-md); }
+.kpi-card:focus-within, .panel-card:focus-within { border-color: var(--teal-600); }
+.data-table tbody tr:nth-child(even) { background: #FBFCFD; }
+.data-table tbody tr:hover { background: var(--teal-50); }
+@media (max-width: 860px) {
+  .sidebar-nav { padding-bottom: 18px; }
+  .welcome-actions { width: 100%; flex-wrap: wrap; }
+  .welcome-actions .btn { flex: 1 1 190px; }
+}
+@media (max-width: 560px) {
+  .topbar { min-height: 64px; height: auto; padding-top: 10px; padding-bottom: 10px; align-items: flex-start; }
+  .topbar-right { justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
+  .period-selectors { gap: 4px; }
+  .select-control select { max-width: 132px; font-size: 11px; }
+  .welcome-banner { padding: 18px; }
+  .welcome-copy h2 { font-size: 18px; }
+  .panel-card { padding: 16px; }
+  .panel-header { flex-wrap: wrap; }
+}
