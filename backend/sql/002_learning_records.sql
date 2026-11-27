@@ -254,3 +254,18 @@ create policy "School members can add report evidence links"
 
 -- No browser DELETE policies are created. Records are retained for accountability;
 -- performance evidence can be marked voided instead of being physically deleted.
+
+
+-- Cover foreign-key lookups for school records and audit attribution.
+create index if not exists learners_created_by_idx on public.learners(created_by) where created_by is not null;
+create index if not exists learners_updated_by_idx on public.learners(updated_by) where updated_by is not null;
+create index if not exists performance_learner_school_fk_idx on public.performance_records(learner_id, school_id);
+create index if not exists performance_created_by_idx on public.performance_records(created_by) where created_by is not null;
+create index if not exists performance_updated_by_idx on public.performance_records(updated_by) where updated_by is not null;
+create index if not exists attendance_learner_school_fk_idx on public.attendance_records(learner_id, school_id);
+create index if not exists attendance_recorded_by_idx on public.attendance_records(recorded_by) where recorded_by is not null;
+create index if not exists report_drafts_learner_school_fk_idx on public.report_drafts(learner_id, school_id);
+create index if not exists report_drafts_generated_by_idx on public.report_drafts(generated_by) where generated_by is not null;
+create index if not exists report_evidence_report_school_fk_idx on public.report_draft_evidence(report_draft_id, school_id);
+create index if not exists report_evidence_performance_school_fk_idx on public.report_draft_evidence(performance_record_id, school_id) where performance_record_id is not null;
+create index if not exists report_evidence_attendance_school_fk_idx on public.report_draft_evidence(attendance_record_id, school_id) where attendance_record_id is not null;
