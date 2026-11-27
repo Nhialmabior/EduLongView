@@ -1006,3 +1006,5 @@ const EduNavigation = {
     if (typeof this.onRouteChange === 'function') {
       this.onRouteChange(targetSection);
     }
+  }
+};
