@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 load_dotenv()
 
@@ -143,6 +143,14 @@ def _extract_json(content: Any) -> dict[str, Any]:
     return parsed
 
 
+def validate_evidence_references(draft: DraftContent, allowed_ids: set[str]) -> None:
+    unknown_ids = set(draft.evidenceReferences) - allowed_ids
+    if unknown_ids:
+        raise ValueError("Model referenced evidence IDs that were not supplied.")
+    if len(draft.evidenceReferences) != len(set(draft.evidenceReferences)):
+        raise ValueError("Model returned duplicate evidence references.")
+
+
 async def generate_with_model(payload: DraftRequest) -> tuple[DraftContent, str]:
     if not AI_API_KEY or not AI_MODEL:
         raise HTTPException(
@@ -189,11 +197,7 @@ async def generate_with_model(payload: DraftRequest) -> tuple[DraftContent, str]
         content = body["choices"][0]["message"]["content"]
         parsed = _extract_json(content)
         draft = DraftContent.model_validate(parsed)
-        unknown_ids = set(draft.evidenceReferences) - allowed_ids
-        if unknown_ids:
-            raise ValueError("Model referenced evidence IDs that were not supplied.")
-        if len(draft.evidenceReferences) != len(set(draft.evidenceReferences)):
-            raise ValueError("Model returned duplicate evidence references.")
+        validate_evidence_references(draft, allowed_ids)
         model_name = str(body.get("model") or AI_MODEL)[:120]
         return draft, model_name
     except HTTPException:
