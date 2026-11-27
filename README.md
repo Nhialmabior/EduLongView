@@ -7,8 +7,8 @@ EduLongView is an education monitoring and CBC/CBE learner progress and academic
 ## CBC/CBE Foundation Release Scope
 
 - **Education Structure:** Kenya Grades 1–9, organised as Lower Primary (Grades 1–3), Upper Primary (Grades 4–6), and Junior School (Grades 7–9).
-- **Curriculum Foundation:** The interactive Curriculum module lets users select Grades 1–9 and explore the KICD learning areas for each grade band. The seven CBC core competencies are also displayed. Curriculum reference data is represented in `KENYA_CBC_CURRICULUM` in `assets/js/data.js`.
-- **Assessment Approach:** Detailed grade-specific curriculum designs, strands, sub-strands, learning outcomes, and teacher-reviewed assessment rubrics are the next implementation stage. Dashboard index figures are illustrative demo indicators, not official CBC achievement levels.
+- **Curriculum Foundation:** The interactive Curriculum module lets users select Grades 1–9 and explore the learning areas listed by stage in KICD's 2026 curriculum support-materials guidance. It links to the official KICD curriculum design libraries and displays the seven CBC core competencies. Detailed strands, sub-strands and specific learning outcomes are deliberately not fabricated; they must be imported from the relevant grade-specific design. Curriculum reference data is represented in `KENYA_CBC_CURRICULUM` in `assets/js/data.js`.
+- **Assessment Approach:** Next: import and map grade-specific strands, sub-strands, specific learning outcomes and assessment rubrics from the official KICD curriculum designs. Dashboard index figures are illustrative demo indicators, not official CBC achievement levels.
 
 - **Brand & Visual System:** Clean light workspace paired with a deep navy sidebar, restrained teal accents, subtle gold highlights, and Inter/Manrope typography.
 - **Responsive Navigation Shell:** Collapsible desktop sidebar, mobile slide-out drawer, top breadcrumb header, and interactive Academic Year & Term selectors.
