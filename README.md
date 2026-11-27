@@ -19,6 +19,16 @@ EduLongView is designed for teachers and school administrators in refugee and ho
 - **Responsive Navigation Shell:** Collapsible desktop sidebar, mobile slide-out drawer, top breadcrumb header, and interactive Academic Year & Term selectors.
 - **Offline-Ready Persistence:** Uses browser LocalStorage (`edulongview_state_v2`) with one-click demo dataset reset.
 
+
+### Working learner-record features
+
+- Register a learner with full name, unique admission / learner number, Grade 1–9 and class / stream.
+- Enter individual performance records linked to a registered learner.
+- Capture learning area, assessment/activity, assessment type, year, term, date, score, maximum score, attendance, participation and factual teacher observations.
+- Validate score values and calculate a percentage from the entered score and maximum score.
+- Persist learner profiles and performance records in browser LocalStorage (`edulongview_state_v2`).
+- These records are currently stored locally in the browser. They are not yet synchronised to a school database or shared across teacher devices.
+
 ## Project Structure
 
 ```text
