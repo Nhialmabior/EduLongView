@@ -5,12 +5,12 @@
 const MODULE_BLUEPRINTS = {
   'learners': {
     title: 'Learners Directory',
-    badge: 'Module Ready for Phase 2',
-    description: 'Centralized learner registry with admission numbers, class stream assignments, attendance context, and longitudinal academic profiles.',
+    badge: 'Working · Browser storage',
+    description: 'Register learners by admission number, grade and class stream, then link individual performance records to each learner.',
     pillars: [
       { title: 'Learner Profiles', detail: 'Current and historical performance records, attendance context, teacher observations, support needs and individual progress history.' },
       { title: 'Stream & Cohort Filters', detail: 'Filter across Grades 1–9 streams, gender balance, and support categories without losing context.' },
-      { title: 'LocalStorage Persistence', detail: 'Add, edit, or search learner records directly in browser storage with instant CSV export.' }
+      { title: 'Persistent Learner Profiles', detail: 'Learner profiles are saved in this browser and remain available after page refresh. Duplicate admission numbers are blocked.' }
     ]
   },
   'classes': {
@@ -35,8 +35,8 @@ const MODULE_BLUEPRINTS = {
   },
   'assessments': {
     title: 'Learner Performance Records',
-    badge: 'Module Ready for Phase 2',
-    description: 'Record and review learner assessment results and other performance evidence by grade, class, learning area and reporting period.',
+    badge: 'Working · Individual records',
+    description: 'Capture each learner’s assessment results, attendance context, participation and teacher observations by learning area and reporting period.',
     pillars: [
       { title: 'Structured Mark Entry', detail: 'Simple entry of scores, achievement descriptors where the school uses them, attendance, participation and teacher observations.' },
       { title: 'Completion Tracking', detail: 'Track which learner performance records have been entered, checked or are still missing.' },
