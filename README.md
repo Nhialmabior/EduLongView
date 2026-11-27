@@ -29,6 +29,18 @@ EduLongView is designed for teachers and school administrators in refugee and ho
 - Persist learner profiles and performance records in browser LocalStorage (`edulongview_state_v2`).
 - These records are currently stored locally in the browser. They are not yet synchronised to a school database or shared across teacher devices.
 
+
+### Bulk results upload
+
+- Upload multiple learner performance records from a CSV file or Excel workbook (.xlsx).
+- Download the CSV template to use the expected column names and data format.
+- Match every row to a registered learner by admission / learner number.
+- Preview rows before importing; invalid rows are reported and excluded.
+- Validate reporting term, year, date, score and maximum score. Existing duplicate assessment records are skipped.
+- Confirmed imports are saved to the same `performanceRecords` collection as manually entered results, so the learner analysis and report-draft workflow can use the uploaded evidence.
+- CSV parsing uses PapaParse and Excel parsing uses SheetJS from CDN libraries; an internet connection is required to load those parsers.
+- Like manually entered records, imported records currently remain in this browser's LocalStorage and are not uploaded to a central school database.
+
 ## Project Structure
 
 ```text
