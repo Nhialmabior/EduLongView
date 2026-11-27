@@ -1,33 +1,33 @@
 /* ==========================================================================
    EduLongView — Design System & Layout Stylesheet
-   Visual Direction: Deep Navy Sidebar, Clean White Workspace, Restrained Teal & Subtle Gold
+   Visual Direction: Charcoal Gray Sidebar, Silver Workspace, Minimal Yellow Accents
    ========================================================================== */
 
 :root {
-  /* Core Palette */
-  --navy-950: #091526;
-  --navy-900: #0F213A;
-  --navy-800: #163052;
-  --navy-700: #1E406B;
-  --navy-border: rgba(255, 255, 255, 0.09);
+  /* EduLongView theme: charcoal gray, silver and restrained yellow */
+  --navy-950: #3F444A;
+  --navy-900: #555B61;
+  --navy-800: #686F76;
+  --navy-700: #7B8289;
+  --navy-border: rgba(255, 255, 255, 0.14);
 
-  /* Surfaces */
-  --bg-canvas: #F5F7FA;
+  /* Light silver workspace */
+  --bg-canvas: #F3F4F5;
   --bg-surface: #FFFFFF;
-  --bg-subtle: #F8FAFC;
-  --bg-hover: #F1F5F9;
+  --bg-subtle: #F7F8F9;
+  --bg-hover: #ECEEF0;
 
-  /* Brand Accents */
-  --teal-700: #0F766E;
-  --teal-600: #0D9488;
-  --teal-50: #F0FDFA;
-  --teal-100: #CCFBF1;
+  /* Neutral gray replaces the former teal brand accent */
+  --teal-700: #555B61;
+  --teal-600: #737A81;
+  --teal-50: #F0F1F2;
+  --teal-100: #DDE0E3;
 
-  /* Subtle Gold Highlights */
-  --gold-600: #B45309;
-  --gold-500: #D97706;
-  --gold-50: #FFFBEB;
-  --gold-100: #FEF3C7;
+  /* Minimal warm yellow accent */
+  --gold-600: #8A7422;
+  --gold-500: #E5C84B;
+  --gold-50: #FBF8E9;
+  --gold-100: #F4E9AE;
 
   /* Semantic Status */
   --success-text: #0F766E;
@@ -1297,3 +1297,53 @@ button, select, input {
 .learner-directory-table tr[hidden]{display:none}
 @media(max-width:700px){.learner-overview-grid{grid-template-columns:1fr 1fr;gap:10px}.learner-overview-card{padding:14px}.learner-overview-card strong{font-size:23px}.learner-directory-tools{align-items:stretch}.learner-search-field{max-width:none}.learner-grade-filter{flex:1}}
 @media(max-width:420px){.learner-overview-grid{grid-template-columns:1fr}}
+
+
+/* ==========================================================================
+   EduLongView gray / silver / minimal yellow theme refinements
+   ========================================================================== */
+.sidebar { background-color: var(--navy-900); border-right-color: var(--navy-950); }
+.brand-mark { background: var(--navy-800); }
+.school-indicator { background: var(--gold-500); box-shadow: 0 0 0 3px rgba(229, 200, 75, 0.18); }
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 3px 0 0 var(--gold-500);
+}
+.nav-item.active svg { color: var(--gold-500); }
+.nav-badge {
+  background: rgba(229, 200, 75, 0.14);
+  color: #F4E9AE;
+  border-color: rgba(229, 200, 75, 0.28);
+}
+.user-avatar { background: var(--navy-800); }
+.btn-primary { background: var(--navy-900); color: #FFFFFF; }
+.btn-primary:hover { background: var(--navy-950); }
+.btn-outline { color: var(--navy-900); }
+.btn-outline:hover { background: var(--bg-subtle); border-color: var(--navy-700); }
+.welcome-banner { background: linear-gradient(115deg, #FFFFFF 0%, #F7F8F9 100%); border-color: var(--border-light); }
+.welcome-copy h2 span { color: var(--navy-900); }
+.kpi-card-warning { border-top-color: var(--gold-500); }
+.kpi-icon.teal, .kpi-icon.navy { background: #F0F1F2; color: var(--navy-900); }
+.kpi-icon.gold { background: var(--gold-50); color: var(--gold-600); }
+.panel-tag, .module-badge {
+  color: var(--navy-900);
+  background: #F0F1F2;
+  border-color: var(--border-light);
+}
+.status-pill.verified { background: #F0F1F2; color: var(--navy-900); }
+.status-pill.pending { background: var(--gold-50); color: var(--gold-600); }
+.text-link { color: var(--navy-900); }
+.warning-item { border-left-color: var(--gold-500); }
+.toast { background: var(--navy-900); border-left-color: var(--gold-500); }
+.workspace-form-grid input:focus,
+.workspace-form-grid select:focus,
+.workspace-form-grid textarea:focus {
+  border-color: var(--navy-700);
+  box-shadow: 0 0 0 3px rgba(85, 91, 97, 0.12);
+}
+:focus-visible { outline-color: rgba(229, 200, 75, 0.72); }
+.kpi-card:hover, .panel-card:hover { border-color: var(--border-medium); }
+.kpi-card:focus-within, .panel-card:focus-within { border-color: var(--navy-700); }
+.data-table tbody tr:hover { background: #F7F8F9; }
+.learner-record-count { background: #F0F1F2; color: var(--navy-900); }
+.import-dropzone > i { color: var(--navy-900); }
