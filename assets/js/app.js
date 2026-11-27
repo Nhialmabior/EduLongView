@@ -309,7 +309,7 @@
         termSelect.value = appState.activePeriod.term;
         if (streamFilterSelect) streamFilterSelect.value = 'all';
         refreshDashboard();
-        showToast('CBC/CBE demo dataset restored');
+        showToast('Demo dataset restored');
       });
     }
   }
