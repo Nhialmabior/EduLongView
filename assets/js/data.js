@@ -22,15 +22,15 @@ const DEFAULT_DEMO_DATA = {
       'Term 1': {
         kpis: {
           totalLearners: 492,
-          learnersMeta: '12 active streams · 93.4% attendance',
+          learnersMeta: '12 grade classes · 93.4% attendance',
           avgPerformance: 60.4,
-          avgDelta: '+1.2% baseline entry',
+          avgDelta: '+1.2 index points from baseline',
           totalAssessments: 36,
           assessmentsMeta: 'Opener, Mid-Term & End-Term 1',
           flaggedLearners: 38,
-          flaggedMeta: 'Below 50% mean or >12% term drop'
+          flaggedMeta: 'Review based on learning evidence and support indicators'
         },
-        trendLabels: ['Entry Baseline', 'CAT 1 (Feb)', 'Mid-Term 1 (Mar)', 'CAT 2 (Mar)', 'End-Term 1 (Apr)'],
+        trendLabels: ['Entry Baseline', 'Learning Check 1 (Feb)', 'Mid-Term Learning Review 1 (Mar)', 'Learning Check 2 (Mar)', 'End-Term 1 (Apr)'],
         trends: {
           'all': [56.8, 58.5, 59.9, 60.1, 60.4],
           'Grade 1': [54.2, 56.0, 57.5, 58.1, 58.6],
@@ -49,10 +49,10 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 63.9 }
         ],
         recentAssessments: [
-          { title: 'End-Term 1 Exam', subject: 'Mathematics', classStream: 'Grade 4 East', date: '10 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'End-Term 1 Exam', subject: 'English', classStream: 'Grade 7 North', date: '09 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'CAT 2 Practical', subject: 'Integrated Science', classStream: 'Grade 9 West', date: '04 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'Mid-Term 1 Paper', subject: 'Agriculture', classStream: 'Grade 1 South', date: '21 Mar 2026', mean: 'Evidence recorded', status: 'Verified' }
+          { title: 'End-Term Learning Review', subject: 'Mathematics', classStream: 'Grade 4 East', date: '10 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'End-Term Learning Review', subject: 'English', classStream: 'Grade 7 North', date: '09 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Learning Check 2 Practical', subject: 'Integrated Science', classStream: 'Grade 9 West', date: '04 Apr 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Mid-Term Learning Review 1 Paper', subject: 'Agriculture', classStream: 'Grade 1 South', date: '21 Mar 2026', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -87,15 +87,15 @@ const DEFAULT_DEMO_DATA = {
       'Term 2': {
         kpis: {
           totalLearners: 489,
-          learnersMeta: '12 active streams · 93.9% attendance',
+          learnersMeta: '12 grade classes · 93.9% attendance',
           avgPerformance: 61.7,
-          avgDelta: '+1.3% vs Term 1',
+          avgDelta: '+1.3 index points vs Term 1',
           totalAssessments: 36,
-          assessmentsMeta: 'CAT 1, Mid-Term 2 & End-Term 2',
+          assessmentsMeta: 'Learning Check 1, Mid-Term Learning Review 2 & End-Term 2',
           flaggedLearners: 33,
-          flaggedMeta: 'Below 50% mean or >12% term drop'
+          flaggedMeta: 'Review based on learning evidence and support indicators'
         },
-        trendLabels: ['Term 1 Carryover', 'CAT 1 (May)', 'Mid-Term 2 (Jun)', 'CAT 2 (Jul)', 'End-Term 2 (Aug)'],
+        trendLabels: ['Term 1 Carryover', 'Learning Check 1 (May)', 'Mid-Term Learning Review 2 (Jun)', 'Learning Check 2 (Jul)', 'End-Term 2 (Aug)'],
         trends: {
           'all': [60.4, 60.9, 61.2, 61.5, 61.7],
           'Grade 1': [58.6, 59.1, 59.5, 60.0, 60.3],
@@ -115,9 +115,9 @@ const DEFAULT_DEMO_DATA = {
         ],
         recentAssessments: [
           { title: 'End-Term 2 Mock', subject: 'Agriculture', classStream: 'Grade 9 West', date: '07 Aug 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'End-Term 2 Exam', subject: 'Mathematics', classStream: 'Grade 7 East', date: '06 Aug 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'CAT 2 Assessment', subject: 'Creative Arts and Sports', classStream: 'Grade 4 North', date: '24 Jul 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'Mid-Term 2 Exam', subject: 'Kiswahili', classStream: 'Grade 1 East', date: '19 Jun 2026', mean: 'Evidence recorded', status: 'Verified' }
+          { title: 'End-Term Learning Review', subject: 'Mathematics', classStream: 'Grade 7 East', date: '06 Aug 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Learning Check 2 Assessment', subject: 'Creative Arts and Sports', classStream: 'Grade 4 North', date: '24 Jul 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Mid-Term Learning Review 2 Exam', subject: 'Kiswahili', classStream: 'Grade 1 East', date: '19 Jun 2026', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -152,15 +152,15 @@ const DEFAULT_DEMO_DATA = {
       'Term 3': {
         kpis: {
           totalLearners: 486,
-          learnersMeta: '12 active streams · 94.2% attendance',
+          learnersMeta: '12 grade classes · 94.2% attendance',
           avgPerformance: 64.8,
-          avgDelta: '+3.1% vs Term 2',
+          avgDelta: '+3.1 index points vs Term 2',
           totalAssessments: 36,
-          assessmentsMeta: 'CAT 1, Mid-Term & CAT 2 completed',
+          assessmentsMeta: 'Learning Check 1, Mid-Term & Learning Check 2 completed',
           flaggedLearners: 29,
-          flaggedMeta: 'Below 50% mean or >12% term drop'
+          flaggedMeta: 'Review based on learning evidence and support indicators'
         },
-        trendLabels: ['Term 2 Carryover', 'CAT 1 (Sep)', 'Mid-Term 3 (Oct)', 'CAT 2 (Nov)', 'Projected Final'],
+        trendLabels: ['Term 2 Carryover', 'Learning Check 1 (Sep)', 'Mid-Term Learning Review 3 (Oct)', 'Learning Check 2 (Nov)', 'Projected Final'],
         trends: {
           'all': [61.7, 62.9, 63.8, 64.8, 65.6],
           'Grade 1': [60.3, 61.5, 62.4, 63.4, 64.2],
@@ -179,10 +179,10 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 69.5 }
         ],
         recentAssessments: [
-          { title: 'CAT 2 Continuous', subject: 'Mathematics', classStream: 'Grade 7 North', date: '24 Nov 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'CAT 2 Continuous', subject: 'English Paper 2', classStream: 'Grade 9 East', date: '22 Nov 2026', mean: 'Evidence recorded', status: 'Verified' },
-          { title: 'CAT 2 Practical', subject: 'Agriculture', classStream: 'Grade 4 South', date: '19 Nov 2026', mean: 'Evidence recorded', status: 'Pending Review' },
-          { title: 'Mid-Term 3 Exam', subject: 'Social Studies', classStream: 'Grade 1 West', date: '06 Nov 2026', mean: 'Evidence recorded', status: 'Verified' }
+          { title: 'Learning Check 2 Continuous', subject: 'Mathematics', classStream: 'Grade 7 North', date: '24 Nov 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Learning Check 2 Continuous', subject: 'English Paper 2', classStream: 'Grade 9 East', date: '22 Nov 2026', mean: 'Evidence recorded', status: 'Verified' },
+          { title: 'Learning Check 2 Practical', subject: 'Agriculture', classStream: 'Grade 4 South', date: '19 Nov 2026', mean: 'Evidence recorded', status: 'Pending Review' },
+          { title: 'Mid-Term Learning Review 3 Exam', subject: 'Social Studies', classStream: 'Grade 1 West', date: '06 Nov 2026', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
@@ -219,15 +219,15 @@ const DEFAULT_DEMO_DATA = {
       'Term 1': {
         kpis: {
           totalLearners: 464,
-          learnersMeta: '12 active streams · 91.8% attendance',
+          learnersMeta: 'Grade 1–9 classes · 91.8% attendance',
           avgPerformance: 57.9,
           avgDelta: '2025 Term 1 archive',
           totalAssessments: 36,
           assessmentsMeta: 'Archived term records',
           flaggedLearners: 44,
-          flaggedMeta: 'Below 50% mean or >12% term drop'
+          flaggedMeta: 'Review based on learning evidence and support indicators'
         },
-        trendLabels: ['Entry Baseline', 'CAT 1', 'Mid-Term 1', 'CAT 2', 'End-Term 1'],
+        trendLabels: ['Entry Baseline', 'Learning Check 1', 'Mid-Term Learning Review 1', 'Learning Check 2', 'End-Term 1'],
         trends: {
           'all': [55.0, 56.1, 56.9, 57.4, 57.9],
           'Grade 1': [52.4, 53.8, 54.5, 55.1, 55.8],
@@ -264,15 +264,15 @@ const DEFAULT_DEMO_DATA = {
       'Term 2': {
         kpis: {
           totalLearners: 468,
-          learnersMeta: '12 active streams · 92.4% attendance',
+          learnersMeta: 'Grade 1–9 classes · 92.4% attendance',
           avgPerformance: 59.1,
-          avgDelta: '+1.2% vs Term 1 2025',
+          avgDelta: '+1.2 index points vs Term 1 2025',
           totalAssessments: 36,
           assessmentsMeta: 'Archived term records',
           flaggedLearners: 40,
-          flaggedMeta: 'Below 50% mean or >12% term drop'
+          flaggedMeta: 'Review based on learning evidence and support indicators'
         },
-        trendLabels: ['Term 1 Carryover', 'CAT 1', 'Mid-Term 2', 'CAT 2', 'End-Term 2'],
+        trendLabels: ['Term 1 Carryover', 'Learning Check 1', 'Mid-Term Learning Review 2', 'Learning Check 2', 'End-Term 2'],
         trends: {
           'all': [57.9, 58.2, 58.6, 58.9, 59.1],
           'Grade 1': [55.8, 56.1, 56.5, 56.8, 57.0],
@@ -309,15 +309,15 @@ const DEFAULT_DEMO_DATA = {
       'Term 3': {
         kpis: {
           totalLearners: 470,
-          learnersMeta: '12 active streams · 93.1% attendance',
+          learnersMeta: 'Grade 1–9 classes · 93.1% attendance',
           avgPerformance: 61.2,
-          avgDelta: '+2.1% vs Term 2 2025',
+          avgDelta: '+2.1 index points vs Term 2 2025',
           totalAssessments: 36,
           assessmentsMeta: 'Archived annual close',
           flaggedLearners: 34,
-          flaggedMeta: 'Below 50% mean or >12% term drop'
+          flaggedMeta: 'Review based on learning evidence and support indicators'
         },
-        trendLabels: ['Term 2 Carryover', 'CAT 1', 'Mid-Term 3', 'CAT 2', 'End-Term 3'],
+        trendLabels: ['Term 2 Carryover', 'Learning Check 1', 'Mid-Term Learning Review 3', 'Learning Check 2', 'End-Term 3'],
         trends: {
           'all': [59.1, 59.8, 60.3, 60.8, 61.2],
           'Grade 1': [57.0, 57.6, 58.2, 58.7, 59.1],
@@ -336,7 +336,7 @@ const DEFAULT_DEMO_DATA = {
           { name: 'Creative Arts and Sports', mean: 65.1 }
         ],
         recentAssessments: [
-          { title: 'End-Term 3 Annual Exam', subject: 'All Core Subjects', classStream: 'Grade 1 – Grade 7', date: '21 Nov 2025', mean: 'Evidence recorded', status: 'Verified' }
+          { title: 'End-Term Learning Review', subject: 'All Core Subjects', classStream: 'Grade 1 – Grade 7', date: '21 Nov 2025', mean: 'Evidence recorded', status: 'Verified' }
         ],
         earlyWarnings: [
           {
