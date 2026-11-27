@@ -36,7 +36,7 @@
     document.getElementById('activePeriodHeading').textContent = `${year} · ${term}`;
     document.getElementById('kpiTotalLearners').textContent = kpis.totalLearners.toLocaleString();
     document.getElementById('kpiLearnersMeta').textContent = kpis.learnersMeta;
-    document.getElementById('kpiAvgPerformance').textContent = `${kpis.avgPerformance.toFixed(1)}%`;
+    document.getElementById('kpiAvgPerformance').textContent = `${kpis.avgPerformance.toFixed(1)} index points`;
 
     const deltaEl = document.getElementById('kpiAvgDelta');
     deltaEl.innerHTML = `<i data-lucide="arrow-up-right"></i> ${kpis.avgDelta}`;
@@ -94,7 +94,7 @@
             </div>
             <p class="warning-reason">${w.reason}</p>
             <div class="warning-metrics">
-              <span>Term Mean: <strong>${w.currentMean}</strong></span>
+              <span>Progress status: <strong>${w.currentMean}</strong></span>
               <span>Attendance: <strong>${w.attendance}</strong></span>
             </div>
           </div>
@@ -121,7 +121,7 @@
         labels: periodData.trendLabels,
         datasets: [
           {
-            label: selectedStream === 'all' ? 'School Mean (%)' : `${selectedStream} Mean (%)`,
+            label: selectedStream === 'all' ? 'School Progress Index' : `${selectedStream} Progress Index`,
             data: series,
             borderColor: '#0F766E',
             backgroundColor: 'rgba(15, 118, 110, 0.09)',
@@ -135,7 +135,7 @@
             fill: true
           },
           {
-            label: 'School Target (60%)',
+            label: 'Illustrative reference (60 points)',
             data: benchmark,
             borderColor: '#D97706',
             borderWidth: 1.75,
@@ -171,7 +171,7 @@
             padding: 10,
             cornerRadius: 8,
             callbacks: {
-              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y}%`
+              label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} points`
             }
           }
         },
@@ -181,7 +181,7 @@
             max: 80,
             grid: { color: '#F1F5F9' },
             ticks: {
-              callback: (val) => `${val}%`,
+              callback: (val) => `${val}`,
               color: '#64748B',
               font: { family: 'Inter', size: 11.5 }
             }
@@ -218,7 +218,7 @@
         labels,
         datasets: [
           {
-            label: 'Subject Mean (%)',
+            label: 'Illustrative Progress Index',
             data: scores,
             backgroundColor: barColors,
             borderRadius: 5,
@@ -237,7 +237,7 @@
             padding: 10,
             cornerRadius: 8,
             callbacks: {
-              label: (ctx) => `Mean Score: ${ctx.parsed.x}%`
+              label: (ctx) => `Index points: ${ctx.parsed.x}`
             }
           }
         },
@@ -247,7 +247,7 @@
             max: 100,
             grid: { color: '#F1F5F9' },
             ticks: {
-              callback: (val) => `${val}%`,
+              callback: (val) => `${val}`,
               color: '#64748B',
               font: { family: 'Inter', size: 11 }
             }
@@ -309,7 +309,7 @@
         termSelect.value = appState.activePeriod.term;
         if (streamFilterSelect) streamFilterSelect.value = 'all';
         refreshDashboard();
-        showToast('Demo dataset restored to 2026 Term 3 defaults');
+        showToast('CBC/CBE demo dataset restored');
       });
     }
   }
