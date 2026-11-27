@@ -8,15 +8,15 @@ const MODULE_BLUEPRINTS = {
     badge: 'Module Ready for Phase 2',
     description: 'Centralized learner registry with admission numbers, class stream assignments, attendance context, and longitudinal academic profiles.',
     pillars: [
-      { title: 'Learner Profiles', detail: 'Individual term-over-term score trajectories, subject strengths, and teacher intervention notes.' },
-      { title: 'Stream & Cohort Filters', detail: 'Filter across Form 1–4 streams, gender balance, and support categories without losing context.' },
+      { title: 'Learner Profiles', detail: 'Longitudinal learning-outcome progress, competency strengths, learner support needs, and teacher intervention notes.' },
+      { title: 'Stream & Cohort Filters', detail: 'Filter across Grades 1–9 streams, gender balance, and support categories without losing context.' },
       { title: 'LocalStorage Persistence', detail: 'Add, edit, or search learner records directly in browser storage with instant CSV export.' }
     ]
   },
   'classes': {
     title: 'Classes & Streams',
     badge: 'Module Ready for Phase 2',
-    description: 'Manage Form 1 through Form 4 streams, class teachers, enrollment capacity, and comparative stream benchmarks.',
+    description: 'Manage Grade 1 through Grade 9 streams, class teachers, enrollment capacity, and comparative stream benchmarks.',
     pillars: [
       { title: 'Stream Performance Comparison', detail: 'Compare East, West, North, and South streams across identical assessment papers.' },
       { title: 'Class Teacher Allocation', detail: 'Assign homeroom teachers responsible for early-warning follow-ups and parent conferences.' },
@@ -26,27 +26,27 @@ const MODULE_BLUEPRINTS = {
   'subjects': {
     title: 'Subjects & Grading Scales',
     badge: 'Module Ready for Phase 2',
-    description: 'Configure core and elective subjects, department leads, weighting rules, and Kenyan secondary grading boundaries.',
+    description: 'Configure grade-specific CBC/CBE learning areas, curriculum options, strands, sub-strands, and learning outcomes.',
     pillars: [
-      { title: 'Department Benchmarks', detail: 'Track STEM vs. Humanities mean performance to allocate remedial teaching hours.' },
-      { title: 'Custom Grading Rubrics', detail: 'Configure pass thresholds and grade boundaries aligned with school academic policies.' },
-      { title: 'Assessment Weighting', detail: 'Combine CAT 1, Mid-Term, and End-Term marks automatically into weighted term grades.' }
+      { title: 'Learning Area Progress', detail: 'Track learning-outcome progress by grade and learning area to guide learner support.' },
+      { title: 'Competency Assessment', detail: 'Configure school assessment rubrics and achievement descriptors without treating them as national grades.' },
+      { title: 'Learning Evidence', detail: 'Record varied evidence of learning, practical tasks, observations, projects, and teacher feedback.' }
     ]
   },
   'assessments': {
     title: 'Assessments & Markbooks',
     badge: 'Module Ready for Phase 2',
-    description: 'Create and audit CATs, practicals, mid-term exams, and end-term evaluations across every class and subject.',
+    description: 'Create and review formative and summative assessments linked to grade-level learning areas, strands, sub-strands, and outcomes.',
     pillars: [
-      { title: 'Structured Mark Entry', detail: 'Fast keyboard-friendly mark entry grids with automatic validation against maximum scores.' },
+      { title: 'Structured Mark Entry', detail: 'Teacher-friendly evidence entry with rubric/descriptor selection and validation.' },
       { title: 'Completion Tracking', detail: 'See which subject teachers have submitted marks and which streams are still pending.' },
-      { title: 'Automatic Calculations', detail: 'Instant class means, standard deviation, pass rates, and rank distributions.' }
+      { title: 'Automatic Calculations', detail: 'Summaries of achievement evidence and learner progress; avoid ranking learners as the default measure.' }
     ]
   },
   'import-marks': {
     title: 'Import Marks (CSV)',
     badge: 'Powered by PapaParse',
-    description: 'Upload existing teacher spreadsheets in CSV format to automatically map learner admission numbers and compute analytics.',
+    description: 'Import learner records and assessment evidence using grade-aware CSV templates with validation before saving.',
     pillars: [
       { title: 'Downloadable CSV Templates', detail: 'Pre-formatted templates per stream so teachers can enter marks offline and upload in seconds.' },
       { title: 'Validation & Preview', detail: 'Detect missing admission numbers, out-of-range marks, or duplicate rows before saving.' },
@@ -56,9 +56,9 @@ const MODULE_BLUEPRINTS = {
   'analytics': {
     title: 'Deep Academic Analytics',
     badge: 'Powered by Chart.js',
-    description: 'Multi-term longitudinal comparisons, subject correlation matrices, and cohort progression insights.',
+    description: 'Longitudinal learning progress, competency development, grade-level patterns, and cohort progression insights.',
     pillars: [
-      { title: 'Longitudinal Cohort Curves', detail: 'Follow the same group of learners from Form 1 entry through Form 4 candidacy.' },
+      { title: 'Longitudinal Cohort Curves', detail: 'Follow learner development from Grade 1 through Grade 9 while preserving historical records.' },
       { title: 'Subject Gap Analysis', detail: 'Identify topics and subjects pulling down overall learner mean grades.' },
       { title: 'Distribution Histograms', detail: 'Visualize score spreads to distinguish whole-class gaps from individual learner struggles.' }
     ]
@@ -68,7 +68,7 @@ const MODULE_BLUEPRINTS = {
     badge: 'Rule-Based Intervention Engine',
     description: 'Transparent academic risk flags showing exactly why a learner needs support—never an opaque black-box score.',
     pillars: [
-      { title: 'Clear Trigger Rules', detail: 'Flags learners below 50% mean, dropping >12% between CATs, or failing 3+ core subjects.' },
+      { title: 'Clear Trigger Rules', detail: 'Use transparent indicators such as missing learning evidence, attendance concerns, or sustained difficulty with selected outcomes; teachers review every flag.' },
       { title: 'Teacher Action Log', detail: 'Record remedial classes, guardian meetings, and follow-up check-ins per flagged learner.' },
       { title: 'Recovery Monitoring', detail: 'Track whether interventions lift learner performance in subsequent assessments.' }
     ]
@@ -78,7 +78,7 @@ const MODULE_BLUEPRINTS = {
     badge: 'Powered by jsPDF',
     description: 'Generate clean, printable learner report cards, stream broadsheets, and board summary briefs offline.',
     pillars: [
-      { title: 'Individual Learner Report Cards', detail: 'Clean PDF summaries with subject marks, term trends, and constructive teacher remarks.' },
+      { title: 'Individual Learner Report Cards', detail: 'Learner progress summaries with learning areas, competency evidence, teacher feedback, and support actions.' },
       { title: 'Administration Term Briefs', detail: 'One-click executive summaries for school principals and education partners.' },
       { title: 'Offline-First Generation', detail: 'Generates crisp vector PDFs directly in the browser without requiring internet access.' }
     ]
@@ -90,7 +90,7 @@ const MODULE_BLUEPRINTS = {
     pillars: [
       { title: 'Early-Warning Thresholds', detail: 'Adjust pass marks and percentage-drop sensitivity to match school academic targets.' },
       { title: 'JSON Backup & Restore', detail: 'Export the entire LocalStorage database to a portable file for safe offline backup.' },
-      { title: 'Demo Dataset Controls', detail: 'Switch between realistic Kakuma school demo data or start with a clean slate.' }
+      { title: 'Demo Dataset Controls', detail: 'Configure school grade coverage, curriculum options, and demo data or start with a clean slate.' }
     ]
   }
 };
