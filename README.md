@@ -62,7 +62,7 @@ EduLongView is designed for teachers and school administrators in refugee and ho
 - Returns a clear `503` when no AI provider is configured. It does not fabricate AI output.
 - Includes a Render deployment blueprint (`render.yaml`) and local setup instructions in [backend/README.md](backend/README.md).
 - The API contract remains documented in [api/AI_REPORT_API.md](api/AI_REPORT_API.md).
-- **Important:** this is a backend scaffold, not a production-ready school system. The temporary shared bearer token is only for local/server-to-server testing; real teacher identity, school-level authorisation, a secure shared database, audit logging and a safeguarding/data-protection review are still required. Do not expose the shared token in the public website or send real learner data to an external model before those safeguards are implemented.
+- **Important:** Supabase user-session verification and school membership checks are now implemented in the backend. The first school administrator still needs controlled provisioning, and teacher invitation acceptance/activation, learner/report storage, complete audit coverage and a safeguarding/data-protection review remain outstanding. Do not send real learner data to an external model before those safeguards are complete.
 - The static website's existing rule-based report workflow remains unchanged. No live AI provider is configured and no backend has been deployed yet.
 
 ## Project Structure
@@ -110,9 +110,10 @@ edulongview/
 See [backend/README.md](backend/README.md) for Windows PowerShell setup, environment variables and a sample request. The backend runs separately from the static website. Keep provider keys and the local bearer token in backend environment variables only; never add them to frontend JavaScript or commit a real `.env` file.
 
 
-### School identity and security foundation
+### School identity and authentication foundation
 
-- Added the first SQL schema for schools, school memberships and administrative audit events under `backend/sql/001_school_identity.sql`.
-- Added row-level security policies and restricted browser permissions. School membership changes are reserved for a trusted, authenticated backend.
-- Added GitHub Actions to run backend tests automatically on pushes and pull requests.
-- **Not yet live:** the SQL schema has not been applied, school sign-in is not connected, and teacher invitations are not active. The connected Supabase workspace currently has no active EduLongView project; do not reuse another project's database. A dedicated project and secure backend configuration are required before real school accounts can be enabled.
+- Created `schools`, `school_memberships` and `school_audit_events` in the connected EduLongView Supabase project, with RLS and restricted browser write access.
+- The FastAPI backend validates Supabase Auth access tokens against Auth, then resolves the active school membership and active school server-side.
+- Added `GET /api/v1/auth/me` and a school-admin-only `POST /api/v1/school/teachers/invite` endpoint. The invitation request cannot select its own school or role.
+- Server-only Supabase credentials are configured through backend environment variables and must never be exposed in browser code.
+- **Still pending:** controlled first-school/first-admin provisioning, invitation acceptance and activation checks, frontend sign-in UI, learner/report database tables, full audit coverage and end-to-end security tests.
