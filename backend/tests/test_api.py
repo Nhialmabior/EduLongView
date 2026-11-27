@@ -134,6 +134,34 @@ def test_rejects_unexpected_personal_fields(monkeypatch):
 
 
 def test_model_response_cannot_reference_unknown_evidence():
-    allowed = {"record-001"}
-    returned = {"record-001", "fabricated-record"}
-    assert returned - allowed == {"fabricated-record"}
+    draft = main.DraftContent(
+        performanceSummary="A summary.",
+        strengths=[],
+        areasNeedingAttention=[],
+        recommendations=[],
+        evidenceReferences=["record-001", "fabricated-record"],
+        limitations=[],
+    )
+    try:
+        main.validate_evidence_references(draft, {"record-001"})
+    except ValueError as exc:
+        assert "not supplied" in str(exc)
+    else:
+        raise AssertionError("Unknown evidence reference was not rejected")
+
+
+def test_model_response_cannot_duplicate_evidence_references():
+    draft = main.DraftContent(
+        performanceSummary="A summary.",
+        strengths=[],
+        areasNeedingAttention=[],
+        recommendations=[],
+        evidenceReferences=["record-001", "record-001"],
+        limitations=[],
+    )
+    try:
+        main.validate_evidence_references(draft, {"record-001"})
+    except ValueError as exc:
+        assert "duplicate" in str(exc)
+    else:
+        raise AssertionError("Duplicate evidence references were not rejected")
