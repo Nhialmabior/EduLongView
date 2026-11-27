@@ -136,7 +136,12 @@ const EduNavigation = {
     const dropThreshold = Number(school.dropAlertThreshold ?? 12);
     return learners.map((learner) => {
       const learnerRecords = records.filter((record) => record.learnerId === learner.id);
-      const scored = learnerRecords.filter((record) => Number.isFinite(Number(record.percentage)));
+      const scored = learnerRecords.filter((record) =>
+        record.percentage !== null &&
+        record.percentage !== undefined &&
+        String(record.percentage).trim() !== '' &&
+        Number.isFinite(Number(record.percentage))
+      );
       const mean = scored.length ? scored.reduce((sum, record) => sum + Number(record.percentage), 0) / scored.length : null;
       const absences = learnerRecords.filter((record) => String(record.attendance).toLowerCase() === 'absent').length;
       const reasons = [];
@@ -153,7 +158,7 @@ const EduNavigation = {
       Object.keys(areaGroups).forEach((area) => {
         const ordered = areaGroups[area].slice()
           .sort((a, b) => String(a.date || a.createdAt).localeCompare(String(b.date || b.createdAt)))
-          .filter((record) => Number.isFinite(Number(record.percentage)));
+          .filter((record) => record.percentage !== null && record.percentage !== undefined && String(record.percentage).trim() !== '' && Number.isFinite(Number(record.percentage)));
         if (ordered.length < 2) return;
         const first = Number(ordered[0].percentage);
         const latest = Number(ordered[ordered.length - 1].percentage);
