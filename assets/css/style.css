@@ -1347,3 +1347,20 @@ button, select, input {
 .data-table tbody tr:hover { background: #F7F8F9; }
 .learner-record-count { background: #F0F1F2; color: var(--navy-900); }
 .import-dropzone > i { color: var(--navy-900); }
+
+
+/* Live dashboard chart empty states */
+.dashboard-chart-empty {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: #737A81;
+  background: #F7F8F9;
+  border: 1px dashed #C0C5CA;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+}
