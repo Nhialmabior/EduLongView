@@ -114,6 +114,7 @@ const EduNavigation = {
   ensureWorkspaceCollections() {
     if (!Array.isArray(this.workspaceState.learners)) this.workspaceState.learners = [];
     if (!Array.isArray(this.workspaceState.performanceRecords)) this.workspaceState.performanceRecords = [];
+    if (!Array.isArray(this.workspaceState.learnerReports)) this.workspaceState.learnerReports = [];
     EduDataStore.save(this.workspaceState);
   },
 
@@ -304,47 +305,120 @@ const EduNavigation = {
     toast._timer = setTimeout(() => toast.classList.remove('show'), 2800);
   },
 
-  renderLearnerReports(section) {
-    const steps = [
-      { number: '01', title: 'Record learner performance', detail: 'Teachers enter assessment results, attendance, participation, progress notes and relevant observations for each learner.' },
-      { number: '02', title: 'Analyse individual progress', detail: 'The system compares the learner’s recorded evidence over time and across learning areas, identifying strengths, changes and possible gaps.' },
-      { number: '03', title: 'Generate an AI report draft', detail: 'AI prepares a clear performance summary and practical recommendations. It must not invent evidence or make unsupported diagnoses.' },
-      { number: '04', title: 'Teacher reviews and approves', detail: 'The responsible teacher checks the evidence, edits the report where necessary and decides whether it is ready to share.' },
-      { number: '05', title: 'Release to the parent', detail: 'Only an approved and explicitly released report becomes visible to the authorised parent or guardian.' }
-    ];
+  analyseLearner(learnerId) {
+    const learner = this.workspaceState.learners.find(function(item) { return item.id === learnerId; });
+    if (!learner) return null;
+    const records = this.workspaceState.performanceRecords.filter(function(item) { return item.learnerId === learnerId; }).sort(function(a,b) { return String(a.date || a.createdAt).localeCompare(String(b.date || b.createdAt)); });
+    const groups = {};
+    records.forEach(function(record) { const key = String(record.learningArea || 'Unspecified'); (groups[key] = groups[key] || []).push(record); });
+    const areas = Object.keys(groups).map(function(name) {
+      const items = groups[name];
+      const average = items.reduce(function(sum,item) { return sum + Number(item.percentage || 0); },0) / items.length;
+      return { name:name, count:items.length, average:average, change:items.length > 1 ? Number(items[items.length-1].percentage) - Number(items[0].percentage) : null };
+    }).sort(function(a,b) { return b.average-a.average; });
+    const attendance = records.reduce(function(counts,record) {
+      const value = String(record.attendance || 'Not recorded').toLowerCase();
+      if (value === 'present') counts.present++;
+      else if (value === 'late') counts.late++;
+      else if (value === 'absent') counts.absent++;
+      else counts.unrecorded++;
+      return counts;
+    },{present:0,late:0,absent:0,unrecorded:0});
+    const strengths = [], support = [], recommendations = [];
+    const repeated = areas.filter(function(area) { return area.count >= 2; });
+    repeated.filter(function(area) { return area.average >= 70; }).forEach(function(area) { strengths.push(area.name + ': average recorded score ' + area.average.toFixed(1) + '% across ' + area.count + ' records.'); });
+    areas.filter(function(area) { return area.change !== null && area.change >= 5; }).forEach(function(area) { strengths.push(area.name + ': first-to-latest result increased by ' + area.change.toFixed(1) + ' percentage points.'); });
+    const lowest = repeated.slice().sort(function(a,b) { return a.average-b.average; })[0];
+    if (lowest && lowest.average < 60) {
+      support.push(lowest.name + ': average recorded score is ' + lowest.average.toFixed(1) + '% across ' + lowest.count + ' records. Review the tasks and skills represented.');
+      recommendations.push('Review the learner’s work in ' + lowest.name + ', identify specific skills needing practice, and check progress again.');
+    }
+    areas.filter(function(area) { return area.change !== null && area.change <= -5; }).forEach(function(area) {
+      support.push(area.name + ': first-to-latest result decreased by ' + Math.abs(area.change).toFixed(1) + ' percentage points.');
+      recommendations.push('Discuss the recent ' + area.name + ' results with the learner and check for changes in task difficulty, learning conditions or support.');
+    });
+    if (!strengths.length) strengths.push('The current records do not yet show a repeated learning area averaging 70% or above. Review individual work before drawing conclusions.');
+    if (!support.length) support.push('The available records do not show a repeated low average or a decrease of at least five percentage points. Continue monitoring; this does not prove that no support is needed.');
+    if (attendance.absent || attendance.late) recommendations.push('Attendance entries show ' + attendance.absent + ' absence(s) and ' + attendance.late + ' late arrival(s). Verify the context with the learner and follow the school attendance process.');
+    if (!records.some(function(record) { return String(record.observation || '').trim(); })) recommendations.push('No teacher observations were included. Add factual classroom observations if available.');
+    if (records.length < 3) recommendations.push('Evidence is limited to fewer than three records. Add more results over time before making broad conclusions.');
+    if (!recommendations.length) recommendations.push('Continue collecting evidence across reporting periods and discuss the learner’s work to agree on suitable next steps.');
+    const overall = records.length ? records.reduce(function(sum,item) { return sum + Number(item.percentage || 0); },0) / records.length : 0;
+    const periods = Array.from(new Set(records.map(function(record) { return record.year + ' ' + record.term; })));
+    const summary = records.length ? learner.fullName + ' has ' + records.length + ' recorded performance entr' + (records.length === 1 ? 'y' : 'ies') + ' across ' + areas.length + ' learning area(s), covering ' + periods.join(', ') + '. The mean of the recorded percentages is ' + overall.toFixed(1) + '%. Interpret this summary alongside the assessment tasks and teacher observations.' : 'There are no performance records for this learner yet. Record evidence before preparing a progress report.';
+    return { learner:learner, records:records, areas:areas, attendance:attendance, strengths:strengths, support:support, recommendations:recommendations, summary:summary, overall:overall };
+  },
 
-    section.innerHTML = `
-      <div class="module-shell">
-        <div class="module-header">
-          <div>
-            <span class="module-badge">AI-assisted · Human-approved</span>
-            <h2>Individual Learner Reports</h2>
-            <p>EduLongView helps teachers understand each learner’s performance and communicate meaningful progress to parents.</p>
-          </div>
-          <a href="#overview" class="btn btn-primary" data-route="overview">
-            <i data-lucide="arrow-left"></i><span>Back to Overview Dashboard</span>
-          </a>
-        </div>
-        <div class="roadmap-grid">
-          ${steps.map((step) => `
-            <article class="roadmap-card">
-              <span class="module-badge">Step ${step.number}</span>
-              <h4 style="margin-top:12px;">${step.title}</h4>
-              <p>${step.detail}</p>
-            </article>
-          `).join('')}
-        </div>
-        <div class="panel-card" style="margin-top:22px;">
-          <div class="panel-header"><div><h3 class="panel-title">Report governance</h3><p class="panel-subtitle">The teacher remains accountable for every report shared with a parent.</p></div></div>
-          <div class="roadmap-grid">
-            <article class="roadmap-card"><h4>Evidence-based AI</h4><p>Recommendations must be traceable to recorded performance, attendance or teacher observations. Missing information must be identified, not guessed.</p></article>
-            <article class="roadmap-card"><h4>Teacher control</h4><p>AI output remains a private draft until a teacher reviews and approves it. AI cannot publish reports independently.</p></article>
-            <article class="roadmap-card"><h4>Parent privacy</h4><p>Parents can access only the reports for their linked learner that the school has approved and released.</p></article>
-          </div>
-        </div>
-      </div>
-    `;
+  renderLearnerReports(section, selectedLearnerId) {
+    const learners = this.workspaceState.learners;
+    const reports = this.workspaceState.learnerReports.slice().sort(function(a,b) { return String(b.updatedAt).localeCompare(String(a.updatedAt)); });
+    const options = learners.map((learner) => '<option value="' + this.escapeHTML(learner.id) + '" ' + (learner.id === selectedLearnerId ? 'selected' : '') + '>' + this.escapeHTML(learner.fullName) + ' — ' + this.escapeHTML(learner.admissionNo) + ' (Grade ' + this.escapeHTML(learner.grade) + ')</option>').join('');
+    section.innerHTML = '<div class="module-shell"><div class="module-header"><div><span class="module-badge">Evidence analysis · Teacher draft</span><h2>Individual Learner Reports</h2><p>Generate an editable report from one learner’s saved performance records. This version uses transparent rules; no external AI model is connected.</p></div></div>' +
+      '<div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">Prepare a learner report</h3><p class="panel-subtitle">Select a learner to analyse recorded results, attendance and observations.</p></div></div>' +
+      (learners.length ? '<form id="reportGenerateForm" class="workspace-form"><div class="workspace-form-grid"><label class="workspace-wide">Learner<select name="learnerId" required><option value="">Select learner</option>' + options + '</select></label></div><div class="workspace-form-actions"><button class="btn btn-primary" type="submit"><i data-lucide="file-text"></i><span>Generate Report Draft</span></button></div></form>' : '<p class="empty-state-cell">Register a learner and enter performance records before generating a report.</p>') + '</div>' +
+      (reports.length ? '<div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">Saved report drafts</h3><p class="panel-subtitle">Stored only in this browser; not visible to parents.</p></div></div><div class="table-responsive"><table class="data-table"><thead><tr><th>Learner</th><th>Updated</th><th>Status</th><th>Action</th></tr></thead><tbody>' + reports.map((report) => { const learner = learners.find(function(item) { return item.id === report.learnerId; }); return '<tr><td>' + this.escapeHTML(learner ? learner.fullName : 'Learner not found') + '</td><td>' + this.escapeHTML(new Date(report.updatedAt).toLocaleString()) + '</td><td><span class="status-pill pending">Private draft</span></td><td><button type="button" class="btn btn-secondary btn-sm" data-edit-report="' + this.escapeHTML(report.id) + '">Edit draft</button></td></tr>'; }).join('') + '</tbody></table></div></div>' : '') +
+      '<div id="reportEditorHost"></div><div class="panel-card workspace-panel"><h3 class="panel-title">Analysis safeguards</h3><p class="panel-subtitle">Only saved learner evidence is analysed. Missing evidence is identified, conclusions are limited, and teacher approval and parent release are not enabled yet.</p></div></div>';
+    if (selectedLearnerId) { const latest = reports.find(function(report) { return report.learnerId === selectedLearnerId; }); if (latest) this.renderReportEditor(latest.id); }
     if (window.lucide) window.lucide.createIcons();
+  },
+
+  renderReportEditor(reportId) {
+    const report = this.workspaceState.learnerReports.find(function(item) { return item.id === reportId; });
+    const host = document.getElementById('reportEditorHost');
+    if (!report || !host) return;
+    const learner = this.workspaceState.learners.find(function(item) { return item.id === report.learnerId; });
+    host.innerHTML = '<div class="panel-card workspace-panel"><div class="panel-header"><div><h3 class="panel-title">Review and edit report draft</h3><p class="panel-subtitle">' + this.escapeHTML(learner ? learner.fullName : 'Learner') + ' · Private draft</p></div></div>' +
+      '<form id="reportSaveForm" class="workspace-form" data-report-id="' + this.escapeHTML(report.id) + '"><div class="workspace-form-grid">' +
+      '<label class="workspace-wide">Performance summary<textarea name="summary" rows="4" required maxlength="3000">' + this.escapeHTML(report.summary) + '</textarea></label>' +
+      '<label>Identified strengths<textarea name="strengths" rows="5" required maxlength="3000">' + this.escapeHTML(report.strengths) + '</textarea></label>' +
+      '<label>Areas needing attention<textarea name="support" rows="5" required maxlength="3000">' + this.escapeHTML(report.support) + '</textarea></label>' +
+      '<label class="workspace-wide">Recommended next steps<textarea name="recommendations" rows="5" required maxlength="3000">' + this.escapeHTML(report.recommendations) + '</textarea></label>' +
+      '<label class="workspace-wide">Teacher’s comment<textarea name="teacherComment" rows="4" maxlength="2000">' + this.escapeHTML(report.teacherComment || '') + '</textarea></label></div>' +
+      '<div class="workspace-form-actions"><span class="module-badge">Not approved · Not released</span><button class="btn btn-primary" type="submit"><i data-lucide="save"></i><span>Save Teacher Draft</span></button></div></form></div>';
+    if (window.lucide) window.lucide.createIcons();
+  },
+
+  handleWorkspaceSubmit(event) {
+    const form = event.target;
+    if (form.id !== 'learnerCreateForm' && form.id !== 'performanceCreateForm' && form.id !== 'reportGenerateForm' && form.id !== 'reportSaveForm') return;
+    event.preventDefault();
+    const values = Object.fromEntries(new FormData(form).entries());
+    if (form.id === 'reportGenerateForm') {
+      const analysis = this.analyseLearner(values.learnerId);
+      if (!analysis) return;
+      const report = { id:'report-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), learnerId:values.learnerId,
+        summary:analysis.summary, strengths:analysis.strengths.map(function(item) { return '• ' + item; }).join('\n'),
+        support:analysis.support.map(function(item) { return '• ' + item; }).join('\n'),
+        recommendations:analysis.recommendations.map(function(item) { return '• ' + item; }).join('\n'),
+        teacherComment:'', evidenceRecordIds:analysis.records.map(function(item) { return item.id; }), evidenceCount:analysis.records.length,
+        status:'draft', createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() };
+      this.workspaceState.learnerReports.push(report);
+      EduDataStore.save(this.workspaceState);
+      this.renderLearnerReports(document.getElementById('view-subjects'), values.learnerId);
+      this.showWorkspaceToast('Private report draft generated.');
+      return;
+    }
+    if (form.id === 'reportSaveForm') {
+      const report = this.workspaceState.learnerReports.find((item) => item.id === form.dataset.reportId);
+      if (!report) return;
+      report.summary = values.summary.trim(); report.strengths = values.strengths.trim(); report.support = values.support.trim();
+      report.recommendations = values.recommendations.trim(); report.teacherComment = values.teacherComment.trim();
+      report.updatedAt = new Date().toISOString(); report.status = 'draft';
+      EduDataStore.save(this.workspaceState);
+      this.renderLearnerReports(document.getElementById('view-subjects'), report.learnerId);
+      this.showWorkspaceToast('Teacher draft saved. It remains private.');
+      return;
+    }
+    if (form.id === 'learnerCreateForm') {
+      const admissionNo = values.admissionNo.trim();
+      if (this.workspaceState.learners.some((learner) => learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) { window.alert('That admission / learner number is already registered.'); return; }
+      this.workspaceState.learners.push({ id:'learner-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), fullName:values.fullName.trim(), admissionNo:admissionNo, grade:Number(values.grade), stream:values.stream.trim(), createdAt:new Date().toISOString() });
+      EduDataStore.save(this.workspaceState); this.renderLearnerDirectory(document.getElementById('view-learners')); this.showWorkspaceToast('Learner profile saved.'); return;
+    }
+    const score = Number(values.score), maxScore = Number(values.maxScore);
+    if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0 || score < 0 || score > maxScore) { window.alert('Enter a valid score. The score achieved cannot be greater than the maximum score.'); return; }
+    this.workspaceState.performanceRecords.push({ id:'performance-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), learnerId:values.learnerId, learningArea:values.learningArea.trim(), assessmentTitle:values.assessmentTitle.trim(), assessmentType:values.assessmentType, year:Number(values.year), term:values.term, date:values.date, score:score, maxScore:maxScore, percentage:Number(((score / maxScore) * 100).toFixed(2)), attendance:values.attendance, participation:values.participation, observation:values.observation.trim(), createdAt:new Date().toISOString() });
+    EduDataStore.save(this.workspaceState); this.renderPerformanceEntry(document.getElementById('view-assessments')); this.showWorkspaceToast('Performance record saved.');
   },
 
   bindEvents() {
