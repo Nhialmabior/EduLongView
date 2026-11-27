@@ -1140,10 +1140,17 @@ const EduNavigation = {
       }
       if (e.target.closest('[data-delete-report]')) {
         const reportId = e.target.closest('[data-delete-report]').getAttribute('data-delete-report');
+        const report = this.workspaceState.learnerReports.find((item) => item.id === reportId);
+        if (!report) return;
+        if (report.status === 'released') {
+          this.showWorkspaceToast('Released report history is protected and cannot be deleted here.');
+          return;
+        }
         if (window.confirm('Delete this private report draft?')) {
-          this.workspaceState.learnerReports = this.workspaceState.learnerReports.filter((report) => report.id !== reportId);
+          this.workspaceState.learnerReports = this.workspaceState.learnerReports.filter((item) => item.id !== reportId);
           EduDataStore.save(this.workspaceState);
           this.renderReportsWorkspace(document.getElementById('view-reports'));
+          this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
           this.showWorkspaceToast('Private report draft deleted.');
         }
         return;
