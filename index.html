@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EduLongView — Academic Monitoring &amp; Early-Warning Platform</title>
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+  
+  <!-- Google Fonts: Inter & Manrope -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Chart.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <!-- PapaParse & jsPDF (Prepared for upcoming modules) -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+    <!-- Deep Navy Sidebar -->
+    <aside class="sidebar" id="sidebar" aria-label="Primary Navigation">
+      <div class="sidebar-header">
+        <a href="#overview" class="brand" data-route="overview">
+          <div class="brand-mark">
+            <img src="assets/icons/logo-mark.svg" alt="EduLongView Logo" width="24" height="24" />
+          </div>
+          <div class="brand-text">
+            <span class="brand-name">EduLongView</span>
+            <span class="brand-sub">Academic Analytics</span>
+          </div>
+        </a>
+        <button class="icon-btn sidebar-collapse-btn" id="sidebarCollapseBtn" title="Toggle sidebar" aria-label="Toggle sidebar">
+          <i data-lucide="panel-left-close"></i>
+        </button>
+      </div>
+
+      <div class="sidebar-school-pill">
+        <div class="school-indicator"></div>
+        <div class="school-meta">
+          <span class="school-name">Kalobeyei Settlement Sec.</span>
+          <span class="school-location">Kakuma, Turkana County</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-group">
+          <span class="nav-group-label">Monitoring</span>
+          <ul class="nav-list">
+            <li>
+              <a href="#overview" class="nav-item active" data-route="overview">
+                <i data-lucide="layout-dashboard"></i>
+                <span class="nav-label">Overview</span>
+              </a>
+            </li>
+            <li>
+              <a href="#analytics" class="nav-item" data-route="analytics">
+                <i data-lucide="trending-up"></i>
+                <span class="nav-label">Analytics</span>
+              </a>
+            </li>
+            <li>
+              <a href="#early-warnings" class="nav-item" data-route="early-warnings">
+                <i data-lucide="alert-triangle"></i>
+                <span class="nav-label">Early Warnings</span>
+                <span class="nav-badge" id="sidebarWarningBadge">7</span>
+              </a>
+            </li>
+            <li>
+              <a href="#reports" class="nav-item" data-route="reports">
+                <i data-lucide="file-spreadsheet"></i>
+                <span class="nav-label">Reports</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="nav-group">
+          <span class="nav-group-label">Academic Records</span>
+          <ul class="nav-list">
+            <li>
+              <a href="#learners" class="nav-item" data-route="learners">
+                <i data-lucide="users"></i>
+                <span class="nav-label">Learners</span>
+              </a>
+            </li>
+            <li>
+              <a href="#classes" class="nav-item" data-route="classes">
+                <i data-lucide="school"></i>
+                <span class="nav-label">Classes</span>
+              </a>
+            </li>
+            <li>
+              <a href="#subjects" class="nav-item" data-route="subjects">
+                <i data-lucide="book-open"></i>
+                <span class="nav-label">Subjects</span>
+              </a>
+            </li>
+            <li>
+              <a href="#assessments" class="nav-item" data-route="assessments">
+                <i data-lucide="clipboard-check"></i>
+                <span class="nav-label">Assessments</span>
+              </a>
+            </li>
+            <li>
+              <a href="#import-marks" class="nav-item" data-route="import-marks">
+                <i data-lucide="upload-cloud"></i>
+                <span class="nav-label">Import Marks</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#settings" class="nav-item" data-route="settings">
+          <i data-lucide="settings"></i>
+          <span class="nav-label">Settings</span>
+        </a>
+        <div class="user-card">
+          <div class="user-avatar">NM</div>
+          <div class="user-info">
+            <span class="user-name">Nhial Mabior</span>
+            <span class="user-role">Academic Coordinator</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <div class="main-wrapper">
+      <!-- Top Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open menu">
+            <i data-lucide="menu"></i>
+          </button>
+          <div class="breadcrumb-wrap">
+            <span class="breadcrumb-root">EduLongView</span>
+            <i data-lucide="chevron-right" class="breadcrumb-sep"></i>
+            <h1 class="page-title" id="topbarPageTitle">Overview</h1>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <!-- Academic Year & Term Selectors -->
+          <div class="period-selectors" role="group" aria-label="Academic Period Filter">
+            <div class="select-control">
+              <i data-lucide="calendar"></i>
+              <label for="yearSelect" class="sr-only">Academic Year</label>
+              <select id="yearSelect" aria-label="Select Academic Year">
+                <option value="2026" selected>2026 Academic Year</option>
+                <option value="2025">2025 Academic Year</option>
+              </select>
+            </div>
+            <div class="select-divider"></div>
+            <div class="select-control">
+              <label for="termSelect" class="sr-only">Academic Term</label>
+              <select id="termSelect" aria-label="Select Academic Term">
+                <option value="Term 1">Term 1 (Jan – Apr)</option>
+                <option value="Term 2">Term 2 (May – Aug)</option>
+                <option value="Term 3" selected>Term 3 (Sep – Nov)</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="btn btn-secondary btn-sm" id="resetDemoBtn" title="Restore initial demo dataset">
+            <i data-lucide="rotate-ccw"></i>
+            <span class="btn-label-desktop">Reset Demo</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Dynamic Content Container -->
+      <main class="main-content" id="mainContent">
+        <!-- VIEW 1: OVERVIEW DASHBOARD (Active Default) -->
+        <section class="view-section active" id="view-overview" data-title="Overview">
+          <!-- Welcome Banner -->
+          <div class="welcome-banner">
+            <div class="welcome-copy">
+              <div class="tagline-pill">
+                <span class="gold-dot"></span>
+                <span>See the progress. Understand the patterns. Support every learner.</span>
+              </div>
+              <h2>Good morning, Nhial — <span id="activePeriodHeading">2026 · Term 3</span> Snapshot</h2>
+              <p>Continuous academic monitoring across Form 1 to Form 4 streams. Data reflects CAT 1, Mid-Term, and CAT 2 assessments logged in LocalStorage.</p>
+            </div>
+            <div class="welcome-actions">
+              <a href="#import-marks" class="btn btn-primary" data-route="import-marks">
+                <i data-lucide="file-up"></i>
+                <span>Import Assessment CSV</span>
+              </a>
+              <a href="#early-warnings" class="btn btn-outline" data-route="early-warnings">
+                <i data-lucide="shield-alert"></i>
+                <span>Review Flagged Learners</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- KPI Metric Row -->
+          <div class="kpi-grid">
+            <article class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Total Learners</span>
+                <span class="kpi-icon teal"><i data-lucide="users"></i></span>
+              </div>
+              <div class="kpi-value" id="kpiTotalLearners">486</div>
+              <div class="kpi-meta">
+                <span class="trend-badge neutral" id="kpiLearnersMeta">12 active streams · 94.2% attendance</span>
+              </div>
+            </article>
+
+            <article class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Average Class Performance</span>
+                <span class="kpi-icon navy"><i data-lucide="bar-chart-3"></i></span>
+              </div>
+              <div class="kpi-value" id="kpiAvgPerformance">64.8%</div>
+              <div class="kpi-meta">
+                <span class="trend-badge positive" id="kpiAvgDelta">
+                  <i data-lucide="arrow-up-right"></i> +3.1% vs previous term
+                </span>
+              </div>
+            </article>
+
+            <article class="kpi-card">
+              <div class="kpi-top">
+                <span class="kpi-label">Total Assessments</span>
+                <span class="kpi-icon teal"><i data-lucide="clipboard-list"></i></span>
+              </div>
+              <div class="kpi-value" id="kpiTotalAssessments">36</div>
+              <div class="kpi-meta">
+                <span class="trend-badge neutral" id="kpiAssessmentsMeta">CAT 1, Mid-Term &amp; CAT 2 completed</span>
+              </div>
+            </article>
+
+            <article class="kpi-card kpi-card-warning">
+              <div class="kpi-top">
+                <span class="kpi-label">Learners Requiring Attention</span>
+                <span class="kpi-icon gold"><i data-lucide="alert-circle"></i></span>
+              </div>
+              <div class="kpi-value" id="kpiFlaggedLearners">29</div>
+              <div class="kpi-meta">
+                <span class="trend-badge warning" id="kpiFlaggedMeta">Below 50% mean or &gt;12% term drop</span>
+              </div>
+            </article>
+          </div>
+
+          <!-- Primary Charts Grid -->
+          <div class="charts-grid">
+            <!-- Academic Performance Trend Chart -->
+            <article class="panel-card chart-panel-wide">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Academic Performance Trend</h3>
+                  <p class="panel-subtitle">Mean percentage progression across assessment checkpoints vs. 60% target benchmark</p>
+                </div>
+                <div class="panel-controls">
+                  <label for="streamFilterSelect" class="sr-only">Filter by Class</label>
+                  <select id="streamFilterSelect" class="compact-select" aria-label="Filter trend chart by class">
+                    <option value="all">All Classes (School Mean)</option>
+                    <option value="Form 1">Form 1 Streams</option>
+                    <option value="Form 2">Form 2 Streams</option>
+                    <option value="Form 3">Form 3 Streams</option>
+                    <option value="Form 4">Form 4 Candidate Class</option>
+                  </select>
+                </div>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="performanceTrendChart"></canvas>
+              </div>
+            </article>
+
+            <!-- Subject Performance Overview -->
+            <article class="panel-card">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Subject Performance Overview</h3>
+                  <p class="panel-subtitle">Mean score by core subject area</p>
+                </div>
+                <span class="panel-tag">8 Core Subjects</span>
+              </div>
+              <div class="chart-canvas-wrap">
+                <canvas id="subjectOverviewChart"></canvas>
+              </div>
+            </article>
+          </div>
+
+          <!-- Bottom Operational Grid: Recent Activity + Early Warning Summary -->
+          <div class="bottom-grid">
+            <!-- Recent Assessment Activity -->
+            <article class="panel-card">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Recent Assessment Activity</h3>
+                  <p class="panel-subtitle">Latest mark sheets uploaded and verified by subject teachers</p>
+                </div>
+                <a href="#assessments" class="text-link" data-route="assessments">
+                  <span>All assessments</span>
+                  <i data-lucide="arrow-right"></i>
+                </a>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Assessment &amp; Subject</th>
+                      <th>Class</th>
+                      <th>Date Logged</th>
+                      <th>Mean</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="recentAssessmentsBody">
+                    <!-- Populated dynamically by app.js -->
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+            <!-- Early-Warning Summary -->
+            <article class="panel-card">
+              <div class="panel-header">
+                <div>
+                  <h3 class="panel-title">Early-Warning Summary</h3>
+                  <p class="panel-subtitle">Explainable indicators triggered by score drops or multi-subject gaps</p>
+                </div>
+                <a href="#early-warnings" class="text-link" data-route="early-warnings">
+                  <span>Full triage</span>
+                  <i data-lucide="arrow-right"></i>
+                </a>
+              </div>
+              <div class="warning-list" id="earlyWarningSummaryList">
+                <!-- Populated dynamically by app.js -->
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- FOUNDATION MODULE PLACEHOLDERS (Structured & Ready for Phase 2) -->
+        <section class="view-section" id="view-learners" data-title="Learners"></section>
+        <section class="view-section" id="view-classes" data-title="Classes"></section>
+        <section class="view-section" id="view-subjects" data-title="Subjects"></section>
+        <section class="view-section" id="view-assessments" data-title="Assessments"></section>
+        <section class="view-section" id="view-import-marks" data-title="Import Marks"></section>
+        <section class="view-section" id="view-analytics" data-title="Analytics"></section>
+        <section class="view-section" id="view-early-warnings" data-title="Early Warnings"></section>
+        <section class="view-section" id="view-reports" data-title="Reports"></section>
+        <section class="view-section" id="view-settings" data-title="Settings"></section>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="appToast" role="status" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/navigation.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
