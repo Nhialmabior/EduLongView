@@ -524,13 +524,26 @@ const EduNavigation = {
     const values = Object.fromEntries(new FormData(form).entries());
 
     if (form.id === 'learnerCreateForm') {
-      const admissionNo = values.admissionNo.trim();
+      const fullName = String(values.fullName || '').trim();
+      const admissionNo = String(values.admissionNo || '').trim();
+      const grade = Number(values.grade);
       const editingId = form.dataset.editId || '';
-      if (this.workspaceState.learners.some((learner) => learner.id !== editingId && learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) {
+      if (!fullName || !admissionNo) {
+        window.alert('Enter the learner’s full name and admission / learner number.');
+        return;
+      }
+      if (!Number.isInteger(grade) || grade < 1 || grade > 9) {
+        window.alert('Select a valid grade from Grade 1 to Grade 9.');
+        return;
+      }
+      if (this.workspaceState.learners.some((learner) =>
+        learner.id !== editingId &&
+        String(learner.admissionNo || '').trim().toLowerCase() === admissionNo.toLowerCase()
+      )) {
         window.alert('That admission / learner number is already registered.');
         return;
       }
-      const profile = { fullName: values.fullName.trim(), admissionNo, grade: Number(values.grade), stream: values.stream.trim() };
+      const profile = { fullName, admissionNo, grade, stream: String(values.stream || '').trim() };
       if (editingId) {
         const learner = this.workspaceState.learners.find((item) => item.id === editingId);
         if (!learner) { this.showWorkspaceToast('Learner profile could not be found.'); return; }
@@ -983,8 +996,14 @@ const EduNavigation = {
         const learner = this.workspaceState.learners.find((item) => item.id === learnerId);
         if (!learner) return;
         const recordCount = this.workspaceState.performanceRecords.filter((item) => item.learnerId === learnerId).length;
-        const reportCount = this.workspaceState.learnerReports.filter((item) => item.learnerId === learnerId).length;
-        if (!window.confirm('Delete ' + learner.fullName + '? This will also permanently remove ' + recordCount + ' performance record(s) and ' + reportCount + ' report draft(s) from this browser workspace.')) return;
+        const learnerReports = this.workspaceState.learnerReports.filter((item) => item.learnerId === learnerId);
+        const releasedCount = learnerReports.filter((item) => item.status === 'released').length;
+        const draftCount = learnerReports.length - releasedCount;
+        if (releasedCount) {
+          window.alert('This learner has ' + releasedCount + ' report(s) already marked as released. Keep the learner profile so that the released report history remains linked and traceable. Revoke or resolve those reports through Parent Release before considering deletion.');
+          return;
+        }
+        if (!window.confirm('Delete ' + learner.fullName + '? This will permanently remove ' + recordCount + ' performance record(s) and ' + draftCount + ' unreleased report draft(s) from this browser workspace. This cannot be undone.')) return;
         this.workspaceState.learners = this.workspaceState.learners.filter((item) => item.id !== learnerId);
         this.workspaceState.performanceRecords = this.workspaceState.performanceRecords.filter((item) => item.learnerId !== learnerId);
         this.workspaceState.learnerReports = this.workspaceState.learnerReports.filter((item) => item.learnerId !== learnerId);
