@@ -1,15 +1,15 @@
 /**
  * EduLongView — Academic Demo Dataset & LocalStorage Persistence Layer
- * Contextualized for secondary schools in Kakuma & Kalobeyei, Turkana County, Kenya.
+ * Aligned to the Kenya CBC/CBE structure for Grades 1–9; demo records are illustrative.
  */
 
 const EDULONGVIEW_STORAGE_KEY = 'edulongview_state_v1';
 
 const DEFAULT_DEMO_DATA = {
   school: {
-    name: 'Kalobeyei Settlement Secondary School',
+    name: 'Kalobeyei Settlement School',
     location: 'Kakuma, Turkana County, Kenya',
-    passThreshold: 50,
+    attentionIndexThreshold: 50,
     targetBenchmark: 60,
     dropAlertThreshold: 12
   },
@@ -33,41 +33,41 @@ const DEFAULT_DEMO_DATA = {
         trendLabels: ['Entry Baseline', 'CAT 1 (Feb)', 'Mid-Term 1 (Mar)', 'CAT 2 (Mar)', 'End-Term 1 (Apr)'],
         trends: {
           'all': [56.8, 58.5, 59.9, 60.1, 60.4],
-          'Form 1': [54.2, 56.0, 57.5, 58.1, 58.6],
-          'Form 2': [56.5, 58.1, 59.4, 59.8, 60.2],
-          'Form 3': [57.9, 59.4, 60.8, 61.0, 61.2],
-          'Form 4': [58.6, 60.5, 61.9, 61.5, 61.6]
+          'Grade 1': [54.2, 56.0, 57.5, 58.1, 58.6],
+          'Grade 4': [56.5, 58.1, 59.4, 59.8, 60.2],
+          'Grade 7': [57.9, 59.4, 60.8, 61.0, 61.2],
+          'Grade 9': [58.6, 60.5, 61.9, 61.5, 61.6]
         },
         subjects: [
           { name: 'English', mean: 64.2 },
           { name: 'Kiswahili', mean: 62.8 },
           { name: 'Mathematics', mean: 53.4 },
-          { name: 'Biology', mean: 59.1 },
-          { name: 'Chemistry', mean: 54.8 },
-          { name: 'Physics', mean: 56.2 },
-          { name: 'History & Gov', mean: 66.5 },
-          { name: 'Geography', mean: 63.9 }
+          { name: 'Integrated Science', mean: 59.1 },
+          { name: 'Agriculture', mean: 54.8 },
+          { name: 'Pre-Technical Studies', mean: 56.2 },
+          { name: 'Social Studies', mean: 66.5 },
+          { name: 'Creative Arts and Sports', mean: 63.9 }
         ],
         recentAssessments: [
-          { title: 'End-Term 1 Exam', subject: 'Mathematics', classStream: 'Form 2 East', date: '10 Apr 2026', mean: '54.2%', status: 'Verified' },
-          { title: 'End-Term 1 Exam', subject: 'English', classStream: 'Form 3 North', date: '09 Apr 2026', mean: '65.8%', status: 'Verified' },
-          { title: 'CAT 2 Practical', subject: 'Biology', classStream: 'Form 4 West', date: '04 Apr 2026', mean: '61.0%', status: 'Verified' },
-          { title: 'Mid-Term 1 Paper', subject: 'Chemistry', classStream: 'Form 1 South', date: '21 Mar 2026', mean: '52.9%', status: 'Verified' }
+          { title: 'End-Term 1 Exam', subject: 'Mathematics', classStream: 'Grade 4 East', date: '10 Apr 2026', mean: '54.2%', status: 'Verified' },
+          { title: 'End-Term 1 Exam', subject: 'English', classStream: 'Grade 7 North', date: '09 Apr 2026', mean: '65.8%', status: 'Verified' },
+          { title: 'CAT 2 Practical', subject: 'Integrated Science', classStream: 'Grade 9 West', date: '04 Apr 2026', mean: '61.0%', status: 'Verified' },
+          { title: 'Mid-Term 1 Paper', subject: 'Agriculture', classStream: 'Grade 1 South', date: '21 Mar 2026', mean: '52.9%', status: 'Verified' }
         ],
         earlyWarnings: [
           {
             learnerName: 'Amina Hassan Noor',
             admissionNo: 'KSS-2418',
-            stream: 'Form 2 East',
+            stream: 'Grade 4 East',
             riskLevel: 'High',
-            reason: 'Mean dropped by 16.4% between CAT 1 and End-Term 1; weak scores in Mathematics (38%) and Chemistry (41%).',
+            reason: 'Mean dropped by 16.4% between CAT 1 and End-Term 1; weak scores in Mathematics (38%) and Agriculture (41%).',
             currentMean: '44.2%',
             attendance: '81%'
           },
           {
             learnerName: 'Deng Kuol Majok',
             admissionNo: 'KSS-2109',
-            stream: 'Form 3 North',
+            stream: 'Grade 7 North',
             riskLevel: 'High',
             reason: 'Below 50% benchmark across 4 core subjects following 6 days of illness absence in March.',
             currentMean: '46.5%',
@@ -76,9 +76,9 @@ const DEFAULT_DEMO_DATA = {
           {
             learnerName: 'Grace Akinyi Omondi',
             admissionNo: 'KSS-2504',
-            stream: 'Form 1 South',
+            stream: 'Grade 1 South',
             riskLevel: 'Moderate',
-            reason: 'Steep downward trajectory in Physics (-14.0%) and Mathematics (-11.5%) since entry baseline.',
+            reason: 'Steep downward trajectory in Pre-Technical Studies (-14.0%) and Mathematics (-11.5%) since entry baseline.',
             currentMean: '49.8%',
             attendance: '92%'
           }
@@ -98,41 +98,41 @@ const DEFAULT_DEMO_DATA = {
         trendLabels: ['Term 1 Carryover', 'CAT 1 (May)', 'Mid-Term 2 (Jun)', 'CAT 2 (Jul)', 'End-Term 2 (Aug)'],
         trends: {
           'all': [60.4, 60.9, 61.2, 61.5, 61.7],
-          'Form 1': [58.6, 59.1, 59.5, 60.0, 60.3],
-          'Form 2': [60.2, 60.5, 60.8, 61.0, 61.1],
-          'Form 3': [61.2, 61.8, 62.0, 62.4, 62.7],
-          'Form 4': [61.6, 62.2, 62.5, 62.6, 62.9]
+          'Grade 1': [58.6, 59.1, 59.5, 60.0, 60.3],
+          'Grade 4': [60.2, 60.5, 60.8, 61.0, 61.1],
+          'Grade 7': [61.2, 61.8, 62.0, 62.4, 62.7],
+          'Grade 9': [61.6, 62.2, 62.5, 62.6, 62.9]
         },
         subjects: [
           { name: 'English', mean: 65.4 },
           { name: 'Kiswahili', mean: 64.1 },
           { name: 'Mathematics', mean: 55.2 },
-          { name: 'Biology', mean: 60.8 },
-          { name: 'Chemistry', mean: 56.4 },
-          { name: 'Physics', mean: 57.5 },
-          { name: 'History & Gov', mean: 67.9 },
-          { name: 'Geography', mean: 66.0 }
+          { name: 'Integrated Science', mean: 60.8 },
+          { name: 'Agriculture', mean: 56.4 },
+          { name: 'Pre-Technical Studies', mean: 57.5 },
+          { name: 'Social Studies', mean: 67.9 },
+          { name: 'Creative Arts and Sports', mean: 66.0 }
         ],
         recentAssessments: [
-          { title: 'End-Term 2 Mock', subject: 'Chemistry', classStream: 'Form 4 West', date: '07 Aug 2026', mean: '57.8%', status: 'Verified' },
-          { title: 'End-Term 2 Exam', subject: 'Mathematics', classStream: 'Form 3 East', date: '06 Aug 2026', mean: '56.1%', status: 'Verified' },
-          { title: 'CAT 2 Assessment', subject: 'Geography', classStream: 'Form 2 North', date: '24 Jul 2026', mean: '66.4%', status: 'Verified' },
-          { title: 'Mid-Term 2 Exam', subject: 'Kiswahili', classStream: 'Form 1 East', date: '19 Jun 2026', mean: '63.5%', status: 'Verified' }
+          { title: 'End-Term 2 Mock', subject: 'Agriculture', classStream: 'Grade 9 West', date: '07 Aug 2026', mean: '57.8%', status: 'Verified' },
+          { title: 'End-Term 2 Exam', subject: 'Mathematics', classStream: 'Grade 7 East', date: '06 Aug 2026', mean: '56.1%', status: 'Verified' },
+          { title: 'CAT 2 Assessment', subject: 'Creative Arts and Sports', classStream: 'Grade 4 North', date: '24 Jul 2026', mean: '66.4%', status: 'Verified' },
+          { title: 'Mid-Term 2 Exam', subject: 'Kiswahili', classStream: 'Grade 1 East', date: '19 Jun 2026', mean: '63.5%', status: 'Verified' }
         ],
         earlyWarnings: [
           {
             learnerName: 'Samuel Lokwang Ekeno',
             admissionNo: 'KSS-2287',
-            stream: 'Form 3 East',
+            stream: 'Grade 7 East',
             riskLevel: 'High',
-            reason: 'Consecutive declines across CAT 1 (55%) and End-Term 2 (42%) in Mathematics and Physics.',
+            reason: 'Consecutive declines across CAT 1 (55%) and End-Term 2 (42%) in Mathematics and Pre-Technical Studies.',
             currentMean: '45.1%',
             attendance: '86%'
           },
           {
             learnerName: 'Nyamal Gatluak Riek',
             admissionNo: 'KSS-2341',
-            stream: 'Form 2 West',
+            stream: 'Grade 4 West',
             riskLevel: 'Moderate',
             reason: 'Science cluster average fell 13.2% below Term 1 performance despite steady humanities marks.',
             currentMean: '49.4%',
@@ -141,9 +141,9 @@ const DEFAULT_DEMO_DATA = {
           {
             learnerName: 'Peter Lokuwam Lopeyok',
             admissionNo: 'KSS-2095',
-            stream: 'Form 4 West',
+            stream: 'Grade 9 West',
             riskLevel: 'High',
-            reason: 'Candidate mock aggregate dropped 14.0% in Chemistry (36%) and Biology (42%).',
+            reason: 'Candidate mock aggregate dropped 14.0% in Agriculture (36%) and Integrated Science (42%).',
             currentMean: '46.8%',
             attendance: '88%'
           }
@@ -163,50 +163,50 @@ const DEFAULT_DEMO_DATA = {
         trendLabels: ['Term 2 Carryover', 'CAT 1 (Sep)', 'Mid-Term 3 (Oct)', 'CAT 2 (Nov)', 'Projected Final'],
         trends: {
           'all': [61.7, 62.9, 63.8, 64.8, 65.6],
-          'Form 1': [60.3, 61.5, 62.4, 63.4, 64.2],
-          'Form 2': [61.1, 62.0, 62.9, 63.9, 64.8],
-          'Form 3': [62.7, 63.8, 64.6, 65.5, 66.3],
-          'Form 4': [62.9, 64.3, 65.4, 66.5, 67.2]
+          'Grade 1': [60.3, 61.5, 62.4, 63.4, 64.2],
+          'Grade 4': [61.1, 62.0, 62.9, 63.9, 64.8],
+          'Grade 7': [62.7, 63.8, 64.6, 65.5, 66.3],
+          'Grade 9': [62.9, 64.3, 65.4, 66.5, 67.2]
         },
         subjects: [
           { name: 'English', mean: 68.4 },
           { name: 'Kiswahili', mean: 66.9 },
           { name: 'Mathematics', mean: 58.6 },
-          { name: 'Biology', mean: 63.5 },
-          { name: 'Chemistry', mean: 59.2 },
-          { name: 'Physics', mean: 60.8 },
-          { name: 'History & Gov', mean: 71.2 },
-          { name: 'Geography', mean: 69.5 }
+          { name: 'Integrated Science', mean: 63.5 },
+          { name: 'Agriculture', mean: 59.2 },
+          { name: 'Pre-Technical Studies', mean: 60.8 },
+          { name: 'Social Studies', mean: 71.2 },
+          { name: 'Creative Arts and Sports', mean: 69.5 }
         ],
         recentAssessments: [
-          { title: 'CAT 2 Continuous', subject: 'Mathematics', classStream: 'Form 3 North', date: '24 Nov 2026', mean: '59.4%', status: 'Verified' },
-          { title: 'CAT 2 Continuous', subject: 'English Paper 2', classStream: 'Form 4 East', date: '22 Nov 2026', mean: '69.1%', status: 'Verified' },
-          { title: 'CAT 2 Practical', subject: 'Chemistry', classStream: 'Form 2 South', date: '19 Nov 2026', mean: '58.7%', status: 'Pending Review' },
-          { title: 'Mid-Term 3 Exam', subject: 'History & Gov', classStream: 'Form 1 West', date: '06 Nov 2026', mean: '72.0%', status: 'Verified' }
+          { title: 'CAT 2 Continuous', subject: 'Mathematics', classStream: 'Grade 7 North', date: '24 Nov 2026', mean: '59.4%', status: 'Verified' },
+          { title: 'CAT 2 Continuous', subject: 'English Paper 2', classStream: 'Grade 9 East', date: '22 Nov 2026', mean: '69.1%', status: 'Verified' },
+          { title: 'CAT 2 Practical', subject: 'Agriculture', classStream: 'Grade 4 South', date: '19 Nov 2026', mean: '58.7%', status: 'Pending Review' },
+          { title: 'Mid-Term 3 Exam', subject: 'Social Studies', classStream: 'Grade 1 West', date: '06 Nov 2026', mean: '72.0%', status: 'Verified' }
         ],
         earlyWarnings: [
           {
             learnerName: 'Achol Mabior Garang',
             admissionNo: 'KSS-2314',
-            stream: 'Form 2 North',
+            stream: 'Grade 4 North',
             riskLevel: 'High',
-            reason: 'Overall mean declined 15.2% from Mid-Term 3 (58%) to CAT 2 (42.8%); flagged in Mathematics & Physics.',
+            reason: 'Overall mean declined 15.2% from Mid-Term 3 (58%) to CAT 2 (42.8%); flagged in Mathematics & Pre-Technical Studies.',
             currentMean: '44.6%',
             attendance: '83%'
           },
           {
             learnerName: 'Hassan Abdi Mohamed',
             admissionNo: 'KSS-2452',
-            stream: 'Form 1 East',
+            stream: 'Grade 1 East',
             riskLevel: 'High',
-            reason: 'Scored below 45% in three consecutive STEM assessments (Mathematics 39%, Chemistry 41%, Biology 44%).',
+            reason: 'Scored below 45% in three consecutive STEM assessments (Mathematics 39%, Agriculture 41%, Integrated Science 44%).',
             currentMean: '46.1%',
             attendance: '87%'
           },
           {
             learnerName: 'Esther Nakiru Ebei',
             admissionNo: 'KSS-2190',
-            stream: 'Form 3 South',
+            stream: 'Grade 7 South',
             riskLevel: 'Moderate',
             reason: '12.6% drop in English and Kiswahili composition scores compared to Term 2 average.',
             currentMean: '49.5%',
@@ -230,20 +230,20 @@ const DEFAULT_DEMO_DATA = {
         trendLabels: ['Entry Baseline', 'CAT 1', 'Mid-Term 1', 'CAT 2', 'End-Term 1'],
         trends: {
           'all': [55.0, 56.1, 56.9, 57.4, 57.9],
-          'Form 1': [52.4, 53.8, 54.5, 55.1, 55.8],
-          'Form 2': [54.9, 55.8, 56.4, 57.0, 57.4],
-          'Form 3': [56.1, 57.0, 57.9, 58.3, 58.9],
-          'Form 4': [56.6, 57.8, 58.8, 59.2, 59.6]
+          'Grade 1': [52.4, 53.8, 54.5, 55.1, 55.8],
+          'Grade 4': [54.9, 55.8, 56.4, 57.0, 57.4],
+          'Grade 7': [56.1, 57.0, 57.9, 58.3, 58.9],
+          'Grade 9': [56.6, 57.8, 58.8, 59.2, 59.6]
         },
         subjects: [
           { name: 'English', mean: 61.5 },
           { name: 'Kiswahili', mean: 60.2 },
           { name: 'Mathematics', mean: 50.8 },
-          { name: 'Biology', mean: 56.4 },
-          { name: 'Chemistry', mean: 52.1 },
-          { name: 'Physics', mean: 53.7 },
-          { name: 'History & Gov', mean: 64.8 },
-          { name: 'Geography', mean: 62.1 }
+          { name: 'Integrated Science', mean: 56.4 },
+          { name: 'Agriculture', mean: 52.1 },
+          { name: 'Pre-Technical Studies', mean: 53.7 },
+          { name: 'Social Studies', mean: 64.8 },
+          { name: 'Creative Arts and Sports', mean: 62.1 }
         ],
         recentAssessments: [
           { title: 'End-Term 1 Archive', subject: 'Mathematics', classStream: 'All Streams', date: '11 Apr 2025', mean: '50.8%', status: 'Verified' },
@@ -253,9 +253,9 @@ const DEFAULT_DEMO_DATA = {
           {
             learnerName: 'Archived Cohort Summary',
             admissionNo: '2025-T1',
-            stream: 'Form 1 – Form 4',
+            stream: 'Grade 1 – Grade 9',
             riskLevel: 'Moderate',
-            reason: '44 learners received remedial peer-tutoring support in Mathematics and Chemistry during Term 2 2025.',
+            reason: '44 learners received remedial peer-tutoring support in Mathematics and Agriculture during Term 2 2025.',
             currentMean: '47.2%',
             attendance: '89%'
           }
@@ -275,30 +275,30 @@ const DEFAULT_DEMO_DATA = {
         trendLabels: ['Term 1 Carryover', 'CAT 1', 'Mid-Term 2', 'CAT 2', 'End-Term 2'],
         trends: {
           'all': [57.9, 58.2, 58.6, 58.9, 59.1],
-          'Form 1': [55.8, 56.1, 56.5, 56.8, 57.0],
-          'Form 2': [57.4, 57.7, 58.1, 58.4, 58.6],
-          'Form 3': [58.9, 59.2, 59.6, 59.9, 60.1],
-          'Form 4': [59.6, 59.9, 60.2, 60.5, 60.7]
+          'Grade 1': [55.8, 56.1, 56.5, 56.8, 57.0],
+          'Grade 4': [57.4, 57.7, 58.1, 58.4, 58.6],
+          'Grade 7': [58.9, 59.2, 59.6, 59.9, 60.1],
+          'Grade 9': [59.6, 59.9, 60.2, 60.5, 60.7]
         },
         subjects: [
           { name: 'English', mean: 62.7 },
           { name: 'Kiswahili', mean: 61.4 },
           { name: 'Mathematics', mean: 52.0 },
-          { name: 'Biology', mean: 57.8 },
-          { name: 'Chemistry', mean: 53.5 },
-          { name: 'Physics', mean: 54.9 },
-          { name: 'History & Gov', mean: 65.9 },
-          { name: 'Geography', mean: 63.4 }
+          { name: 'Integrated Science', mean: 57.8 },
+          { name: 'Agriculture', mean: 53.5 },
+          { name: 'Pre-Technical Studies', mean: 54.9 },
+          { name: 'Social Studies', mean: 65.9 },
+          { name: 'Creative Arts and Sports', mean: 63.4 }
         ],
         recentAssessments: [
-          { title: 'End-Term 2 Archive', subject: 'Chemistry', classStream: 'All Streams', date: '08 Aug 2025', mean: '53.5%', status: 'Verified' },
-          { title: 'End-Term 2 Archive', subject: 'Biology', classStream: 'All Streams', date: '07 Aug 2025', mean: '57.8%', status: 'Verified' }
+          { title: 'End-Term 2 Archive', subject: 'Agriculture', classStream: 'All Streams', date: '08 Aug 2025', mean: '53.5%', status: 'Verified' },
+          { title: 'End-Term 2 Archive', subject: 'Integrated Science', classStream: 'All Streams', date: '07 Aug 2025', mean: '57.8%', status: 'Verified' }
         ],
         earlyWarnings: [
           {
             learnerName: 'Archived Cohort Summary',
             admissionNo: '2025-T2',
-            stream: 'Form 1 – Form 4',
+            stream: 'Grade 1 – Grade 9',
             riskLevel: 'Moderate',
             reason: '40 learners flagged in 2025 Term 2 archive; 78% improved above 50% by End-Term 3.',
             currentMean: '48.0%',
@@ -320,29 +320,29 @@ const DEFAULT_DEMO_DATA = {
         trendLabels: ['Term 2 Carryover', 'CAT 1', 'Mid-Term 3', 'CAT 2', 'End-Term 3'],
         trends: {
           'all': [59.1, 59.8, 60.3, 60.8, 61.2],
-          'Form 1': [57.0, 57.6, 58.2, 58.7, 59.1],
-          'Form 2': [58.6, 59.2, 59.8, 60.2, 60.6],
-          'Form 3': [60.1, 60.8, 61.3, 61.8, 62.2],
-          'Form 4': [60.7, 61.6, 62.0, 62.5, 62.9]
+          'Grade 1': [57.0, 57.6, 58.2, 58.7, 59.1],
+          'Grade 4': [58.6, 59.2, 59.8, 60.2, 60.6],
+          'Grade 7': [60.1, 60.8, 61.3, 61.8, 62.2],
+          'Grade 9': [60.7, 61.6, 62.0, 62.5, 62.9]
         },
         subjects: [
           { name: 'English', mean: 64.5 },
           { name: 'Kiswahili', mean: 63.0 },
           { name: 'Mathematics', mean: 54.1 },
-          { name: 'Biology', mean: 59.6 },
-          { name: 'Chemistry', mean: 55.2 },
-          { name: 'Physics', mean: 56.8 },
-          { name: 'History & Gov', mean: 67.4 },
-          { name: 'Geography', mean: 65.1 }
+          { name: 'Integrated Science', mean: 59.6 },
+          { name: 'Agriculture', mean: 55.2 },
+          { name: 'Pre-Technical Studies', mean: 56.8 },
+          { name: 'Social Studies', mean: 67.4 },
+          { name: 'Creative Arts and Sports', mean: 65.1 }
         ],
         recentAssessments: [
-          { title: 'End-Term 3 Annual Exam', subject: 'All Core Subjects', classStream: 'Form 1 – Form 3', date: '21 Nov 2025', mean: '61.2%', status: 'Verified' }
+          { title: 'End-Term 3 Annual Exam', subject: 'All Core Subjects', classStream: 'Grade 1 – Grade 7', date: '21 Nov 2025', mean: '61.2%', status: 'Verified' }
         ],
         earlyWarnings: [
           {
             learnerName: 'Archived Cohort Summary',
             admissionNo: '2025-T3',
-            stream: 'Form 1 – Form 3',
+            stream: 'Grade 1 – Grade 7',
             riskLevel: 'Moderate',
             reason: '34 learners carried forward into 2026 Term 1 academic mentorship watchlist.',
             currentMean: '48.4%',
@@ -352,6 +352,53 @@ const DEFAULT_DEMO_DATA = {
       }
     }
   }
+};
+
+
+// Kenya CBC/CBE curriculum reference structure. Learning areas are grouped by grade band;
+// schools can configure optional language and religious-education choices.
+const KENYA_CBC_CURRICULUM = {
+  country: 'Kenya',
+  framework: 'CBC/CBE',
+  grades: Array.from({ length: 9 }, (_, index) => index + 1),
+  stages: [
+    { name: 'Lower Primary', grades: [1, 2, 3] },
+    { name: 'Upper Primary', grades: [4, 5, 6] },
+    { name: 'Junior School', grades: [7, 8, 9] }
+  ],
+  coreCompetencies: [
+    'Communication and Collaboration',
+    'Critical Thinking and Problem Solving',
+    'Creativity and Imagination',
+    'Citizenship',
+    'Digital Literacy',
+    'Learning to Learn',
+    'Self-efficacy'
+  ],
+  learningAreasByStage: {
+    'Lower Primary': [
+      'English', 'Kiswahili', 'Mathematics', 'Environmental Activities',
+      'Creative Activities', 'Religious Education', 'Indigenous Language'
+    ],
+    'Upper Primary': [
+      'English', 'Kiswahili', 'Mathematics', 'Science and Technology',
+      'Agriculture', 'Social Studies', 'Creative Arts', 'Religious Education',
+      'Indigenous Language', 'Foreign Languages'
+    ],
+    'Junior School': [
+      'English', 'Kiswahili', 'Mathematics', 'Integrated Science',
+      'Social Studies', 'Agriculture', 'Pre-Technical Studies',
+      'Creative Arts and Sports', 'Religious Education',
+      'Indigenous Language', 'Foreign Languages'
+    ]
+  },
+  assessmentDimensions: [
+    'Knowledge and Understanding',
+    'Skills and Competencies',
+    'Values and Attitudes',
+    'Application of Learning'
+  ],
+  demoNotice: 'Sample dashboard indicators are illustrative and are not official CBC achievement levels or national assessment grades.'
 };
 
 const EduDataStore = {
