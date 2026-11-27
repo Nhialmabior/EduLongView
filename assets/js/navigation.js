@@ -45,7 +45,7 @@ const MODULE_BLUEPRINTS = {
   },
   'import-marks': {
     title: 'Import Performance Data',
-    badge: 'Powered by PapaParse',
+    badge: 'CSV & Excel Import',
     description: 'Import learner performance records in bulk using grade-aware CSV templates, with validation before saving.',
     pillars: [
       { title: 'Downloadable CSV Templates', detail: 'Templates for learner identifiers, assessment results, attendance and performance observations.' },
@@ -390,7 +390,7 @@ const EduNavigation = {
       <div class="module-shell">
         <div class="module-header"><div><span class="module-badge">Bulk performance data upload</span><h2>Upload Learner Results</h2><p>Import assessment results for many learners in one file. Each row is matched to a registered learner using their admission number before it is added to that learner’s performance history.</p></div></div>
         <div class="panel-card workspace-panel">
-          <div class="panel-header"><div><h3 class="panel-title">1. Prepare your results file</h3><p class="panel-subtitle">Download the template, fill one assessment result per row, and keep the column headings unchanged.</p></div></div>
+          <div class="panel-header"><div><h3 class="panel-title">1. Prepare your results file</h3><p class="panel-subtitle">Download the template, remove its example row, enter one assessment result per row, and keep the column headings unchanged.</p></div></div>
           <div class="import-instructions">
             <p><strong>Required columns:</strong> admissionNo, learningArea, assessmentTitle, assessmentType, year, term, date, score, maxScore.</p>
             <p><strong>Optional columns:</strong> attendance, participation, observation.</p>
@@ -439,7 +439,7 @@ const EduNavigation = {
       } else if (extension === 'xlsx') {
         if (!window.XLSX) throw new Error('Excel reader unavailable. Check your internet connection and refresh.');
         const workbook = window.XLSX.read(await file.arrayBuffer(), { type:'array', cellDates:true });
-        rawRows = window.XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval:'', raw:false });
+        rawRows = window.XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { defval:'', raw:true });
       } else throw new Error('Unsupported file type. Upload CSV or .xlsx.');
       if (!rawRows.length) throw new Error('No result rows found in this file.');
       const normalise = value => String(value || '').trim().toLowerCase().replace(/[\s_-]+/g, '');
@@ -457,8 +457,10 @@ const EduNavigation = {
         let dateValue=get('date','date recorded','assessment date');
         if (dateValue instanceof Date) dateValue=dateValue.toISOString().slice(0,10);
         const date=String(dateValue).trim().slice(0,10);
-        const score=Number(get('score','score achieved','marks'));
-        const maxScore=Number(get('maxScore','maximum score','total marks'));
+        const scoreRaw=get('score','score achieved','marks');
+        const maxScoreRaw=get('maxScore','maximum score','total marks');
+        const score=Number(scoreRaw);
+        const maxScore=Number(maxScoreRaw);
         const errors=[];
         if (!admissionNo) errors.push('Missing admission number'); else if (!learner) errors.push('Learner not registered');
         if (!learningArea) errors.push('Missing learning area');
@@ -466,7 +468,7 @@ const EduNavigation = {
         if (!Number.isInteger(year) || year<2020 || year>2100) errors.push('Invalid year');
         if (!['Term 1','Term 2','Term 3'].includes(term)) errors.push('Term must be Term 1, 2 or 3');
         if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) errors.push('Date must be YYYY-MM-DD');
-        if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore<=0 || score<0 || score>maxScore) errors.push('Invalid score / maximum');
+        if (scoreRaw === '' || maxScoreRaw === '' || !Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore<=0 || score<0 || score>maxScore) errors.push('Invalid or missing score / maximum');
         return { rowNumber:index+2, admissionNo, learnerId:learner?.id || '', learnerName:learner?.fullName || '', learningArea, assessmentTitle, assessmentType, year, term, date, score, maxScore,
           percentage:Number.isFinite(score/maxScore)?Number(((score/maxScore)*100).toFixed(2)):0,
           attendance:String(get('attendance') || 'Not recorded').trim(), participation:String(get('participation') || '').trim(),
