@@ -254,15 +254,41 @@ const EduNavigation = {
           areasGrid.querySelectorAll('[data-area-index]').forEach((item) => item.setAttribute('aria-pressed', 'false'));
           card.setAttribute('aria-pressed', 'true');
 
+          const records = (curriculum.curriculumRecords || []).filter((record) =>
+            record.grade === Number(grade) && record.learningArea === selected.name
+          );
+
+          const recordMarkup = records.length
+            ? records.map((record) => `
+                <article class="roadmap-card" style="margin-top:14px;">
+                  <div class="module-badge">${record.topic} · ${record.verificationStatus === 'verified' ? 'Source verified' : 'Draft'}</div>
+                  <h4 style="margin-top:10px;">${record.strand} — ${record.subStrand}</h4>
+                  <strong>Specific learning outcomes</strong>
+                  <ol style="margin:8px 0 12px 20px;color:#475569;line-height:1.7;">
+                    ${record.specificLearningOutcomes.map((outcome) => `<li>${outcome}</li>`).join('')}
+                  </ol>
+                  <strong>Suggested learning experiences</strong>
+                  <ul style="margin:8px 0 12px 20px;color:#475569;line-height:1.7;">
+                    ${record.suggestedLearningExperiences.map((experience) => `<li>${experience}</li>`).join('')}
+                  </ul>
+                  <p class="panel-subtitle"><strong>Core competencies:</strong> ${record.coreCompetencies.join(', ')}</p>
+                  <p class="panel-subtitle"><strong>Values:</strong> ${record.values.join(', ')}</p>
+                  <p class="panel-subtitle"><strong>PCIs:</strong> ${record.pertinentAndContemporaryIssues.join(', ')}</p>
+                  <p class="panel-subtitle"><strong>Key inquiry questions:</strong> ${record.keyInquiryQuestions.join(' · ')}</p>
+                  <p class="panel-subtitle">Source: ${record.source.organization}, ${record.source.documentTitle}, page ${record.source.page} · ${record.curriculumVersion}</p>
+                  <a class="text-link" href="${record.source.documentUrl}" target="_blank" rel="noopener noreferrer">Open official KICD source</a>
+                </article>
+              `).join('')
+            : `
+                <p class="panel-subtitle">Detailed strands, sub-strands and outcomes for this grade and learning area have not yet been imported. They will be added from the official grade-specific KICD design, not generated or guessed.</p>
+              `;
+
           areaDetail.innerHTML = `
             <span class="module-badge">${selected.type}</span>
             <h3 class="panel-title" style="margin-top:12px;">Grade ${grade} · ${selected.name}</h3>
-            <p class="panel-subtitle">Curriculum record structure planned for this learning area:</p>
-            <ol style="margin:12px 0 16px 20px;color:#475569;line-height:1.9;">
-              ${curriculum.curriculumStructure.map((part) => `<li>${part}</li>`).join('')}
-            </ol>
-            <p class="panel-subtitle">The official strand names, sub-strands and specific learning outcomes must be imported from the Grade ${grade} KICD curriculum design before teachers can record achievement against them.</p>
-            <a class="btn btn-secondary" href="${stage.sourceUrl}" target="_blank" rel="noopener noreferrer">
+            <p class="panel-subtitle">${records.length ? `${records.length} source-based curriculum record(s) available.` : 'Curriculum content is not yet available in the local catalogue for this selection.'}</p>
+            ${recordMarkup}
+            <a class="btn btn-secondary" style="margin-top:16px;" href="${stage.sourceUrl}" target="_blank" rel="noopener noreferrer">
               <i data-lucide="book-open"></i>
               <span>View KICD Grade ${grade} curriculum resources</span>
             </a>
