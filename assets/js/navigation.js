@@ -908,22 +908,47 @@ const EduNavigation = {
     if (form.id === 'reportSaveForm') {
       const report = this.workspaceState.learnerReports.find((item) => item.id === form.dataset.reportId);
       if (!report) return;
-      report.summary = values.summary.trim(); report.strengths = values.strengths.trim(); report.support = values.support.trim();
-      report.recommendations = values.recommendations.trim(); report.teacherComment = values.teacherComment.trim();
-      report.updatedAt = new Date().toISOString(); report.status = 'draft';
+      if (report.status === 'released') {
+        window.alert('This report has already been marked as released. Keep its released version unchanged; generate a new report draft if updated evidence needs review.');
+        return;
+      }
+      const summary = String(values.summary || '').trim();
+      const strengths = String(values.strengths || '').trim();
+      const support = String(values.support || '').trim();
+      const recommendations = String(values.recommendations || '').trim();
+      if (!summary || !strengths || !support || !recommendations) {
+        window.alert('Complete the performance summary, strengths, areas needing attention and recommended next steps.');
+        return;
+      }
+      report.summary = summary; report.strengths = strengths; report.support = support;
+      report.recommendations = recommendations; report.teacherComment = String(values.teacherComment || '').trim();
+      report.updatedAt = new Date().toISOString();
       EduDataStore.save(this.workspaceState);
       this.renderLearnerReports(document.getElementById('view-subjects'), report.learnerId);
       this.showWorkspaceToast('Teacher draft saved. It remains private.');
       return;
     }
     if (form.id === 'learnerCreateForm') {
-      const admissionNo = values.admissionNo.trim();
+      const fullName = String(values.fullName || '').trim();
+      const admissionNo = String(values.admissionNo || '').trim();
+      const grade = Number(values.grade);
       const editingId = form.dataset.editId || '';
-      if (this.workspaceState.learners.some((learner) => learner.id !== editingId && learner.admissionNo.toLowerCase() === admissionNo.toLowerCase())) {
+      if (!fullName || !admissionNo) {
+        window.alert('Enter the learner’s full name and admission / learner number.');
+        return;
+      }
+      if (!Number.isInteger(grade) || grade < 1 || grade > 9) {
+        window.alert('Select a valid grade from Grade 1 to Grade 9.');
+        return;
+      }
+      if (this.workspaceState.learners.some((learner) =>
+        learner.id !== editingId &&
+        String(learner.admissionNo || '').trim().toLowerCase() === admissionNo.toLowerCase()
+      )) {
         window.alert('That admission / learner number is already registered.');
         return;
       }
-      const profile = { fullName: values.fullName.trim(), admissionNo, grade: Number(values.grade), stream: values.stream.trim() };
+      const profile = { fullName, admissionNo, grade, stream: String(values.stream || '').trim() };
       if (editingId) {
         const learner = this.workspaceState.learners.find((item) => item.id === editingId);
         if (!learner) { this.showWorkspaceToast('Learner profile could not be found.'); return; }
@@ -941,11 +966,27 @@ const EduNavigation = {
       return;
     }
     const score = Number(values.score), maxScore = Number(values.maxScore);
-    if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0 || score < 0 || score > maxScore) { window.alert('Enter a valid score. The score achieved cannot be greater than the maximum score.'); return; }
+    const year = Number(values.year);
+    const learnerExists = this.workspaceState.learners.some((learner) => learner.id === values.learnerId);
+    const learningArea = String(values.learningArea || '').trim();
+    const assessmentTitle = String(values.assessmentTitle || '').trim();
     const editId = form.dataset.editId || '';
     const existing = editId ? this.workspaceState.performanceRecords.find((item) => item.id === editId) : null;
     if (editId && !existing) { this.showWorkspaceToast('Performance record could not be found.'); return; }
-    const recordData = { learnerId:values.learnerId, learningArea:values.learningArea.trim(), assessmentTitle:values.assessmentTitle.trim(), assessmentType:values.assessmentType, year:Number(values.year), term:values.term, date:values.date, score, maxScore, percentage:Number(((score / maxScore) * 100).toFixed(2)), attendance:values.attendance, participation:values.participation, observation:values.observation.trim(), updatedAt:new Date().toISOString() };
+    if (!learnerExists) { window.alert('Select a learner who is registered in this workspace.'); return; }
+    if (!learningArea || !assessmentTitle || !values.assessmentType || !values.term || !values.date) {
+      window.alert('Complete the learner, learning area, assessment title, assessment type, term and date fields.');
+      return;
+    }
+    if (!Number.isInteger(year) || year < 2020 || year > 2100) {
+      window.alert('Enter a valid academic year between 2020 and 2100.');
+      return;
+    }
+    if (!Number.isFinite(score) || !Number.isFinite(maxScore) || maxScore <= 0 || score < 0 || score > maxScore) {
+      window.alert('Enter a valid score. The score achieved cannot be greater than the maximum score.');
+      return;
+    }
+    const recordData = { learnerId:values.learnerId, learningArea, assessmentTitle, assessmentType:values.assessmentType, year, term:values.term, date:values.date, score, maxScore, percentage:Number(((score / maxScore) * 100).toFixed(2)), attendance:values.attendance || 'Not recorded', participation:values.participation || '', observation:String(values.observation || '').trim(), updatedAt:new Date().toISOString() };
     if (existing) { Object.assign(existing, recordData); this.editingPerformanceId = null; }
     else this.workspaceState.performanceRecords.push(Object.assign({ id:'performance-' + Date.now() + '-' + Math.random().toString(36).slice(2,8), createdAt:new Date().toISOString() }, recordData));
     EduDataStore.save(this.workspaceState); this.syncWarningBadge();
