@@ -21,7 +21,9 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 load_dotenv()
 
 APP_ENV = os.getenv("APP_ENV", "development")
-SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")\nSUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "").strip()\nSUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+SUPABASE_URL = os.getenv("SUPABASE_URL", "").rstrip("/")
+SUPABASE_PUBLISHABLE_KEY = os.getenv("SUPABASE_PUBLISHABLE_KEY", "").strip()
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
 AI_BASE_URL = os.getenv("AI_BASE_URL", "https://api.openai.com/v1").rstrip("/")
 AI_API_KEY = os.getenv("AI_API_KEY", "").strip()
 AI_MODEL = os.getenv("AI_MODEL", "").strip()
@@ -352,8 +354,25 @@ async def health():
     return {"status": "ok", "service": "edulongview-report-api", "aiConfigured": bool(AI_API_KEY and AI_MODEL)}
 
 
-@app.post("/api/v1/reports/draft", response_model=DraftResponse, dependencies=[Depends(require_teacher_token)])
-async def create_report_draft(payload: DraftRequest):
+@app.get("/api/v1/auth/me")
+async def auth_me(context: dict[str, Any] = Depends(require_teacher_token)):
+    return {
+        "user": {"id": context["user"]["id"], "email": context["user"].get("email")},
+        "school": context["school"],
+        "membership": context["membership"],
+    }
+
+
+@app.post("/api/v1/school/teachers/invite", response_model=TeacherInviteResponse)
+async def create_teacher_invitation(
+    payload: TeacherInviteRequest,
+    context: dict[str, Any] = Depends(require_teacher_token),
+):
+    return await invite_teacher(payload, context)
+
+
+@app.post("/api/v1/reports/draft", response_model=DraftResponse)
+async def create_report_draft(payload: DraftRequest, context: dict[str, Any] = Depends(require_teacher_token)):
     draft, model_name = await generate_with_model(payload)
     return DraftResponse(
         requestId=payload.requestId,
