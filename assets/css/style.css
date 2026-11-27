@@ -1278,3 +1278,22 @@ button, select, input {
   .panel-card { padding: 16px; }
   .panel-header { flex-wrap: wrap; }
 }
+
+
+/* Learner directory — overview and filtering */
+.learner-overview-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:0 0 20px}
+.learner-overview-card{display:flex;flex-direction:column;gap:7px;padding:18px 20px;background:var(--surface,#fff);border:1px solid var(--border-color,#e8edf2);border-radius:14px;box-shadow:0 3px 12px rgba(15,35,55,.035)}
+.learner-overview-card span{font-size:12px;font-weight:600;color:var(--text-muted,#718096)}
+.learner-overview-card strong{font-size:27px;line-height:1.15;color:var(--text-primary,#172b4d)}
+.learner-overview-card small{font-size:11px;color:var(--text-muted,#718096)}
+.learner-directory-tools{display:flex;align-items:end;gap:14px;flex-wrap:wrap;margin:4px 0 16px}
+.learner-search-field{position:relative;display:flex;align-items:center;flex:1 1 260px;max-width:460px}
+.learner-search-field [data-lucide]{position:absolute;left:13px;width:17px;height:17px;color:#8190a3}
+.learner-search-field input{width:100%;min-height:42px;padding:9px 12px 9px 40px;border:1px solid var(--border-color,#dce3eb);border-radius:9px;background:var(--surface,#fff);color:inherit;font:inherit}
+.learner-grade-filter{display:flex;flex-direction:column;gap:5px;min-width:150px;font-size:12px;font-weight:600;color:var(--text-muted,#718096)}
+.learner-grade-filter select{min-height:42px;padding:8px 30px 8px 11px;border:1px solid var(--border-color,#dce3eb);border-radius:9px;background:var(--surface,#fff);color:inherit;font:inherit}
+.learner-record-count{display:inline-flex;min-width:27px;justify-content:center;padding:3px 8px;border-radius:20px;background:#eaf5f3;color:#176b5d;font-weight:700;font-size:12px}
+.learner-no-matches{padding:22px;text-align:center;color:var(--text-muted,#718096);font-size:13px}
+.learner-directory-table tr[hidden]{display:none}
+@media(max-width:700px){.learner-overview-grid{grid-template-columns:1fr 1fr;gap:10px}.learner-overview-card{padding:14px}.learner-overview-card strong{font-size:23px}.learner-directory-tools{align-items:stretch}.learner-search-field{max-width:none}.learner-grade-filter{flex:1}}
+@media(max-width:420px){.learner-overview-grid{grid-template-columns:1fr}}
