@@ -22,13 +22,13 @@ const DEFAULT_DEMO_DATA = {
       'Term 1': {
         kpis: {
           totalLearners: 492,
-          learnersMeta: '12 grade classes · 93.4% attendance',
+          learnersMeta: '12 classes · 93.4% attendance',
           avgPerformance: 60.4,
-          avgDelta: '+1.2 index points from baseline',
+          avgDelta: '+1.2 vs baseline',
           totalAssessments: 36,
-          assessmentsMeta: 'Opener, Mid-Term & End-Term 1',
+          assessmentsMeta: 'Recorded this term',
           flaggedLearners: 38,
-          flaggedMeta: 'Review based on learning evidence and support indicators'
+          flaggedMeta: 'Based on recorded evidence'
         },
         trendLabels: ['Entry Baseline', 'Learning Check 1 (Feb)', 'Mid-Term Learning Review 1 (Mar)', 'Learning Check 2 (Mar)', 'End-Term 1 (Apr)'],
         trends: {
@@ -87,13 +87,13 @@ const DEFAULT_DEMO_DATA = {
       'Term 2': {
         kpis: {
           totalLearners: 489,
-          learnersMeta: '12 grade classes · 93.9% attendance',
+          learnersMeta: '12 classes · 93.9% attendance',
           avgPerformance: 61.7,
           avgDelta: '+1.3 index points vs Term 1',
           totalAssessments: 36,
-          assessmentsMeta: 'Learning Check 1, Mid-Term Learning Review 2 & End-Term 2',
+          assessmentsMeta: 'Recorded this term',
           flaggedLearners: 33,
-          flaggedMeta: 'Review based on learning evidence and support indicators'
+          flaggedMeta: 'Based on recorded evidence'
         },
         trendLabels: ['Term 1 Carryover', 'Learning Check 1 (May)', 'Mid-Term Learning Review 2 (Jun)', 'Learning Check 2 (Jul)', 'End-Term 2 (Aug)'],
         trends: {
@@ -152,13 +152,13 @@ const DEFAULT_DEMO_DATA = {
       'Term 3': {
         kpis: {
           totalLearners: 486,
-          learnersMeta: '12 grade classes · 94.2% attendance',
+          learnersMeta: '12 classes · 94.2% attendance',
           avgPerformance: 64.8,
           avgDelta: '+3.1 index points vs Term 2',
           totalAssessments: 36,
-          assessmentsMeta: 'Learning Check 1, Mid-Term & Learning Check 2 completed',
+          assessmentsMeta: 'Recorded this term',
           flaggedLearners: 29,
-          flaggedMeta: 'Review based on learning evidence and support indicators'
+          flaggedMeta: 'Based on recorded evidence'
         },
         trendLabels: ['Term 2 Carryover', 'Learning Check 1 (Sep)', 'Mid-Term Learning Review 3 (Oct)', 'Learning Check 2 (Nov)', 'Projected Final'],
         trends: {
@@ -219,13 +219,13 @@ const DEFAULT_DEMO_DATA = {
       'Term 1': {
         kpis: {
           totalLearners: 464,
-          learnersMeta: 'Grade 1–9 classes · 91.8% attendance',
+          learnersMeta: '12 classes · 91.8% attendance',
           avgPerformance: 57.9,
-          avgDelta: '2025 Term 1 archive',
+          avgDelta: '2025 archive',
           totalAssessments: 36,
-          assessmentsMeta: 'Archived term records',
+          assessmentsMeta: 'Recorded this term',
           flaggedLearners: 44,
-          flaggedMeta: 'Review based on learning evidence and support indicators'
+          flaggedMeta: 'Based on recorded evidence'
         },
         trendLabels: ['Entry Baseline', 'Learning Check 1', 'Mid-Term Learning Review 1', 'Learning Check 2', 'End-Term 1'],
         trends: {
@@ -264,13 +264,13 @@ const DEFAULT_DEMO_DATA = {
       'Term 2': {
         kpis: {
           totalLearners: 468,
-          learnersMeta: 'Grade 1–9 classes · 92.4% attendance',
+          learnersMeta: '12 classes · 92.4% attendance',
           avgPerformance: 59.1,
-          avgDelta: '+1.2 index points vs Term 1 2025',
+          avgDelta: '+1.2 index points vs Term 1',
           totalAssessments: 36,
-          assessmentsMeta: 'Archived term records',
+          assessmentsMeta: 'Recorded this term',
           flaggedLearners: 40,
-          flaggedMeta: 'Review based on learning evidence and support indicators'
+          flaggedMeta: 'Based on recorded evidence'
         },
         trendLabels: ['Term 1 Carryover', 'Learning Check 1', 'Mid-Term Learning Review 2', 'Learning Check 2', 'End-Term 2'],
         trends: {
@@ -309,13 +309,13 @@ const DEFAULT_DEMO_DATA = {
       'Term 3': {
         kpis: {
           totalLearners: 470,
-          learnersMeta: 'Grade 1–9 classes · 93.1% attendance',
+          learnersMeta: '12 classes · 93.1% attendance',
           avgPerformance: 61.2,
-          avgDelta: '+2.1 index points vs Term 2 2025',
+          avgDelta: '+2.1 index points vs Term 2',
           totalAssessments: 36,
-          assessmentsMeta: 'Archived annual close',
+          assessmentsMeta: 'Recorded this term',
           flaggedLearners: 34,
-          flaggedMeta: 'Review based on learning evidence and support indicators'
+          flaggedMeta: 'Based on recorded evidence'
         },
         trendLabels: ['Term 2 Carryover', 'Learning Check 1', 'Mid-Term Learning Review 3', 'Learning Check 2', 'End-Term 3'],
         trends: {
