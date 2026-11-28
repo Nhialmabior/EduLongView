@@ -562,12 +562,39 @@ const EduNavigation = {
       });
     });
 
-    if (!additions.length) {
-      this.showWorkspaceToast('Sample evidence is already available for the demo learners.');
-      return;
+    if (additions.length) {
+      this.workspaceState.performanceRecords.push(...additions);
     }
 
-    this.workspaceState.performanceRecords.push(...additions);
+    // Two clearly labelled synthetic examples demonstrate different support needs:
+    // Amina has persistently low marks; Deng has repeated absence entries.
+    // Only demo-generated records are adjusted, never teacher-entered evidence.
+    const lowMarksLearner = demoLearners.find((learner) => learner.admissionNo === 'DEMO-2601');
+    const attendanceLearner = demoLearners.find((learner) => learner.admissionNo === 'DEMO-2602');
+
+    if (lowMarksLearner) {
+      const lowMarkRecords = this.workspaceState.performanceRecords
+        .filter((record) => record.demoRecord === true && record.learnerId === lowMarksLearner.id)
+        .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+      lowMarkRecords.forEach((record, index) => {
+        const percentage = 32 + ((index * 3) % 8);
+        record.percentage = percentage;
+        record.score = Number((percentage * Number(record.maxScore || 50) / 100).toFixed(1));
+        record.observation = 'Synthetic demonstration record: learner may benefit from targeted practice, teacher check-ins and progress monitoring.';
+      });
+    }
+
+    if (attendanceLearner) {
+      const attendanceRecords = this.workspaceState.performanceRecords
+        .filter((record) => record.demoRecord === true && record.learnerId === attendanceLearner.id)
+        .sort((a, b) => String(a.date || '').localeCompare(String(b.date || '')));
+      const absenceCandidates = attendanceRecords.filter((record) => record.learningArea === 'Mathematics');
+      absenceCandidates.slice(0, 3).forEach((record) => {
+        record.attendance = 'Absent';
+        record.observation = 'Synthetic demonstration record: repeated absence entry; teacher follow-up is recommended to understand attendance barriers.';
+      });
+    }
+
     EduDataStore.save(this.workspaceState);
     this.syncWarningBadge();
     this.renderLearnerDirectory(document.getElementById('view-learners'));
@@ -578,7 +605,9 @@ const EduNavigation = {
     this.renderReportsWorkspace(document.getElementById('view-reports'));
     this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
     document.getElementById('termSelect')?.dispatchEvent(new Event('change'));
-    this.showWorkspaceToast(additions.length + ' synthetic sample evidence record(s) added across the demo learners.');
+    this.showWorkspaceToast(additions.length
+      ? additions.length + ' synthetic sample evidence record(s) added, including low-mark and repeated-absence support examples.'
+      : 'Demo support examples refreshed: low marks and repeated absences are now visible in Early Warnings.');
   },
 
   filterLearnerDirectory() {
