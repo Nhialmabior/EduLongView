@@ -292,15 +292,23 @@ const EduNavigation = {
   renderAnalytics(section) {
     const records = this.workspaceState.performanceRecords || [];
     const learnerCount = new Set(records.map((record) => record.learnerId)).size;
-    const mean = records.length ? records.reduce((sum, record) => sum + Number(record.percentage || 0), 0) / records.length : null;
+    const scoredRecords = records.filter((record) =>
+      record.percentage !== null &&
+      record.percentage !== undefined &&
+      String(record.percentage).trim() !== '' &&
+      Number.isFinite(Number(record.percentage))
+    );
+    const mean = scoredRecords.length
+      ? scoredRecords.reduce((sum, record) => sum + Number(record.percentage), 0) / scoredRecords.length
+      : null;
     section.innerHTML = `<div class="module-shell">
       <div class="module-header"><div><span class="module-badge">Evidence-based analysis</span><h2>Learning Performance Analysis</h2><p>Explore the saved assessment evidence. All figures come from this browser’s learner records.</p></div><a href="#assessments" class="btn btn-secondary" data-route="assessments"><i data-lucide="clipboard-plus"></i><span>Add Evidence</span></a></div>
       <div class="module-stat-grid">
         <article class="panel-card module-stat-card"><span class="kpi-label">Saved records</span><h3>${records.length}</h3><p>Across ${learnerCount} learner(s)</p></article>
-        <article class="panel-card module-stat-card"><span class="kpi-label">Mean score</span><h3>${mean === null ? '—' : mean.toFixed(1) + '%'}</h3><p>Recorded percentage mean</p></article>
+        <article class="panel-card module-stat-card"><span class="kpi-label">Mean score</span><h3>${mean === null ? '—' : mean.toFixed(1) + '%'}</h3><p>Numeric scores only; observations excluded</p></article>
         <article class="panel-card module-stat-card"><span class="kpi-label">Learning areas</span><h3>${new Set(records.map((record) => record.learningArea)).size}</h3><p>Areas represented</p></article>
       </div>
-      <div class="charts-grid"><article class="panel-card"><div class="panel-header"><div><h3 class="panel-title">Performance by learning area</h3><p class="panel-subtitle">Mean saved percentage</p></div></div><div class="chart-canvas-wrap"><canvas id="analyticsSubjectChart"></canvas></div></article>
+      <div class="charts-grid"><article class="panel-card"><div class="panel-header"><div><h3 class="panel-title">Performance by learning area</h3><p class="panel-subtitle">Mean numeric score · observation-only records excluded</p></div></div><div class="chart-canvas-wrap">${scoredRecords.length ? '<canvas id="analyticsSubjectChart"></canvas>' : '<div class="dashboard-chart-empty">Learning-area averages will appear when numeric scores are saved. Observation-only records are not treated as zero.</div>'}</div></article>
       <article class="panel-card"><div class="panel-header"><div><h3 class="panel-title">Evidence distribution</h3><p class="panel-subtitle">Saved records by reporting term</p></div></div><div class="chart-canvas-wrap"><canvas id="analyticsTermChart"></canvas></div></article></div>
     </div>`;
     requestAnimationFrame(() => this.renderAnalyticsCharts());
@@ -310,10 +318,16 @@ const EduNavigation = {
   renderAnalyticsCharts() {
     if (typeof Chart === 'undefined') return;
     const records = this.workspaceState.performanceRecords || [];
+    const scoredRecords = records.filter((record) =>
+      record.percentage !== null &&
+      record.percentage !== undefined &&
+      String(record.percentage).trim() !== '' &&
+      Number.isFinite(Number(record.percentage))
+    );
     const groups = {};
-    records.forEach((record) => {
+    scoredRecords.forEach((record) => {
       const key = record.learningArea || 'Unspecified';
-      (groups[key] = groups[key] || []).push(Number(record.percentage || 0));
+      (groups[key] = groups[key] || []).push(Number(record.percentage));
     });
     const areaLabels = Object.keys(groups);
     const areaMeans = areaLabels.map((key) => groups[key].reduce((sum, value) => sum + value, 0) / groups[key].length);
@@ -325,7 +339,7 @@ const EduNavigation = {
       new Chart(subjectCanvas, { type: 'bar', data: { labels: areaLabels, datasets: [{ label: 'Mean %', data: areaMeans, backgroundColor: '#0F766E', borderRadius: 5 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, max: 100 }, x: { ticks: { font: { size: 11 } } } }, plugins: { legend: { display: false } } } });
     }
     if (termCanvas) {
-      new Chart(termCanvas, { type: 'doughnut', data: { labels: termLabels, datasets: [{ data: termCounts, backgroundColor: ['#0F213A', '#0F766E', '#D97706'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
+      new Chart(termCanvas, { type: 'doughnut', data: { labels: termLabels, datasets: [{ data: termCounts, backgroundColor: ['#0F766E', '#99F6E4', '#D97706'], borderColor: '#FFFFFF', borderWidth: 2 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } } });
     }
   },
 
