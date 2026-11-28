@@ -2170,3 +2170,108 @@ textarea {
     width: 100%;
   }
 }
+
+
+/* ==========================================================================
+   Mobile viewport containment — prevent the document itself from panning.
+   Wide tables remain scrollable inside their own .table-responsive wrapper.
+   ========================================================================== */
+@media screen and (max-width: 860px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+  }
+
+  body {
+    position: relative;
+  }
+
+  #appShell,
+  .app-shell {
+    display: flex;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+  }
+
+  .main-wrapper {
+    flex: 1 1 0%;
+    width: 0;
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .topbar,
+  .main-content,
+  .view-section,
+  .module-shell,
+  .module-header,
+  .workspace-panel,
+  .panel-card,
+  .welcome-banner {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .main-content,
+  .view-section,
+  .module-shell {
+    overflow-wrap: anywhere;
+  }
+
+  .charts-grid,
+  .bottom-grid,
+  .roadmap-grid,
+  .module-stat-grid,
+  .kpi-grid,
+  .learner-overview-grid,
+  .workspace-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .charts-grid > *,
+  .bottom-grid > *,
+  .roadmap-grid > *,
+  .module-stat-grid > *,
+  .kpi-grid > *,
+  .learner-overview-grid > *,
+  .workspace-form-grid > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .table-responsive {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive .data-table {
+    width: max-content;
+    min-width: 620px;
+    max-width: none;
+  }
+
+  canvas,
+  img,
+  video,
+  iframe {
+    max-width: 100%;
+  }
+
+  pre,
+  code {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+}
