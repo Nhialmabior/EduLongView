@@ -1482,3 +1482,374 @@ button, select, input {
 .learner-record-count { background: #E6F7F4; color: #0F766E; }
 .import-dropzone > i { color: #0F766E; }
 
+
+
+/* ==========================================================================
+   Responsive hardening — phones, tablets, laptops and wide displays
+   Keep the existing desktop layout while preventing narrow-screen overflow.
+   ========================================================================== */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  scroll-padding-top: 76px;
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+.app-shell,
+.main-wrapper,
+.main-content,
+.view-section,
+.panel-card,
+.kpi-card,
+.workspace-panel {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img,
+svg,
+canvas,
+video {
+  max-width: 100%;
+}
+
+button,
+.btn,
+input,
+select,
+textarea {
+  max-width: 100%;
+}
+
+.data-table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.data-table th,
+.data-table td {
+  overflow-wrap: anywhere;
+}
+
+.charts-grid,
+.bottom-grid,
+.kpi-grid,
+.learner-overview-grid,
+.workspace-form-grid {
+  min-width: 0;
+}
+
+.charts-grid > *,
+.bottom-grid > *,
+.kpi-grid > *,
+.learner-overview-grid > *,
+.workspace-form-grid > * {
+  min-width: 0;
+}
+
+.panel-header,
+.panel-actions,
+.import-actions,
+.workspace-form-actions,
+.record-actions {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.panel-header > *,
+.topbar-left,
+.topbar-right,
+.welcome-copy,
+.welcome-actions {
+  min-width: 0;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .topbar {
+    gap: 10px;
+  }
+
+  .topbar-right {
+    gap: 8px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .charts-grid,
+  .bottom-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .topbar {
+    min-height: 64px;
+    height: auto;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    align-items: center;
+  }
+
+  .topbar-left {
+    flex: 1 1 auto;
+  }
+
+  .topbar-right {
+    flex: 0 1 auto;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  .period-selectors {
+    max-width: 100%;
+  }
+
+  .welcome-banner {
+    align-items: stretch;
+  }
+
+  .welcome-actions {
+    display: flex;
+    width: 100%;
+  }
+
+  .welcome-actions .btn {
+    flex: 1 1 180px;
+  }
+
+  .panel-card {
+    overflow: hidden;
+  }
+
+  .data-table {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .topbar-left,
+  .topbar-right {
+    width: 100%;
+  }
+
+  .topbar-right {
+    justify-content: space-between;
+  }
+
+  .period-selectors {
+    flex: 1 1 auto;
+    justify-content: space-between;
+    gap: 2px;
+  }
+
+  .select-control {
+    min-width: 0;
+    flex: 1 1 0;
+    padding: 4px;
+  }
+
+  .select-control select {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    font-size: 12px;
+  }
+
+  .main-content {
+    padding: 14px 12px 28px;
+  }
+
+  .welcome-banner {
+    padding: 16px;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .welcome-actions {
+    flex-direction: column;
+  }
+
+  .welcome-actions .btn {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .kpi-grid,
+  .learner-overview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .kpi-card {
+    padding: 14px;
+  }
+
+  .kpi-value {
+    font-size: clamp(20px, 6vw, 26px);
+    overflow-wrap: anywhere;
+  }
+
+  .panel-card {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+
+  .panel-header {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .panel-header > * {
+    max-width: 100%;
+  }
+
+  .workspace-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .workspace-wide {
+    grid-column: auto;
+  }
+
+  .workspace-form-actions {
+    justify-content: stretch;
+  }
+
+  .workspace-form-actions .btn,
+  .import-actions .btn {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+
+  .record-actions {
+    min-width: 0;
+  }
+
+  .record-actions .btn {
+    min-height: 36px;
+  }
+
+  .import-dropzone {
+    padding: 20px 12px;
+  }
+
+  .breadcrumb-wrap {
+    min-width: 0;
+  }
+
+  .page-title {
+    font-size: 16px;
+    overflow-wrap: anywhere;
+  }
+}
+
+@media (max-width: 420px) {
+  .main-content {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .topbar {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .kpi-grid,
+  .learner-overview-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kpi-card {
+    padding: 13px;
+  }
+
+  .panel-card {
+    padding: 12px;
+  }
+
+  .topbar-right {
+    align-items: stretch;
+  }
+
+  .topbar-right > .btn {
+    min-height: 40px;
+  }
+
+  .period-selectors {
+    width: 100%;
+  }
+
+  .select-control svg {
+    display: none;
+  }
+
+  .data-table th,
+  .data-table td {
+    padding: 8px;
+    white-space: normal;
+  }
+
+  .btn {
+    min-height: 40px;
+  }
+
+  .icon-btn {
+    min-width: 40px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 340px) {
+  .brand-sub {
+    display: none;
+  }
+
+  .page-title {
+    font-size: 15px;
+  }
+
+  .topbar-right {
+    flex-direction: column;
+  }
+
+  .period-selectors {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .select-control {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
