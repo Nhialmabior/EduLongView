@@ -488,25 +488,24 @@ const EduNavigation = {
     ];
     const existingAdmissions = new Set((this.workspaceState.learners || []).map((learner) => String(learner.admissionNo || '').trim().toLowerCase()));
     const additions = demoLearners.filter((learner) => !existingAdmissions.has(learner.admissionNo.toLowerCase()));
-    if (!additions.length) {
-      this.showWorkspaceToast('The demo learners are already in this browser workspace.');
-      return;
-    }
-    const now = new Date().toISOString();
-    additions.forEach((learner) => {
-      this.workspaceState.learners.push({
-        id: 'demo-learner-' + learner.admissionNo.toLowerCase(),
-        ...learner,
-        createdAt: now,
-        demoRecord: true
+    if (additions.length) {
+      const now = new Date().toISOString();
+      additions.forEach((learner) => {
+        this.workspaceState.learners.push({
+          id: 'demo-learner-' + learner.admissionNo.toLowerCase(),
+          ...learner,
+          createdAt: now,
+          demoRecord: true
+        });
       });
-    });
-    EduDataStore.save(this.workspaceState);
+      EduDataStore.save(this.workspaceState);
+    }
     this.syncWarningBadge();
     this.renderLearnerDirectory(document.getElementById('view-learners'));
     this.renderClasses(document.getElementById('view-classes'));
     this.renderPerformanceEntry(document.getElementById('view-assessments'));
-    this.showWorkspaceToast(additions.length + ' synthetic demo learner(s) added. Add evidence to test analysis and reports.');
+    // Ensure both newly created and previously added demo learners receive sample evidence.
+    this.addDemoEvidence();
   },
 
   addDemoEvidence() {
