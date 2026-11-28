@@ -428,7 +428,10 @@ const EduNavigation = {
       <div class="module-shell">
         <div class="module-header">
           <div><span class="module-badge">Learner registry</span><h2>Learners Directory</h2><p>Create and maintain learner profiles. Each performance record is linked to one learner, building an individual evidence history over time.</p></div>
-          <button class="btn btn-secondary" type="button" data-add-demo-learners><i data-lucide="users"></i><span>Add Demo Learners</span></button>
+          <div class="record-actions">
+            <button class="btn btn-secondary" type="button" data-add-demo-learners><i data-lucide="users"></i><span>Add Demo Learners</span></button>
+            <button class="btn btn-primary" type="button" data-add-demo-evidence><i data-lucide="clipboard-plus"></i><span>Add Demo Evidence</span></button>
+          </div>
         </div>
         <div class="learner-overview-grid">
           <div class="learner-overview-card"><span>Total learners</span><strong>${learners.length}</strong><small>Profiles in this browser</small></div>
@@ -504,6 +507,79 @@ const EduNavigation = {
     this.renderClasses(document.getElementById('view-classes'));
     this.renderPerformanceEntry(document.getElementById('view-assessments'));
     this.showWorkspaceToast(additions.length + ' synthetic demo learner(s) added. Add evidence to test analysis and reports.');
+  },
+
+  addDemoEvidence() {
+    const demoLearners = (this.workspaceState.learners || []).filter((learner) => learner.demoRecord === true);
+    if (!demoLearners.length) {
+      this.showWorkspaceToast('Add the demo learners first, then add their sample evidence.');
+      return;
+    }
+
+    const learningAreas = ['English', 'Mathematics', 'Integrated Science'];
+    const periods = [
+      { year: 2026, term: 'Term 1', date: '2026-04-08', title: 'Term 1 Learning Review' },
+      { year: 2026, term: 'Term 2', date: '2026-08-07', title: 'Term 2 Learning Review' },
+      { year: 2026, term: 'Term 3', date: '2026-11-20', title: 'Term 3 Learning Review' }
+    ];
+    const existingIds = new Set((this.workspaceState.performanceRecords || []).map((record) => record.id));
+    const additions = [];
+
+    demoLearners.forEach((learner, learnerIndex) => {
+      learningAreas.forEach((area, areaIndex) => {
+        periods.forEach((period, periodIndex) => {
+          const id = 'demo-evidence-' + learner.admissionNo.toLowerCase() + '-' + areaIndex + '-' + periodIndex;
+          if (existingIds.has(id)) return;
+
+          const base = 43 + ((learnerIndex * 7 + areaIndex * 11) % 24);
+          const improvement = periodIndex * (2 + ((learnerIndex + areaIndex) % 3));
+          const variation = ((learnerIndex + areaIndex + periodIndex) % 5) - 2;
+          const percentage = Math.max(35, Math.min(92, base + improvement + variation));
+          const maxScore = 50;
+          const score = Number((percentage * maxScore / 100).toFixed(1));
+          const attendance = (learnerIndex + areaIndex + periodIndex) % 13 === 0 ? 'Absent' : ((learnerIndex + areaIndex + periodIndex) % 9 === 0 ? 'Late' : 'Present');
+
+          additions.push({
+            id,
+            learnerId: learner.id,
+            learningArea: area,
+            assessmentTitle: period.title,
+            assessmentType: 'End-of-term assessment',
+            year: period.year,
+            term: period.term,
+            date: period.date,
+            score,
+            maxScore,
+            percentage: Number(((score / maxScore) * 100).toFixed(2)),
+            attendance,
+            participation: percentage >= 65 ? 'Actively participated' : 'Participated with support',
+            observation: percentage >= 70
+              ? 'Demonstrated understanding of several assessed tasks; continue practising to consolidate progress.'
+              : 'Completed the assessed tasks with some support; targeted practice and follow-up are recommended.',
+            createdAt: new Date(period.date + 'T09:00:00').toISOString(),
+            demoRecord: true
+          });
+        });
+      });
+    });
+
+    if (!additions.length) {
+      this.showWorkspaceToast('Sample evidence is already available for the demo learners.');
+      return;
+    }
+
+    this.workspaceState.performanceRecords.push(...additions);
+    EduDataStore.save(this.workspaceState);
+    this.syncWarningBadge();
+    this.renderLearnerDirectory(document.getElementById('view-learners'));
+    this.renderPerformanceEntry(document.getElementById('view-assessments'));
+    this.renderAnalytics(document.getElementById('view-analytics'));
+    this.renderEarlyWarnings(document.getElementById('view-early-warnings'));
+    this.renderLearnerReports(document.getElementById('view-subjects'));
+    this.renderReportsWorkspace(document.getElementById('view-reports'));
+    this.renderParentReleaseWorkspace(document.getElementById('view-parent-release'));
+    document.getElementById('termSelect')?.dispatchEvent(new Event('change'));
+    this.showWorkspaceToast(additions.length + ' synthetic sample evidence record(s) added across the demo learners.');
   },
 
   filterLearnerDirectory() {
@@ -1090,6 +1166,10 @@ const EduNavigation = {
     document.addEventListener('click', (e) => {
       if (e.target.closest('[data-add-demo-learners]')) {
         this.addDemoLearners();
+        return;
+      }
+      if (e.target.closest('[data-add-demo-evidence]')) {
+        this.addDemoEvidence();
         return;
       }
       const cancelLearnerEdit = e.target.closest('[data-cancel-learner-edit]');
