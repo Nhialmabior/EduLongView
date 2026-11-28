@@ -1853,3 +1853,320 @@ textarea {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+/* iPhone / compact mobile layout corrections.
+   These rules intentionally come last to override older mobile declarations. */
+@supports (padding: max(0px)) {
+  .topbar {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+  }
+  .main-content {
+    padding-bottom: max(28px, env(safe-area-inset-bottom));
+  }
+}
+
+@media screen and (max-width: 600px) {
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .app-shell {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
+  .main-wrapper {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-left: 0 !important;
+  }
+
+  .topbar {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 0;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .topbar-left {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .mobile-menu-btn {
+    display: inline-flex;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .breadcrumb-wrap {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+  }
+
+  .breadcrumb-root,
+  .breadcrumb-sep {
+    display: none;
+  }
+
+  .page-title {
+    min-width: 0;
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+  }
+
+  .topbar-right {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .period-selectors {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-around;
+    padding: 4px;
+  }
+
+  .select-control {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 50%;
+    padding: 4px 2px;
+    gap: 3px;
+  }
+
+  .select-control select {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    padding: 5px 1px;
+    font-size: 11px;
+    text-overflow: ellipsis;
+  }
+
+  .select-control svg {
+    display: none;
+  }
+
+  #resetDemoBtn {
+    flex: 0 0 auto;
+    min-height: 42px;
+    padding: 8px 10px;
+  }
+
+  .main-content {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin: 0;
+    padding: 14px 12px 30px;
+  }
+
+  .welcome-banner {
+    width: 100%;
+    min-width: 0;
+    padding: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+  }
+
+  .welcome-copy h2 {
+    font-size: 18px;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .welcome-actions {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .welcome-actions .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .kpi-card {
+    min-width: 0;
+    padding: 13px;
+  }
+
+  .kpi-label,
+  .kpi-meta,
+  .trend-badge {
+    overflow-wrap: anywhere;
+  }
+
+  .kpi-value {
+    font-size: clamp(19px, 5.5vw, 25px);
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+  }
+
+  .charts-grid,
+  .bottom-grid,
+  .roadmap-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .panel-card {
+    width: 100%;
+    min-width: 0;
+    padding: 14px;
+  }
+
+  .panel-header {
+    width: 100%;
+    min-width: 0;
+    flex-wrap: wrap;
+  }
+
+  .panel-header > div,
+  .panel-controls {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .compact-select,
+  .panel-controls select {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .chart-canvas-wrap {
+    width: 100%;
+    min-width: 0;
+    height: 230px;
+  }
+
+  .table-responsive {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table-responsive .data-table {
+    display: table;
+    width: 100%;
+    min-width: 620px;
+    max-width: none;
+    table-layout: auto;
+  }
+
+  .data-table th,
+  .data-table td {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .workspace-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .workspace-form-grid > *,
+  .workspace-form-grid input,
+  .workspace-form-grid select,
+  .workspace-form-grid textarea {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .learner-directory-tools {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .learner-search-field,
+  .learner-grade-filter {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+
+  .record-actions {
+    min-width: 145px;
+    flex-wrap: nowrap;
+  }
+
+  .sidebar {
+    width: min(var(--sidebar-width), calc(100vw - 52px)) !important;
+    max-width: calc(100vw - 52px);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .sidebar-backdrop {
+    z-index: 39;
+  }
+
+  .sidebar {
+    z-index: 40;
+  }
+}
+
+@media screen and (max-width: 380px) {
+  .main-content {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .topbar {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .topbar-right {
+    flex-direction: column;
+  }
+
+  #resetDemoBtn {
+    width: 100%;
+  }
+}
