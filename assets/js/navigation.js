@@ -428,6 +428,7 @@ const EduNavigation = {
       <div class="module-shell">
         <div class="module-header">
           <div><span class="module-badge">Learner registry</span><h2>Learners Directory</h2><p>Create and maintain learner profiles. Each performance record is linked to one learner, building an individual evidence history over time.</p></div>
+          <button class="btn btn-secondary" type="button" data-add-demo-learners><i data-lucide="users"></i><span>Add Demo Learners</span></button>
         </div>
         <div class="learner-overview-grid">
           <div class="learner-overview-card"><span>Total learners</span><strong>${learners.length}</strong><small>Profiles in this browser</small></div>
@@ -468,6 +469,41 @@ const EduNavigation = {
         <p class="import-storage-note">Demo workspace notice: learner profiles and performance records currently remain in this browser only. They are not yet synchronised with the school database.</p>
       </div>`;
     if (window.lucide) window.lucide.createIcons();
+  },
+
+  addDemoLearners() {
+    const demoLearners = [
+      { fullName: 'Amina Hassan Noor', admissionNo: 'DEMO-2601', grade: 1, stream: 'Grade 1 East' },
+      { fullName: 'Deng Kuol Majok', admissionNo: 'DEMO-2602', grade: 2, stream: 'Grade 2 West' },
+      { fullName: 'Grace Akinyi Omondi', admissionNo: 'DEMO-2603', grade: 3, stream: 'Grade 3 East' },
+      { fullName: 'Samuel Lokwang Ekeno', admissionNo: 'DEMO-2604', grade: 4, stream: 'Grade 4 West' },
+      { fullName: 'Nyamal Gatluak Riek', admissionNo: 'DEMO-2605', grade: 5, stream: 'Grade 5 East' },
+      { fullName: 'Peter Lokuwam Lopeyok', admissionNo: 'DEMO-2606', grade: 6, stream: 'Grade 6 West' },
+      { fullName: 'Achol Mabior Garang', admissionNo: 'DEMO-2607', grade: 7, stream: 'Grade 7 North' },
+      { fullName: 'Hassan Abdi Mohamed', admissionNo: 'DEMO-2608', grade: 8, stream: 'Grade 8 South' },
+      { fullName: 'Esther Nakiru Ebei', admissionNo: 'DEMO-2609', grade: 9, stream: 'Grade 9 North' }
+    ];
+    const existingAdmissions = new Set((this.workspaceState.learners || []).map((learner) => String(learner.admissionNo || '').trim().toLowerCase()));
+    const additions = demoLearners.filter((learner) => !existingAdmissions.has(learner.admissionNo.toLowerCase()));
+    if (!additions.length) {
+      this.showWorkspaceToast('The demo learners are already in this browser workspace.');
+      return;
+    }
+    const now = new Date().toISOString();
+    additions.forEach((learner) => {
+      this.workspaceState.learners.push({
+        id: 'demo-learner-' + learner.admissionNo.toLowerCase(),
+        ...learner,
+        createdAt: now,
+        demoRecord: true
+      });
+    });
+    EduDataStore.save(this.workspaceState);
+    this.syncWarningBadge();
+    this.renderLearnerDirectory(document.getElementById('view-learners'));
+    this.renderClasses(document.getElementById('view-classes'));
+    this.renderPerformanceEntry(document.getElementById('view-assessments'));
+    this.showWorkspaceToast(additions.length + ' synthetic demo learner(s) added. Add evidence to test analysis and reports.');
   },
 
   filterLearnerDirectory() {
@@ -1052,6 +1088,10 @@ const EduNavigation = {
       }
     });
     document.addEventListener('click', (e) => {
+      if (e.target.closest('[data-add-demo-learners]')) {
+        this.addDemoLearners();
+        return;
+      }
       const cancelLearnerEdit = e.target.closest('[data-cancel-learner-edit]');
       if (cancelLearnerEdit) {
         this.editingLearnerId = null;
