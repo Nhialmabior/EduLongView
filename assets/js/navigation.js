@@ -170,7 +170,7 @@ const EduNavigation = {
       if (largestDrop) {
         reasons.push(`${largestDrop.area}: the latest result is ${largestDrop.drop.toFixed(1)} percentage points below the first repeated result, exceeding the ${dropThreshold}-point alert threshold.`);
       }
-      if (absences > 2) reasons.push(`${absences} absence entries were recorded.`);
+      if (absences > 2) reasons.push(`${absences} absence entries were recorded. Check in with the learner and guardian to understand attendance barriers and agree on follow-up support.`);
       if (!learnerRecords.length || !reasons.length) return null;
       return { learner, mean, absences, reasons, level: mean !== null && mean < attentionThreshold ? 'High' : 'Moderate' };
     }).filter(Boolean);
