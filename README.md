@@ -2,157 +2,210 @@
 
 **See the progress. Understand the patterns. Support every learner.**
 
-EduLongView is an AI-assisted learner performance analysis and reporting platform for schools. It helps teachers organise individual learner performance evidence, understand patterns over time, prepare clear reports and recommendations, and share approved reports with parents or guardians through a controlled process.
+EduLongView is an AI-assisted learner performance monitoring and reporting platform designed to help schools organise learner records, understand progress over time, identify learners who may need additional support, and prepare clear, evidence-based reports.
 
-The central workflow is:
+The project brings learner information and teacher-recorded evidence into one workspace. Instead of treating a single test result as the full picture, EduLongView is designed around longitudinal records: assessment results, attendance, participation and factual teacher observations collected across reporting periods.
 
-1. A school registers its learners.
-2. Teachers enter or import performance evidence for each learner.
-3. EduLongView organises the evidence and summarises performance patterns.
-4. An AI service can prepare a report draft from the selected learner's evidence.
-5. A teacher reviews, corrects and approves the report.
-6. An authorised school workflow releases the approved report to the verified parent or guardian.
+> **Core principle:** AI supports teachers; it does not replace them. AI-generated content remains a draft for teacher review. A teacher or authorised school official remains responsible for decisions, approval and any report release.
 
-**The teacher remains responsible for professional judgement and report approval. AI must never approve or release a report.**
-
-EduLongView is designed with refugee and host-community school contexts in mind, including schools in Kakuma and Kalobeyei, Turkana County, Kenya.
+**Project status:** Presentation-ready browser demonstration with a separate backend foundation under development. It is a prototype, not yet a production school information system.
 
 ---
 
-## 1. Product scope and principles
+## Project links
 
-EduLongView focuses on recording and analysing learner performance. It is **not** a curriculum repository, teaching platform, lesson-planning tool or automated assessment authority. It does not teach curriculum content or decide what a learner should be taught.
-
-- **Learner coverage:** Grades 1–9. Grade information is used to organise learner records and reports; it does not represent curriculum content.
-- **Evidence-led analysis:** Summaries and recommendations must be grounded in the learner's recorded results, attendance, participation and factual teacher observations.
-- **Individual reporting:** Reports are prepared for one learner at a time, using that learner's available evidence.
-- **Human review:** AI output is a draft. Teachers must review and edit it before any approval or release.
-- **Parent privacy:** Parents or guardians should only see reports explicitly released for a learner linked to them through a verified school process.
-- **School separation:** Each school's users and records must be isolated by server-enforced school membership and database permissions.
-- **Data minimisation:** Only the minimum necessary, preferably pseudonymised, evidence should be sent to an external AI provider.
-- **No unsupported conclusions:** The system must not invent results, infer diagnoses, or describe a trend from a single observation.
-
-## 2. Current implementation status
-
-EduLongView is under active development. The repository contains a working browser-based demonstration and a separate FastAPI backend foundation.
-
-| Area | Current status |
+| Resource | Link |
 |---|---|
-| Static web workspace | Implemented; HTML, CSS and JavaScript with no frontend build step |
-| Dashboard and navigation | Implemented, including responsive navigation and workspace modules |
-| Learner directory | Browser-demo implementation with learner profiles and search/filter controls |
-| Performance entry | Browser-demo implementation for individual learner evidence |
-| Bulk upload | CSV and Excel (.xlsx) import workflow with preview and validation |
-| Analysis and report drafts | Rule-based, evidence-based browser workflow |
-| Sample workspace data | Synthetic demonstration learners and performance records |
-| FastAPI service | Implemented separately from the static frontend |
-| Supabase authentication foundation | Backend validates Supabase Auth sessions and resolves active school membership |
-| Teacher invitation endpoints | School-admin-only invitation and invitation-activation endpoints are implemented in the backend |
-| AI provider | Not configured; the report API intentionally returns HTTP 503 when no provider is configured |
-| Shared learner/report database | Not yet implemented for the browser workflow |
-| Parent/guardian portal and report release | Not yet implemented end to end |
-| Production readiness | Not ready for real learner data; see [Security, privacy and production readiness](#10-security-privacy-and-production-readiness) |
+| Live website | [Open EduLongView](https://nhialmabior.github.io/EduLongView/) |
+| GitHub repository | [Nhialmabior/EduLongView](https://github.com/Nhialmabior/EduLongView) |
+| Backend API documentation (when the service is available) | Open the deployed API's `/docs` route |
 
-The backend has been deployed to Render and its health endpoint was previously verified. Deployment availability and configuration can change. The static website's current report workflow remains browser-based and rule-based; it is not yet connected to a live AI provider.
+The live website is intended for demonstration and evaluation. It uses synthetic sample data; do not enter real learner or school records.
 
-## 3. Features in the browser demonstration
+---
 
-### Dashboard and workspace navigation
+## The problem
 
-- Dashboard overview and learner-performance workspace.
-- Navigation for Dashboard, Learners, Performance Records and Bulk Upload.
-- Insight and reporting areas for Analytics, Learners to Review, AI Report Drafts and Report Management.
-- Responsive desktop and mobile navigation.
-- School/workspace context and academic year/term selectors.
+Learner performance information is often recorded in separate files, mark sheets and teacher notes. This can make it difficult to:
 
-### Learner directory
+- Follow an individual learner's progress across terms.
+- Bring assessment results, attendance and observations together.
+- Notice repeated patterns that may require teacher attention.
+- Prepare consistent, understandable learner reports.
+- Keep reporting decisions under the control of teachers and school staff.
 
-- Register learner name, admission/learner number, grade and class/stream.
-- Use Grades 1–9 as organisational information.
-- Search and filter the learner directory.
-- Identify whether learner records have performance evidence available.
-- Validate admission/learner numbers to reduce duplicate registrations.
+EduLongView explores how a structured digital workspace and carefully bounded AI assistance can make these tasks easier while keeping professional judgement with educators.
 
-### Individual performance records
+## Project objectives
 
-Teachers can record evidence against a registered learner, including:
+- Organise learner profiles and individual performance evidence.
+- Support manual entry and bulk import of assessment records.
+- Present recorded performance in readable summaries and charts.
+- Surface explainable indicators that prompt teacher review.
+- Prepare learner report drafts grounded in available evidence.
+- Keep teacher review and parent/guardian release as separate, controlled steps.
+- Provide a responsive interface that can be explored on desktop, tablet and mobile devices.
 
-- Learning area or subject label.
-- Assessment or activity title and assessment type.
+## Key features
+
+### 1. Dashboard
+
+The dashboard provides a school-workspace overview, including learner and assessment indicators, performance visualisations and shortcuts to key areas. Academic year and term selectors help organise the displayed information by reporting period.
+
+### 2. Learner directory
+
+- Register and manage learner profiles.
+- Organise learners by grade and class/stream.
+- Search and filter learner records.
+- Link performance evidence to the relevant learner.
+- Use admission or learner identifiers to help prevent duplicate records.
+
+### 3. Individual performance records
+
+Teachers can record evidence for an individual learner, including:
+
+- Learning area or subject.
+- Assessment title and type.
 - Academic year, term and date.
 - Score and maximum score.
-- Attendance and participation.
-- Factual teacher observation.
+- Attendance and participation context.
+- Factual teacher observations.
 
-The interface validates score values and calculates the percentage from the score and maximum score. Records are associated with a learner and can be used by the analysis and report-draft workflow.
+The interface validates score entries and calculates percentages where numeric scores are provided. Evidence is associated with the learner and reporting period.
 
-### Bulk performance upload
+### 4. Bulk upload
 
-- Import multiple records from CSV files or Excel workbooks (.xlsx).
-- Download and use the CSV template for the expected fields.
-- Match imported rows to learners using their admission/learner number.
-- Preview and validate rows before confirming an import.
-- Exclude invalid rows and skip detected duplicate assessment records.
-- Save accepted imports into the same browser-side performance-record collection used by manual entry.
+The demonstration includes a bulk-import workflow for supported CSV and Excel (.xlsx) files.
 
-CSV parsing uses PapaParse and Excel workbook parsing uses SheetJS, loaded from CDN libraries. An internet connection is therefore required for those import libraries to load.
+- Use a template to prepare records.
+- Upload a file and preview the rows.
+- Validate learner identifiers and score values.
+- Review invalid or duplicate rows before confirming the import.
+- Add accepted records to the browser demonstration workspace.
 
-### Analytics and learner report drafts
+### 5. Analytics and performance insights
 
-- Summarise recorded performance by learning area.
-- Calculate record counts, mean recorded percentages and first-to-latest changes when repeated scored records exist.
-- Summarise available attendance and participation entries.
-- Keep teacher observations alongside their source records.
-- Show the evidence snapshot used to prepare a report draft.
-- Avoid describing a trend when only one scored record is available.
-- Keep generated reports as private, editable drafts in the browser demonstration.
+Charts and summaries help users explore recorded evidence across learning areas and reporting periods. The aim is to make patterns easier to review while keeping the underlying records visible and understandable.
 
-**Important:** the current browser report generator is rule-based. It is not a live generative AI integration. The separate backend contains an AI-draft endpoint, but a provider must be configured and the frontend integration and production safeguards must be completed before AI-generated reports can be used in the application.
+### 6. Learners to review
 
-### Demonstration data
+Explainable, rule-based indicators can draw attention to records that may need follow-up, such as repeated low results, declining performance, missing evidence or attendance concerns.
 
-The browser demonstration includes synthetic sample learner profiles and performance records so the workspace can be explored without entering data first. This data is illustrative only. Do not treat it as real school data, and do not use real learner information in the demonstration environment.
+These indicators are prompts for professional review. They are not diagnoses, final judgements or automated decisions about a learner.
 
-The browser application uses the LocalStorage key `edulongview_state_v2`. Resetting the demo workspace restores its default demonstration dataset.
+### 7. AI-assisted report drafts
 
-## 4. Technology and architecture
+EduLongView's intended reporting workflow brings together available learner evidence to prepare a readable report draft with:
 
-### Frontend
+- A performance summary.
+- Identified strengths.
+- Areas that may need attention.
+- Suggested support actions.
+- References to the evidence used and any limitations.
 
-- HTML5
-- CSS3
-- Vanilla JavaScript
-- Browser LocalStorage for the current demonstration state
-- PapaParse for CSV import
-- SheetJS for Excel workbook import
+The browser demonstration includes an evidence-based report workflow. The separate API provides a foundation for provider-backed AI drafting when correctly configured. Do not describe the current public demo as a fully connected live AI service.
 
-The frontend is a static website. It does not require npm, a bundler or a frontend build command.
+### 8. Report management and parent release
 
-### Backend
+The workspace includes reporting and parent-release areas to demonstrate the intended separation between preparing a report, reviewing it and making it available to a parent or guardian.
 
-- Python
-- FastAPI
-- Pydantic request/response validation
-- Uvicorn ASGI server
-- HTTPX for outbound HTTP requests
-- python-dotenv for local environment configuration
-- Pytest for backend tests
+The production workflow must ensure that only an authorised school user can approve and release a report, and that a parent or guardian can access only reports explicitly released for a learner linked to them through a verified school process. A complete end-to-end parent portal and release system is not yet represented as production-ready.
 
-The backend is a separate service. Its authentication and report endpoints do not mean that the static browser application has already migrated its learner data to a shared database.
+### 9. Demo data and workspace controls
 
-### Authentication and database foundation
+Synthetic demonstration learners and performance records allow reviewers to explore the interface without first creating a dataset. The workspace also includes controls for managing or resetting the local demonstration state.
 
-The backend uses Supabase Auth to validate access tokens and resolves the user's active school membership on the server. School identity and membership tables use Row Level Security (RLS). Server-only Supabase credentials belong in backend environment variables and must never be exposed in frontend code.
+**Demo data is illustrative only.** It does not represent real learners, school results or operational school records.
 
-### AI provider integration
+### 10. Responsive interface
 
-The backend supports an OpenAI-compatible API configuration through server-side environment variables. It validates structured model output and checks that evidence references correspond to records supplied in the request. If no provider is configured, the endpoint returns HTTP 503 rather than creating fabricated AI output.
+The interface includes a responsive navigation shell and layouts designed to adapt to desktop, tablet and mobile screen widths. Mobile navigation and page layouts are intended to keep the workspace usable on smaller screens, including modern iPhone-sized displays.
+
+The current project is a responsive website. It is not yet a published native mobile application or a fully offline-capable Progressive Web App (PWA).
 
 ---
 
-## 5. Repository structure
+## Technology stack
 
-The main repository layout is:
+| Layer | Technologies |
+|---|---|
+| Frontend | HTML5, CSS3, vanilla JavaScript |
+| Charts and visualisation | Chart.js |
+| Icons | Lucide |
+| CSV import | PapaParse |
+| Excel import | SheetJS |
+| PDF/report support | jsPDF |
+| Backend | Python, FastAPI, Pydantic, Uvicorn |
+| Authentication foundation | Supabase Auth |
+| Database foundation | Supabase / PostgreSQL with Row Level Security policies |
+| AI integration foundation | OpenAI-compatible API configuration |
+| Backend testing | Pytest |
+| Frontend hosting | GitHub Pages |
+| Backend hosting configuration | Render |
+
+The frontend is a static website and does not currently require a JavaScript build step. Some libraries are loaded from CDNs, so an internet connection is needed for those external resources to load.
+
+## How the project works
+
+The intended learner-reporting workflow is:
+
+1. Register a learner in the school workspace.
+2. Record or import the learner's performance evidence.
+3. Review summaries, charts and indicators generated from the available records.
+4. Prepare a report draft using the selected learner's evidence.
+5. Have a teacher review and edit the draft.
+6. Obtain the required school approval.
+7. Release the approved report through a verified parent/guardian process.
+
+The prototype demonstrates parts of this workflow in the browser. The complete secure, multi-user workflow requires further backend and database integration.
+
+---
+
+## Architecture and implementation status
+
+EduLongView has two main parts:
+
+### Browser frontend
+
+The public demonstration is a static HTML, CSS and JavaScript application. Its current demonstration records are stored in the browser using LocalStorage.
+
+This means:
+
+- Data belongs to the browser profile and device being used.
+- Records are not automatically shared between teachers or devices.
+- Clearing browser site data can remove locally stored demonstration records.
+- Browser storage does not provide the access controls or security required for real learner records.
+
+### Backend foundation
+
+A separate FastAPI service provides the foundation for authenticated school workflows and report drafting. It includes API validation, Supabase session checks, school-membership checks for protected operations, teacher invitation logic and a report-draft endpoint designed to return teacher-reviewable output.
+
+The backend is not yet the shared persistence layer for all data entered in the public browser demonstration. A configured AI provider is also required before provider-backed report generation can operate.
+
+### Implementation summary
+
+| Component | Status |
+|---|---|
+| Responsive static website and workspace navigation | Implemented in the demonstration |
+| Dashboard and visual analytics | Implemented in the demonstration |
+| Learner directory and synthetic demo learners | Implemented in the demonstration |
+| Individual performance evidence entry | Implemented in the demonstration |
+| CSV and Excel import workflow | Implemented in the demonstration |
+| Evidence-based browser summaries and report workflow | Implemented in the demonstration |
+| Explainable learner-review indicators | Demonstration functionality |
+| Report management and parent-release interface areas | Present in the workspace; full secure workflow remains future work |
+| FastAPI backend | Implemented as a separate service foundation |
+| Supabase authentication and school-membership checks | Backend foundation implemented; deployment configuration and full onboarding require validation |
+| Shared, school-scoped learner and assessment persistence | Not yet fully integrated with the browser application |
+| Live provider-backed AI reporting | Requires provider configuration and end-to-end integration |
+| Verified parent/guardian portal and release | Not yet complete end to end |
+| Native mobile application / full offline PWA | Not yet implemented |
+
+---
+
+## Repository structure
+
+The main project structure is organised as follows:
 
 ```text
 EduLongView/
@@ -170,14 +223,10 @@ EduLongView/
 │   │   ├── favicon.svg
 │   │   └── logo-mark.svg
 │   └── images/
-│       └── README.md
-├── pages/
-│   └── README.md
 ├── api/
 │   └── AI_REPORT_API.md
 └── backend/
     ├── app/
-    │   ├── __init__.py
     │   └── main.py
     ├── tests/
     │   └── test_api.py
@@ -189,71 +238,66 @@ EduLongView/
 
 Key files:
 
-- `index.html`: application page and workspace shell.
-- `assets/css/style.css`: layout, visual styles and responsive behaviour.
-- `assets/js/data.js`: browser demo data, LocalStorage persistence and data-store helpers.
-- `assets/js/navigation.js`: workspace navigation, module rendering and browser interaction handlers.
-- `assets/js/app.js`: application startup and dashboard-level behaviour.
-- `backend/app/main.py`: FastAPI application, authentication dependencies and API routes.
-- `backend/tests/test_api.py`: backend API tests.
-- `backend/.env.example`: names and examples of backend configuration variables; it must not contain real secrets.
-- `api/AI_REPORT_API.md`: report API request/response contract and integration safeguards.
-- `render.yaml`: Render service blueprint.
+- `index.html` — application shell and page structure.
+- `assets/css/style.css` — visual design, layout and responsive styling.
+- `assets/js/data.js` — demonstration data, browser persistence and data helpers.
+- `assets/js/navigation.js` — navigation, workspace modules and interaction handling.
+- `assets/js/app.js` — application initialisation and dashboard behaviour.
+- `backend/app/main.py` — FastAPI application and API routes.
+- `backend/tests/test_api.py` — backend API tests.
+- `backend/.env.example` — example environment-variable names; contains no production secrets.
+- `api/AI_REPORT_API.md` — report API contract and integration guidance.
+- `render.yaml` — Render deployment blueprint.
 
 ---
 
-## 6. Run the frontend locally
+## Run the frontend locally
 
 ### Requirements
 
-- A modern browser.
+- A modern web browser.
+- Git.
 - Visual Studio Code (recommended).
-- VS Code Live Server extension, or another static HTTP server.
-- Internet access if you want to use CSV/Excel import libraries loaded from CDNs.
+- VS Code Live Server or another static HTTP server.
 
-### Steps
+### Setup
 
-1. Clone the repository:
+Clone the repository:
 
-   ```powershell
-   git clone https://github.com/Nhialmabior/EduLongView.git
-   ```
+```bash
+git clone https://github.com/Nhialmabior/EduLongView.git
+cd EduLongView
+```
 
-2. Open the project folder:
+Open the folder in Visual Studio Code:
 
-   ```powershell
-   cd EduLongView
-   code .
-   ```
+```bash
+code .
+```
 
-3. In VS Code, open `index.html` and choose **Open with Live Server**.
+Open `index.html` with the Live Server extension, or serve the repository root using another static HTTP server.
 
-You can also serve the folder with another static HTTP server. No frontend package installation or build step is currently required.
+No frontend package installation or build command is currently required.
 
-### Browser data
+### Demonstration workspace
 
-The demonstration saves its state in the browser's LocalStorage under `edulongview_state_v2`. This means:
+Open the live website or run it locally to explore the synthetic sample workspace. Use the dashboard navigation to visit the learner directory, performance records, bulk upload, analytics and reporting areas.
 
-- Data is specific to the browser profile and device.
-- Different teachers or devices do not share the same records.
-- Clearing browser site data can remove the demonstration records.
-- LocalStorage is not a secure school database and must not be used for real learner records.
+The browser demonstration stores state in LocalStorage. It is not a shared online database.
 
 ---
 
-## 7. Run the FastAPI backend locally
-
-The backend runs separately from the static frontend.
+## Run the backend locally
 
 ### Requirements
 
-- Python 3.10 or later (use a version supported by the installed dependencies).
-- Windows PowerShell, macOS Terminal or Linux shell.
-- A Supabase project with the required Auth and database configuration.
+- Python 3.10 or a compatible version supported by the dependencies.
+- A Supabase project for the authentication configuration.
+- An AI provider account and API key only if testing provider-backed report drafting.
 
-### Windows PowerShell setup
+From the repository root, run:
 
-From the repository root:
+**Windows PowerShell**
 
 ```powershell
 cd backend
@@ -263,26 +307,34 @@ python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-Configure the values in `backend/.env`:
+**macOS / Linux**
+
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+cp .env.example .env
+```
+
+Configure the environment variables in `.env` using your own service credentials:
 
 | Variable | Purpose |
 |---|---|
 | `APP_ENV` | Runtime environment |
 | `SUPABASE_URL` | Supabase project URL |
-| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key (or supported legacy anon key) |
-| `SUPABASE_SERVICE_ROLE_KEY` | Server-only Supabase service-role/secret key with required permissions |
+| `SUPABASE_PUBLISHABLE_KEY` | Supabase publishable key or supported anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Server-only Supabase service-role/secret key |
 | `AI_BASE_URL` | OpenAI-compatible provider base URL |
 | `AI_API_KEY` | Server-side AI provider credential |
-| `AI_MODEL` | Model identifier used by the configured provider |
+| `AI_MODEL` | Configured model identifier |
 | `AI_TIMEOUT_SECONDS` | AI request timeout |
-| `CORS_ORIGINS` | Explicitly allowed frontend origins |
-| `MAX_EVIDENCE_RECORDS` | Maximum evidence records accepted for a report request |
+| `CORS_ORIGINS` | Explicitly permitted frontend origins |
+| `MAX_EVIDENCE_RECORDS` | Maximum evidence records accepted per report request |
 
-Use the actual values from your own project settings. Never commit a real `.env` file, publish a service-role key, or put AI credentials in frontend JavaScript.
+Start the API:
 
-Start the backend:
-
-```powershell
+```bash
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
@@ -291,126 +343,130 @@ Local endpoints:
 - Health check: http://127.0.0.1:8000/health
 - Interactive API documentation: http://127.0.0.1:8000/docs
 
-For the full backend setup, see [backend/README.md](backend/README.md).
+See [backend/README.md](backend/README.md) for backend-specific setup details.
+
+**Security:** Never commit `.env` files, expose service-role keys, or place AI provider credentials in frontend JavaScript.
 
 ---
 
-## 8. API overview
+## API overview
 
-The backend currently provides these routes:
+The backend foundation includes the following routes:
 
-| Method | Endpoint | Purpose / access |
+| Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/health` | Public service health check |
-| GET | `/api/v1/auth/me` | Return the signed-in user's active school context |
-| POST | `/api/v1/auth/activate-invitation` | Activate the signed-in user's own confirmed teacher invitation |
-| POST | `/api/v1/school/teachers/invite` | Invite a teacher; active school administrator only |
-| POST | `/api/v1/reports/draft` | Request a teacher-reviewable report draft; signed-in active school member |
+| GET | `/health` | Service health check |
+| GET | `/api/v1/auth/me` | Return the authenticated user's school context |
+| POST | `/api/v1/auth/activate-invitation` | Activate the signed-in user's confirmed teacher invitation |
+| POST | `/api/v1/school/teachers/invite` | Invite a teacher through an authorised school administrator |
+| POST | `/api/v1/reports/draft` | Request a teacher-reviewable report draft |
 
-The invitation endpoint accepts the teacher's email address. The server determines the school and role from the authenticated administrator's membership; the caller cannot choose a school or grant themselves a role.
+The report endpoint is for draft generation only. It does not approve, publish, email or release reports. The browser demonstration is not yet fully integrated with the backend reporting workflow.
 
-The report endpoint is draft-only. It does not approve, publish, email or release learner reports. The browser-based report workflow is not yet fully integrated with this backend.
-
-See [api/AI_REPORT_API.md](api/AI_REPORT_API.md) for the report payload contract, error handling and AI integration safeguards.
+See [api/AI_REPORT_API.md](api/AI_REPORT_API.md) for request and response details.
 
 ---
 
-## 9. Deployment
+## Deployment
 
-### Static frontend
+### Frontend — GitHub Pages
 
-The frontend can be hosted on any static web host, including GitHub Pages or Netlify:
+The frontend is published as a static website through GitHub Pages.
 
-1. Connect the GitHub repository to the hosting provider, or publish the static project folder.
-2. Set the publish/root directory to the repository root.
-3. No build command is required.
-4. Confirm that `index.html` loads and that static asset paths resolve correctly.
+For deployment from the repository:
 
-### FastAPI backend on Render
+1. Open the repository's **Settings**.
+2. Open **Pages**.
+3. Select the intended publishing source and branch.
+4. Use the repository root as the publishing folder when deploying from the root.
+5. Save the configuration and wait for the Pages deployment to complete.
 
-A Render blueprint is included in `render.yaml`. It defines a Python web service with:
+The live demonstration is available at:
 
-- Root directory: `backend`
-- Build command: `pip install -r requirements.txt`
-- Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-- Health-check path: `/health`
+https://nhialmabior.github.io/EduLongView/
 
-Set the required environment variables in the Render service dashboard. Keep Supabase service-role credentials and AI provider credentials private. Set `CORS_ORIGINS` to the exact frontend origins that should be allowed; do not use an unrestricted wildcard for a production deployment.
+### Backend — Render
 
-The previously configured Render service has used this health URL:
+A Render blueprint is provided in `render.yaml`. The service uses the backend directory, installs dependencies from `requirements.txt`, and starts the FastAPI application with Uvicorn.
 
-https://edulongview.onrender.com/health
+Configure the required environment variables in Render. Set `CORS_ORIGINS` to the exact frontend origin(s) that should be permitted. Check the deployed health endpoint and service logs before relying on the API.
 
-Check the live health endpoint and Render deployment logs before relying on the service. A successful health response confirms that the API process is responding; it does not prove that authentication, AI generation, database persistence or the complete application workflow is production-ready.
+A successful health check confirms that the API process responds; it does not establish that the full application, authentication, AI provider, database persistence or parent-release workflow is production-ready.
 
 ---
 
-## 10. Security, privacy and production readiness
+## Privacy, safeguarding and responsible AI
 
-**Do not use real learner data in the current browser demonstration.** The frontend currently stores learner profiles, performance records and report drafts in LocalStorage. LocalStorage is not encrypted school storage, is not shared between users and does not enforce school-level access control.
+EduLongView is intended for an education context, where learner information must be handled carefully.
 
-Before production use, complete and test at least the following:
+**Do not enter real learner information into the public demonstration.** The browser frontend currently uses LocalStorage for its demonstration records. This is not encrypted, centralised school storage and does not enforce multi-user or school-level access control.
 
-- Provision the first school administrator through a controlled process.
-- Complete and test teacher invitation acceptance and account activation.
-- Connect the frontend to authenticated backend APIs rather than relying on browser-only state.
-- Implement school-scoped learner, performance-record and report storage in the database.
-- Enforce school membership and role permissions on every protected operation.
-- Add complete audit events for sensitive access, edits, approvals and releases.
-- Implement verified parent/guardian linking and consent/verification processes.
-- Ensure parents can access only reports explicitly released for their linked learner.
-- Keep AI drafts and internal teacher notes private from parents.
-- Minimise and pseudonymise evidence sent to an AI provider; do not send direct identifiers unless a reviewed, lawful need exists.
-- Review provider retention, training, data-processing and cross-border transfer terms.
-- Validate AI output against source evidence and preserve the evidence snapshot.
-- Add rate limits, request-size limits, secure secret management, monitoring and security tests.
-- Complete school safeguarding, privacy and data-protection reviews applicable to the deployment context.
+Before using the system with real learners, the project requires:
 
-The initial school and first school administrator still require controlled provisioning. The backend authentication foundation is not a substitute for completing the full school onboarding and data-access workflow.
+- Secure school onboarding and controlled first-administrator provisioning.
+- Fully tested authentication, role assignment and teacher invitation processes.
+- School-scoped database persistence for learner profiles and performance evidence.
+- Server-enforced school membership and role permissions for every protected operation.
+- Appropriate audit records for sensitive access, edits, approvals and releases.
+- Verified parent/guardian linking and consent procedures.
+- Parent access restricted to reports explicitly released for their verified learner link.
+- Protection of AI drafts and internal teacher notes from unauthorised access.
+- Data minimisation and pseudonymisation before sending evidence to an external AI provider.
+- Review of AI provider data retention, model-training and data-processing terms.
+- Validation of AI output against source evidence, with evidence references retained.
+- Security testing, monitoring, rate limits, secure secret management and backup procedures.
+- School safeguarding, privacy and applicable data-protection reviews.
+
+AI-generated summaries must not invent results, infer medical or psychological diagnoses, or present unsupported conclusions. A warning or performance indicator should prompt a teacher to review the evidence; it must not label a learner or make a final decision.
 
 ---
 
-## 11. Backend tests
+## Tests
 
-From the repository root:
+Run the backend tests from the repository root:
 
-```powershell
+```bash
 cd backend
 python -m pytest -q
 ```
 
-The existing tests exercise backend API behaviour with mocked authentication context. They do not prove that a live Supabase project, email delivery, Render deployment, external AI provider or end-to-end browser workflow is functioning.
+These tests exercise the backend behaviours covered by the test suite. They do not, by themselves, verify a live Supabase project, external AI provider, email delivery, hosting configuration or the complete end-to-end application.
 
 ---
 
-## 12. Development priorities
+## Roadmap
 
-The next development phases should focus on completing the product workflow without expanding into curriculum delivery:
+The next development phases are:
 
-1. Finish secure school onboarding and first-administrator provisioning.
-2. Connect teacher sign-in and school membership to the frontend.
-3. Move learner profiles and performance records from LocalStorage into school-scoped database tables.
-4. Connect manual entry and bulk upload to authenticated backend persistence.
-5. Integrate the report-draft endpoint with the selected learner's minimum necessary evidence.
-6. Add teacher review, approval and report version history.
+1. Complete school onboarding and secure first-administrator provisioning.
+2. Connect the frontend to authenticated school accounts and backend APIs.
+3. Move learner profiles and performance records into school-scoped database tables.
+4. Connect manual entry and bulk import to secure backend persistence.
+5. Integrate the report-drafting API with selected learner evidence.
+6. Complete teacher review, approval and report version history.
 7. Implement verified parent/guardian linking and controlled report release.
-8. Complete audit coverage, safeguarding review and end-to-end security testing.
+8. Add comprehensive audit trails, safeguarding checks and end-to-end security testing.
+9. Evaluate offline support and a Progressive Web App or dedicated mobile application.
+
+## Project boundaries
+
+EduLongView is focused on learner performance evidence, analysis and reporting. It is not intended to become a curriculum repository, lesson-delivery platform or automated assessment authority.
+
+The project will continue to prioritise:
+
+- Evidence-based reporting.
+- Teacher oversight and professional judgement.
+- Clear, explainable indicators.
+- Privacy and safeguarding.
+- Responsible and transparent AI assistance.
+- Usability across device sizes.
 
 ---
 
-## 13. Project boundaries
+## Acknowledgement
 
-To preserve the purpose of EduLongView:
-
-- Do not add curriculum repositories, curriculum content or lesson delivery features.
-- Do not make AI the final decision-maker for learner outcomes.
-- Do not generate claims that are not supported by recorded evidence.
-- Do not expose AI drafts or internal notes to parents by default.
-- Do not treat browser LocalStorage as secure, centralised or multi-school storage.
-- Do not use real learner data until the production safeguards above are complete.
-
----
+EduLongView is developed as an education technology prototype exploring how digital tools and responsible AI can support teachers in understanding learner progress and preparing better-informed reports.
 
 ## License
 
-No license has been specified for this repository yet. All rights remain with the repository owner unless a license is added.
+No open-source license has been specified in this repository. Unless a license is added, the project remains subject to the repository owner's rights.
