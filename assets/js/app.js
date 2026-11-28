@@ -180,11 +180,11 @@
         label: 'Recorded score',
         data: values,
         spanGaps: true,
-        borderColor: '#555B61',
-        backgroundColor: 'rgba(85, 91, 97, 0.10)',
+        borderColor: '#0F766E',
+        backgroundColor: 'rgba(15, 118, 110, 0.12)',
         borderWidth: 2.5,
-        pointBackgroundColor: '#E5C84B',
-        pointBorderColor: '#555B61',
+        pointBackgroundColor: '#D97706',
+        pointBorderColor: '#0F766E',
         pointBorderWidth: 1.5,
         pointRadius: 4,
         tension: 0.25,
@@ -197,8 +197,8 @@
           tooltip: { callbacks: { label: (ctx) => ctx.parsed.y === null ? 'Observation only' : 'Score: ' + ctx.parsed.y.toFixed(1) + '%' } }
         },
         scales: {
-          y: { beginAtZero: true, max: 100, grid: { color: '#ECEEF0' }, ticks: { color: '#737A81', callback: (value) => value + '%' } },
-          x: { grid: { display: false }, ticks: { color: '#737A81', maxRotation: 35, minRotation: 0 } }
+          y: { beginAtZero: true, max: 100, grid: { color: '#E1EAE8' }, ticks: { color: '#64748B', callback: (value) => value + '%' } },
+          x: { grid: { display: false }, ticks: { color: '#64748B', maxRotation: 35, minRotation: 0 } }
         }
       }
     });
@@ -231,7 +231,7 @@
       data: { labels, datasets: [{
         label: 'Mean score',
         data: means,
-        backgroundColor: means.map((value) => value < 50 ? '#E5C84B' : value >= 70 ? '#555B61' : '#AEB4BA'),
+        backgroundColor: means.map((value) => value < 50 ? '#D97706' : value >= 70 ? '#0F766E' : '#99F6E4'),
         borderRadius: 5,
         barThickness: 16
       }] },
@@ -240,7 +240,7 @@
         plugins: { legend: { display: false }, tooltip: { callbacks: { label: (ctx) => 'Mean score: ' + ctx.parsed.x.toFixed(1) + '%' } } },
         scales: {
           x: { beginAtZero: true, max: 100, grid: { color: '#ECEEF0' }, ticks: { color: '#737A81', callback: (value) => value + '%' } },
-          y: { grid: { display: false }, ticks: { color: '#555B61' } }
+          y: { grid: { display: false }, ticks: { color: '#374151' } }
         }
       }
     });
