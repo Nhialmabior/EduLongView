@@ -1383,3 +1383,102 @@ button, select, input {
   .record-actions { min-width: 145px; }
   .record-actions .btn { flex: 1 1 auto; }
 }
+
+/* ==========================================================================
+   EduLongView brand palette — logo teal, white, light teal and amber
+   Primary brand colour: #0F766E
+   ========================================================================== */
+:root {
+  --navy-950: #064E49;
+  --navy-900: #0F766E;
+  --navy-800: #115E59;
+  --navy-700: #0D9488;
+  --navy-border: rgba(255, 255, 255, 0.16);
+
+  --bg-canvas: #F3F6F6;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F0FAF8;
+  --bg-hover: #E6F4F1;
+
+  --teal-700: #0F766E;
+  --teal-600: #0D9488;
+  --teal-50: #E6F7F4;
+  --teal-100: #99F6E4;
+
+  --gold-600: #B45309;
+  --gold-500: #D97706;
+  --gold-50: #FFF7ED;
+  --gold-100: #FED7AA;
+
+  --success-text: #0F766E;
+  --success-bg: #CCFBF1;
+
+  --text-on-navy: #F0FDFA;
+  --text-on-navy-muted: #B7DAD5;
+
+  --border-light: #E1EAE8;
+  --border-medium: #C7D8D4;
+}
+
+.sidebar {
+  background-color: var(--navy-900);
+  border-right-color: var(--navy-950);
+}
+.brand-mark { background: var(--navy-800); }
+.school-indicator {
+  background: #99F6E4;
+  box-shadow: 0 0 0 3px rgba(153, 246, 228, 0.2);
+}
+.nav-item.active {
+  background: rgba(255, 255, 255, 0.14);
+  box-shadow: inset 3px 0 0 #D97706;
+}
+.nav-item.active svg { color: #99F6E4; }
+.nav-badge {
+  background: rgba(217, 119, 6, 0.2);
+  color: #FED7AA;
+  border-color: rgba(217, 119, 6, 0.42);
+}
+.user-avatar { background: var(--navy-800); }
+.btn-primary { background: #0F766E; color: #FFFFFF; }
+.btn-primary:hover { background: #0B625B; }
+.btn-outline { color: #0F766E; }
+.btn-outline:hover {
+  background: #E6F7F4;
+  border-color: #0D9488;
+}
+.welcome-banner {
+  background: linear-gradient(115deg, #FFFFFF 0%, #F0FAF8 100%);
+  border-color: var(--border-light);
+}
+.welcome-copy h2 span { color: #0F766E; }
+.kpi-icon.teal, .kpi-icon.navy {
+  background: #E6F7F4;
+  color: #0F766E;
+}
+.kpi-icon.gold {
+  background: #FFF7ED;
+  color: #B45309;
+}
+.panel-tag, .module-badge {
+  color: #0F766E;
+  background: #E6F7F4;
+  border-color: #BFE9E1;
+}
+.status-pill.verified { background: #E6F7F4; color: #0F766E; }
+.status-pill.pending { background: #FFF7ED; color: #B45309; }
+.text-link { color: #0F766E; }
+.toast { background: #064E49; border-left-color: #D97706; }
+.workspace-form-grid input:focus,
+.workspace-form-grid select:focus,
+.workspace-form-grid textarea:focus {
+  border-color: #0D9488;
+  box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.14);
+}
+:focus-visible { outline-color: rgba(13, 148, 136, 0.55); }
+.kpi-card:hover, .panel-card:hover { border-color: #BFE9E1; }
+.kpi-card:focus-within, .panel-card:focus-within { border-color: #0D9488; }
+.data-table tbody tr:hover { background: #F0FAF8; }
+.learner-record-count { background: #E6F7F4; color: #0F766E; }
+.import-dropzone > i { color: #0F766E; }
+
